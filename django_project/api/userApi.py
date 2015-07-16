@@ -23,6 +23,7 @@ def fMerchant(request,user,vendor):
         else:
             verified.update({"followed":{vendor:datetime.datetime.now().strftime("%d/%m/%Y")}})
         collection.update({"userID":user},{"$set": verified} ,False)
+        db.merchants.update_one({"vendor_id": int(vendor)}, {"$inc": {"followers": 1}})
         return HttpResponse(dumps({"success": '1'}),content_type="application/json")
     except:
         return HttpResponse(dumps({"success": '0'}),content_type="application/json")
