@@ -46,5 +46,5 @@ def get_followed(request, userID):      # Dummy
             }
             data.append(temp)
         return HttpResponse(dumps({"data":data}), content_type='application/json')
-    except:
-        return HttpResponse(dumps({"sucess":0}), content_type='application/json')
+    except Exception, e:
+        return HttpResponse(dumps({"sucess":0, "error": "exception: "+str(e)}), content_type='application/json')
