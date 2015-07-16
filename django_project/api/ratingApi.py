@@ -63,58 +63,54 @@ def rate_merchant (request):
 
         # Step 1: Save rating to user db (opt)
         if not das:
-            try:
-                db.user.update({"userID": uID}, {"$push": {"rating": {
-                    "value": data['rating'],
-                    "vendor_id": vID,
-                    "date": datetime.now()
-                }}}, False)
-            except Exception, e:
-                return response({"sucess": 0, "error": "Step 1, "+str(e)})
-            try:
-                # Step 2: Modify merchant rating (opt)
-                while not updateRating(vID, data['rating']):
-                    pass
-            except Exception, e:
-                return response({"sucess": 0, "error": "Step 2, "+str(e), "vendor_id": vID})
+            '''
+            db.user.update({"userID": uID}, {"$push": {"rating": {
+                "value": data['rating'],
+                "vendor_id": vID,
+                "date": datetime.now()
+            }}}, False)
+            '''
+            # Step 2: Modify merchant rating (opt)
+            while not updateRating(vID, data['rating']):
+                pass
+
+            # Step 2.5: store ratings
+
+            v = db.merchants.find_one({"vendor_id": vID}, {"_id": False, "vendor_name": True})
+            db.ratings.insert_one({
+                "vendor_id": vID,
+                "userID": uID,
+                "cID": data['cID'],
+                "rating": data['rating'],
+                "comment": data['comment'],
+                "vendor_name": v['vendor_name'],
+                "date": datetime.now()
+            })
 
         # Step 3: Update order_data and resolve conflict        //Dicey, check code
-        try:
-            if das:
-                status = "expired"
-            else:
-                status = "used"
+        if das:
+            status = "expired"
+        else:
+            status = "used"
 
-            query = {
-                "vendor_id": vID,
-                "cID": data['cID'],
-                "rcode": data['rcode'],
-                "userID": uID
-            }
-
-            if db.order_data.count(query) == 0:
-                if status == "used":
-                    query.update({
-                        "used_on": datetime.now(),
-                        "mstatus": "disputed",
-                        "ustatus": "used"
-                    })
-                    db.order_data.insert(query)
-            else:
-                while not check_dispute(query, status):
-                    pass
-        except Exception, e:
-            return response({"sucess": 0, "error": "Step 3, "+str(e)})
-        """
-        db.order_data.update({
+        query = {
             "vendor_id": vID,
-            "userID": uID,
+            "cID": data['cID'],
             "rcode": data['rcode'],
-            "cID": data['cID']
-        }, {"$set": {"ustatus": status}}, False)
-        while not check_dispute(data['rcode'], data['cID']):
-            pass
-        """
+            "userID": uID
+        }
+
+        if db.order_data.count(query) == 0:
+            if status == "used":
+                query.update({
+                    "used_on": datetime.now(),
+                    "mstatus": "disputed",
+                    "ustatus": "used"
+                })
+                db.order_data.insert(query)
+        else:
+            while not check_dispute(query, status):
+                pass
 
         return response({"success": 1})
     except Exception, e:
@@ -122,4 +118,23 @@ def rate_merchant (request):
 
 @csrf_exempt
 def check_pending (request):
-    pass
+    try:
+        userID = request.GET['userID']
+        records = db.order_data.find({"userID": userID, "ustatus": "pending"},
+                                     {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True})
+
+        return response({"success": 1, "data": records})
+    except Exception, e:
+        return response({"success": 0, "error": "Exception "+str(e)})
+
+@csrf_exempt
+def get_ratings (request):
+    try:
+        userID = request.GET['userID']
+        records = db.ratings.find({"useID": userID}, {"_id": False, "comment": False})
+        for record in records:
+            record['date'] = record['date'].strftime("%d/%m/%Y")
+
+        return response({"success": 1, "data": records})
+    except Exception, e:
+        return response({"success": 0, "error": "Exception "+str(e)})

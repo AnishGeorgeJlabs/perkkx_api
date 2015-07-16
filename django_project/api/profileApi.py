@@ -17,7 +17,8 @@ db = dbclient.perkkx
 @csrf_exempt
 def get_savings(request, userID):       # Dummy
     collection = db.order_data
-    deals = collection.find({"userID":userID,"mstatus":"used"})
+    deals = collection.find({"userID":userID, "mstatus":"used", "discount": {"$exists": True}},
+                            {"discount": True, "_id": False})
     total = 0
     for x in deals:
         total = total + x['discount']
@@ -46,5 +47,5 @@ def get_followed(request, userID):      # Dummy
             }
             data.append(temp)
         return HttpResponse(dumps({"data":data}), content_type='application/json')
-    except:
-        return HttpResponse(dumps({"sucess":0}), content_type='application/json')
+    except Exception, e:
+        return HttpResponse(dumps({"sucess":0, "error": "exception: "+str(e)}), content_type='application/json')

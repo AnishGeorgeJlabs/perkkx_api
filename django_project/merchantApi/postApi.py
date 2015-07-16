@@ -20,26 +20,20 @@ def update_order_data (query, req_data):
 
     # Section 0: Update cID if original is different
     record['cID'] = req_data['cID']
+    record['mstatus'] = "used"
+    _copy_bill(record, req_data)
 
+    '''
     # Section 1: Merchant Initiated
     if record['ustatus'] == "pending":
-        record['mstatus'] = req_data['status']
-        #record['ustatus'] = req_data['status']  # Will be used only, let consumer do that
-        if req_data['status'] == 'used':
-            _copy_bill(record, req_data)
-            # Rest of the merchant initiated process to be done when user closes the coupon
-
-    elif record['ustatus'] == 'used' and req_data['status'] == 'used':              # Section 2: User Initiated, was disputed, will resolve dispute
-        record['mstatus'] = 'used'
+    elif record['ustatus'] == 'used':          # Section 2: User Initiated, was disputed, will resolve dispute
         _copy_bill(record, req_data)
-    elif record['ustatus'] == 'expired' and req_data['status'] == 'expired':    ## NOT possible
-        record['mstatus'] = 'expired'
-    elif record['ustatus'] == 'expired' and req_data['status'] == 'used':       # Resolve dispute ## NOT possible
+    elif record['ustatus'] == 'expired':       # Resolve dispute ## NOT possible
         record['ustatus'] = 'used'
-        record['mstatus'] = 'used'
         _copy_bill(record, req_data)
     else:                                                                       # DISPUTE
         record['mstatus'] = 'disputed'                                          # NOT possible
+    '''
 
     result = collection.update(query, record, False)        # IMPORTANT, cannot be updateOne
     return result['updatedExisting']
@@ -68,12 +62,11 @@ def post(request, vendor_id):
                 "userID": req_data["rcode"][:-2],
                 "cID": req_data["cID"],
                 "used_on": _time_transform(req_data["used_on"]),
-                "ustatus": req_data["status"],
+                "ustatus": 'pending',               # We allow the user to set feedback
                 "vendor_id": int(vendor_id),
-                "mstatus": req_data["status"]
+                "mstatus": 'used'
             }
-            if req_data['status'] == 'used':
-                _copy_bill(newData, req_data)
+            _copy_bill(newData, req_data)
             
             collection.insert(newData)
             return response({ "success": 1 , "debug": "case2"})
@@ -100,5 +93,26 @@ def login(request):
             return response({"result": result['updatedExisting']})
         else:
             return response({"result": False, "error": "Unknown mode"})
+    except Exception, e:
+        return response({"result": False, "error": "Excepton: "+str(e)})
+
+@csrf_exempt
+def signup(request):
+    failure = {"result": False}
+    try:
+        data = json.loads(request.body)
+        if db.merchants.count({"vendor_id": data['vendor_id']}) == 0:
+            return response(failure)
+
+        collection = db.credentials
+        if collection.count({"username": data['username']}) > 0:
+            return response(failure)
+
+        collection.insert_one({
+            "vendor_id": data['vendor_id'],
+            "username": data['username'],
+            "password": data['password']
+        })
+        return response({"result": True})
     except Exception, e:
         return response({"result": False, "error": "Excepton: "+str(e)})

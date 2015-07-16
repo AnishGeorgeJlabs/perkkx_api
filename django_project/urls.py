@@ -32,9 +32,12 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
     url(r'^perkkx/profile/savings/(?P<userID>\w+)', profileApi.get_savings, name='profileApi.get_savings'),
     url(r'^perkkx/profile/followed/(?P<userID>\w+)', profileApi.get_followed, name='profileApi.get_followed'),
     url(r'^perkkx/profile/rate', ratingApi.rate_merchant, name='ratingApi.rate_merchant'),
+    url(r'^perkkx/profile/check', ratingApi.check_pending, name='ratingApi.check_pending'),
+    url(r'^perkkx/profile/ratings', ratingApi.get_ratings, name='ratingApi.get_ratings'),
 
     url(r'^perkkx/merchantapp/validate', getApi.validate_code, name='getApi.validate_code'),
     url(r'^perkkx/merchantapp/login', postApi.login, name='postApi.login'),
+    url(r'^perkkx/merchantapp/signup', postApi.signup, name='postApi.signup'),      # Not to be used by app
     url(r'^perkkx/merchantapp/submit/(?P<vendor_id>\d+)', postApi.post, name='postApi.post'),
     url(r'^perkkx/merchantapp/count/(?P<vendor_id>\d+)', getApi.get_count, name='getApi.get_count'),
     url(r'^perkkx/merchantapp/(?P<typ>\w+)/(?P<vendor_id>\d+)', getApi.get, name='getApi.get')
