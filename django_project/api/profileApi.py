@@ -17,7 +17,8 @@ db = dbclient.perkkx
 @csrf_exempt
 def get_savings(request, userID):       # Dummy
     collection = db.order_data
-    deals = collection.find({"userID":userID,"mstatus":"used"})
+    deals = collection.find({"userID":userID, "mstatus":"used", "discount": {"$exists": True}},
+                            {"discount": True, "_id": False})
     total = 0
     for x in deals:
         total = total + x['discount']

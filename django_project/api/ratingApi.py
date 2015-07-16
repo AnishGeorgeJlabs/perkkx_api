@@ -111,16 +111,6 @@ def rate_merchant (request):
         else:
             while not check_dispute(query, status):
                 pass
-        """
-        db.order_data.update({
-            "vendor_id": vID,
-            "userID": uID,
-            "rcode": data['rcode'],
-            "cID": data['cID']
-        }, {"$set": {"ustatus": status}}, False)
-        while not check_dispute(data['rcode'], data['cID']):
-            pass
-        """
 
         return response({"success": 1})
     except Exception, e:

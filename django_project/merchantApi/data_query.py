@@ -5,7 +5,7 @@ import pymongo
 import math
 
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
-db = dbclient.perkkx
+db = dbclient.test
 limit = 10
 
 def response(obj):

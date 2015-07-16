@@ -23,18 +23,14 @@ def update_order_data (query, req_data):
 
     # Section 1: Merchant Initiated
     if record['ustatus'] == "pending":
-        record['mstatus'] = req_data['status']
-        #record['ustatus'] = req_data['status']  # Will be used only, let consumer do that
-        if req_data['status'] == 'used':
-            _copy_bill(record, req_data)
+        record['mstatus'] = "used"
+        _copy_bill(record, req_data)
             # Rest of the merchant initiated process to be done when user closes the coupon
 
-    elif record['ustatus'] == 'used' and req_data['status'] == 'used':              # Section 2: User Initiated, was disputed, will resolve dispute
+    elif record['ustatus'] == 'used':          # Section 2: User Initiated, was disputed, will resolve dispute
         record['mstatus'] = 'used'
         _copy_bill(record, req_data)
-    elif record['ustatus'] == 'expired' and req_data['status'] == 'expired':    ## NOT possible
-        record['mstatus'] = 'expired'
-    elif record['ustatus'] == 'expired' and req_data['status'] == 'used':       # Resolve dispute ## NOT possible
+    elif record['ustatus'] == 'expired':       # Resolve dispute ## NOT possible
         record['ustatus'] = 'used'
         record['mstatus'] = 'used'
         _copy_bill(record, req_data)
@@ -68,12 +64,11 @@ def post(request, vendor_id):
                 "userID": req_data["rcode"][:-2],
                 "cID": req_data["cID"],
                 "used_on": _time_transform(req_data["used_on"]),
-                "ustatus": req_data["status"],
+                "ustatus": 'pending',               # We allow the user to set feedback
                 "vendor_id": int(vendor_id),
-                "mstatus": req_data["status"]
+                "mstatus": 'used'
             }
-            if req_data['status'] == 'used':
-                _copy_bill(newData, req_data)
+            _copy_bill(newData, req_data)
             
             collection.insert(newData)
             return response({ "success": 1 , "debug": "case2"})
