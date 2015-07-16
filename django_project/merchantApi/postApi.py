@@ -20,22 +20,20 @@ def update_order_data (query, req_data):
 
     # Section 0: Update cID if original is different
     record['cID'] = req_data['cID']
+    record['mstatus'] = "used"
+    _copy_bill(record, req_data)
 
+    '''
     # Section 1: Merchant Initiated
     if record['ustatus'] == "pending":
-        record['mstatus'] = "used"
-        _copy_bill(record, req_data)
-            # Rest of the merchant initiated process to be done when user closes the coupon
-
     elif record['ustatus'] == 'used':          # Section 2: User Initiated, was disputed, will resolve dispute
-        record['mstatus'] = 'used'
         _copy_bill(record, req_data)
     elif record['ustatus'] == 'expired':       # Resolve dispute ## NOT possible
         record['ustatus'] = 'used'
-        record['mstatus'] = 'used'
         _copy_bill(record, req_data)
     else:                                                                       # DISPUTE
         record['mstatus'] = 'disputed'                                          # NOT possible
+    '''
 
     result = collection.update(query, record, False)        # IMPORTANT, cannot be updateOne
     return result['updatedExisting']
