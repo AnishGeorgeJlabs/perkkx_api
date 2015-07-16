@@ -25,8 +25,8 @@ def fMerchant(request,user,vendor):
         collection.update({"userID":user},{"$set": verified} ,False)
         db.merchants.update_one({"vendor_id": int(vendor)}, {"$inc": {"followers": 1}})
         return HttpResponse(dumps({"success": '1'}),content_type="application/json")
-    except:
-        return HttpResponse(dumps({"success": '0'}),content_type="application/json")
+    except Exception, e:
+        return HttpResponse(dumps({"success": '0', 'error': "Exception: "+str(e)}),content_type="application/json")
 
 @csrf_exempt
 def user_exist(request):
