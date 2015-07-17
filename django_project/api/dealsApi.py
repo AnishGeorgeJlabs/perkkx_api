@@ -135,8 +135,8 @@ def get_deals(request,user, category, typ):
                         data_for_distance = {
                         "l1":float(lat),
                         "ln1":float(lon),
-                        "l2":float(re.sub("[^0-9\.]","",str(merdata['address']['lat'])),
-                        "ln2":float(re.sub("[^0-9\.]","",str(merdata['address']['lng']))
+                        "l2":float(re.sub("[^0-9\.]","",str(merdata['address']['lat']))),
+                        "ln2":float(re.sub("[^0-9\.]","",str(merdata['address']['lng'])))
                         }
                         merdata.update({"distance":distance(data_for_distance)})
                     else:
