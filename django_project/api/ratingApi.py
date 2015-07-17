@@ -123,7 +123,7 @@ def check_pending (request):
         records = db.order_data.find_one({"userID": userID, "ustatus": "pending"},
                                      {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True,"vendor_id":True})
         vendor_data = db.merchants.find_one({"vendor_id":records['vendor_id']},
-            {"vendor_name":True,"address.text":True})
+            {"_id": False,"vendor_name":True,"address.text":True})
         records.update(vendor_data)
         return response({"success": 1, "data": records})
     except Exception, e:
