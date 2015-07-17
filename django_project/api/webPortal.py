@@ -7,6 +7,11 @@ from datetime import datetime
 import random
 import string
 import json
+    # Do OAuth2 stuff to create credentials object
+from oauth2client.file import Storage
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client import tools
+import gspread
 
 def get_worksheet(i):
     storage = Storage("creds.dat")
@@ -24,11 +29,7 @@ def get_worksheet(i):
 
 @csrf_exempt
 def addData(response,rowID):
-    # Do OAuth2 stuff to create credentials object
-    from oauth2client.file import Storage
-    from oauth2client.client import flow_from_clientsecrets
-    from oauth2client import tools
-    import gspread
+
     worksheet = get_worksheet(0)
     val = worksheet.get_all_records()
     row = val[rowID - 2]
