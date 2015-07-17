@@ -7,12 +7,15 @@ from datetime import datetime
 import random
 import string
 import json
-    # Do OAuth2 stuff to create credentials object
 from oauth2client.file import Storage
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client import tools
 import gspread
 import os
+
+failure = dumps({ "success": 0 })
+dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
+db = dbclient.perkkx
 
 def get_worksheet(i):
     storage = Storage("creds.dat")
@@ -34,4 +37,5 @@ def addData(response,rowID):
     worksheet = get_worksheet(0)
     val = worksheet.get_all_records()
     row = val[int(rowID) - 2]
+    db.new_deal.insert(row)
     return HttpResponse(dumps(row), content_type='application/json')
