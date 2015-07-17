@@ -33,5 +33,5 @@ def addData(response,rowID):
     #return HttpResponse(os.getcwd())
     worksheet = get_worksheet(0)
     val = worksheet.get_all_records()
-    row = val[rowID - 2]
+    row = val[int(rowID) - 2]
     return HttpResponse(dumps(row), content_type='application/json')
