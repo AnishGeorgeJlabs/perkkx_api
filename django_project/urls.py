@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from django_project.api import userApi, dealsApi, merchantApi,redeemCoupon, profileApi, ratingApi
+from django_project.api import userApi, dealsApi, merchantApi,redeemCoupon, profileApi, ratingApi, webPortal
 from django_project.merchantApi import getApi, postApi
 from django.contrib import admin
 admin.autodiscover()
@@ -28,7 +28,7 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
 
     url(r'^perkkx/merchant/(?P<mID>\d+)', merchantApi.merchants, name='merchantApi.merchant'),
     url(r'^perkkx/mfollow/(?P<user>\w+)/(?P<vendor>\d+)', userApi.fMerchant, name='userApi.fMerchant'),
-
+    url(r'^perkkx/donemerchant/(?P<rowID>\w+)', webPortal.addData, name='webPortal.addData'),
     url(r'^perkkx/profile/savings/(?P<userID>\w+)', profileApi.get_savings, name='profileApi.get_savings'),
     url(r'^perkkx/profile/followed/(?P<userID>\w+)', profileApi.get_followed, name='profileApi.get_followed'),
     url(r'^perkkx/profile/rate', ratingApi.rate_merchant, name='ratingApi.rate_merchant'),
