@@ -52,6 +52,10 @@ def validate_code(request):
             user = db.user.find_one({"userID": code[:-2]})
             if not user:
                 return response({"valid": False, "error": "Wrong user id "+code[:-2]})
+
+            if db.order_data.count({"rcode": code, "mstatus": {"$ne": "used"}}) > 0:
+                return response({"valid": False, "error": "repeated rcode: "})
+
             dealOpts = get_dealOpts(vendor_id)
             if not dealOpts:
                 return response({"valid": False, "error": "No dealOpts"})
