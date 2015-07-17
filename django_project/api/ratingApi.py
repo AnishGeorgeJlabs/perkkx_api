@@ -121,8 +121,10 @@ def check_pending (request):
     try:
         userID = request.GET['userID']
         records = db.order_data.find({"userID": userID, "ustatus": "pending"},
-                                     {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True})
-
+                                     {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True,"vendor_id":True})
+        vendor_data = db.merchants.find_one({"vendor_id":records['vendor_id']},
+            {"vendor_name":True,"address.text":True})
+        records.update(vendor_data)
         return response({"success": 1, "data": records})
     except Exception, e:
         return response({"success": 0, "error": "Exception "+str(e)})
