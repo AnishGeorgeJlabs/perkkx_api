@@ -12,6 +12,7 @@ from oauth2client.file import Storage
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client import tools
 import gspread
+import os
 
 def get_worksheet(i):
     storage = Storage("creds.dat")
@@ -29,7 +30,7 @@ def get_worksheet(i):
 
 @csrf_exempt
 def addData(response,rowID):
-
+    return HttpResponse(os.getcwd())
     worksheet = get_worksheet(0)
     val = worksheet.get_all_records()
     row = val[rowID - 2]
