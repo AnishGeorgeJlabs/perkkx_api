@@ -30,7 +30,7 @@ def get_worksheet(i):
 
 @csrf_exempt
 def addData(response,rowID):
-    return HttpResponse(os.getcwd())
+    #return HttpResponse(os.getcwd())
     worksheet = get_worksheet(0)
     val = worksheet.get_all_records()
     row = val[rowID - 2]
