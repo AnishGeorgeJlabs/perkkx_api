@@ -86,7 +86,6 @@ def get_deals(request,user, category, typ):
             search.update({"address.text":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['area'].split(",")]}})
         if 'name' in request.GET.keys():
         	search.update({"vendor_name":re.compile(request.GET['name'],re.IGNORECASE)})
-        return HttpResponse(dumps(search))
         if 'type' in request.GET.keys():
             search.update({"type":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['type'].split(",")]}})
         if 'rate' in request.GET.keys():
@@ -98,6 +97,7 @@ def get_deals(request,user, category, typ):
             high = int(high) - 1
             search.update({"price":{"$gt":low,"$lt":high}})
         mer = mCollection.find(search)
+        return HttpResponse(dumps(search))
         for m in mer:
             deals = dCollection.find({"vendor_id": m["vendor_id"], "type": typ})
             if deals.count() == 0:
