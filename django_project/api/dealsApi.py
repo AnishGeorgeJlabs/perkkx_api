@@ -97,7 +97,7 @@ def get_deals(request,user, category, typ):
             high = int(high) - 1
             search.update({"price":{"$gt":low,"$lt":high}})
         mer = mCollection.find(search)
-        return HttpResponse(dumps(search))
+        return HttpResponse(dumps(mer))
         for m in mer:
             deals = dCollection.find({"vendor_id": m["vendor_id"], "type": typ})
             if deals.count() == 0:
