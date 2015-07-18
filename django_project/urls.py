@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from django_project.api import userApi, dealsApi, merchantApi,redeemCoupon, profileApi, ratingApi, webPortal
+from django_project.api import userApi, dealsApi, merchantApi,redeemCoupon, profileApi, ratingApi, webPortal,search
 from django_project.merchantApi import getApi, postApi
 from django.contrib import admin
 admin.autodiscover()
@@ -40,6 +40,7 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
     url(r'^perkkx/merchantapp/signup', postApi.signup, name='postApi.signup'),      # Not to be used by app
     url(r'^perkkx/merchantapp/submit/(?P<vendor_id>\d+)', postApi.post, name='postApi.post'),
     url(r'^perkkx/merchantapp/count/(?P<vendor_id>\d+)', getApi.get_count, name='getApi.get_count'),
-    url(r'^perkkx/merchantapp/(?P<typ>\w+)/(?P<vendor_id>\d+)', getApi.get, name='getApi.get')
+    url(r'^perkkx/merchantapp/(?P<typ>\w+)/(?P<vendor_id>\d+)', getApi.get, name='getApi.get'),
+    url(r'^perkkx/search', search.search, name='search.search')
 
 )
