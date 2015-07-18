@@ -14,11 +14,9 @@ db = dbclient.perkkx
 @csrf_exempt
 def merchants(request, mID):
     global db
-    #db = dbclient.perkkx
     merchant = db.merchants.find_one({"vendor_id": int(mID)})
     if merchant is None:
         return HttpResponse(dumps({}), content_type="application/json")
-
     s = []
     g = []
     deals = db.deals.find(

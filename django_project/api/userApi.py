@@ -30,7 +30,6 @@ def fMerchant(request,user,vendor):
 
 @csrf_exempt
 def user_exist(request):
-    global db
     result = dict() 
     data = json.loads(request.body)
     email = data['email']
@@ -48,7 +47,6 @@ def user_exist(request):
     else:
         result['success']='0'
         result['reason'] = "NO INFORMATION FOUND FOR GIVEN EMAIL : "+ email
-
         return HttpResponse(dumps(result), content_type="application/json")
         
 """ generating user ID"""
@@ -58,7 +56,6 @@ def userIdGenPartial():
     return p1 + p2
 
 def userIdGen():
-    global db
     res = userIdGenPartial()
     collection = db.user
     while db.user.find({"userID": res}).count() > 0:
@@ -70,32 +67,12 @@ def userIdGen():
 def signup(request):	   
     global db
     try:
-        #return HttpResponse(request,content_type="application/json")
         data = json.loads(request.body)
 	data = data['data']
-        """fname = data['fname']
-        lname = data['lname']
-        mob = data['mob']
-        gender = data['gender']
-        dob = data['dob']
-        mstatus = data['mstatus']
-        try:
-            aniv = data['aniv']
-        except:
-            aniv = ""
-        cemail = data['cemail']
-        cname = data['cname']
-        cadd = data['cadd']
-        salary = data['salary']
-        intr = data['interest']
-        #db = dbclient.perkkx"""
         failure = dict()
 	collection = db.user
-        if collection.find({"$or": [ {"email": data['email']}]}).count() is not 0:
+        if collection.find({"email": data['email']}).count() is not 0:
             return HttpResponse(failure,content_type="application/json")
-
-        #key = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))    # TODO
-        #key = '12345599'
         key = userIdGen()
         data.update({"userID":key})
         data.update({"verified":"N"})
@@ -103,18 +80,15 @@ def signup(request):
         res = { "success":'1', "userID": key }
         return HttpResponse(dumps(res),content_type="application/json")
     except:
-        raise
         failure['success'] = '0'
         failure['reason'] = "DATA ALREADY EXIST"
 	return HttpResponse(dumps(failure), content_type="application/json")
 
 @csrf_exempt
 def getdata(request):
-    global db
     failure = dict()
     try:
         id = request.GET['userID']
-        #db = dbclient.perkkx
         collection = db.user
         data = collection.find({"userID":id})
 	if data.count() is 1:
@@ -124,11 +98,11 @@ def getdata(request):
 	    failure['reason'] = "NO USER FOUND"
 	    return HttpResponse(dumps(failure),content_type="application/json")    
     except:
-	raise
         failure['success'] = '0'
         failure['reason'] = "NO USER FOUND"
-
         return HttpResponse(dumps(failure),content_type="application/json")
+
+#-------------Mailing Function-----------------#
 def conf_mail(email,code):
     import sendgrid
     sg = sendgrid.SendGridClient('ashmeetjlabs', 'jlabs@123')
@@ -144,32 +118,13 @@ def updateuser(request):
     global db
     failure = dict()
     try:
-        #return HttpResponse(request,content_type="application/json")
         data = json.loads(request.body)
         data = data['data']
-        """fname = data['fname']
-        lname = data['lname']
-        mob = data['mob']
-        gender = data['gender']
-        dob = data['dob']
-        mstatus = data['mstatus']
-        try:
-                aniv = data['aniv']
-        except:
-                aniv = ""
-        cemail = data['cemail']
-        cname = data['cname']
-        cadd = data['cadd']
-        salary = data['salary']
-        intr = data['interest']
-        key = data['userID']
-        #db = dbclient.perkkx"""
         collection = db.user
         key = data['userID']
         data.pop('userID')
         verified = collection.find_one({"userID":key})
         try:
-            #conf_mail(data['cemail'],key)
             if 'cemail' in data.keys():
                 verify = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
                 code = key + "_" + verify
@@ -181,7 +136,6 @@ def updateuser(request):
         collection.update({"userID":key},{"$set": data} ,False)
         return HttpResponse(dumps({"success": '1'}),content_type="application/json")
     except:
-        #raise
         failure['success'] = '0'
         failure['reason'] = "UPDATATION CAN'T BE PROCEEDED"
         return HttpResponse(dumps(failure),content_type="application/json")
@@ -217,7 +171,6 @@ def user_coupons(request,uid):
 def getFacility(request):
 	failure = {"success": 0}
 	if "domain" in request.GET.keys():
-		global db
 		domain = str(request.GET['domain'])
 		collection = db.corp
 		data = []
@@ -241,7 +194,6 @@ def getFacility(request):
 def verifyUser(request,code):
     code = code.split("_")
     if len(code) == 2:
-        global db
         collection = db.user
         data = collection.find_one({"userID":code[0]})
         if data:
@@ -251,7 +203,7 @@ def verifyUser(request,code):
                 if data['code'] in code[1].strip():
                     data['verified'] = "Y"
                     collection.update({"userID":code[0]},{"$set": data} ,False)
-                    return HttpResponse("User has been verified. COntinue to app")
+                    return HttpResponse("User has been verified. Continue to app")
                 else:
                     return HttpResponse("Invalid URL")
             except:

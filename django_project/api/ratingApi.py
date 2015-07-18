@@ -8,8 +8,6 @@ import random
 import string
 import json
 
-#from dispute import check_dispute
-
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
 
@@ -20,13 +18,10 @@ def updateRating (vendor_id, rating):
     result = collection.update({"vendor_id": vendor_id, "rating": merchant['rating']}, {"$set": {"rating": newRating}}, False)
     return result['updatedExisting']
 
-
 def check_dispute (query, ustatus):
     collection = db.order_data
     order = collection.find_one(query)
-
     mstatus = order['mstatus']
-
     if ustatus == 'used' and mstatus == 'pending':      # New rules
         res = 'disputed'
     elif ustatus == 'expired' and mstatus == 'pending':
@@ -35,21 +30,12 @@ def check_dispute (query, ustatus):
         res = 'used'
     else:
         res = 'disputed'
-
     result = collection.update(order, {"$set": {"mstatus": res, "ustatus": ustatus}}, False)
     return result['updatedExisting']
-
 
 def response (obj):
     return HttpResponse(dumps(obj), content_type='application/json')
 
-"""
-format:
-JSON body:
-    rcode, vendor_id, cID
-    das: <boolean> //did not avail service
-    rating: optional iff not das
-"""
 @csrf_exempt
 def rate_merchant (request):
     try:
@@ -60,22 +46,12 @@ def rate_merchant (request):
         # Step 0: check validity of user
         if db.user.count({"userID": uID}) == 0:
             return response({"success": 0, "error": "Invalid user"})
-
         # Step 1: Save rating to user db (opt)
         if not das:
-            '''
-            db.user.update({"userID": uID}, {"$push": {"rating": {
-                "value": data['rating'],
-                "vendor_id": vID,
-                "date": datetime.now()
-            }}}, False)
-            '''
             # Step 2: Modify merchant rating (opt)
             while not updateRating(vID, data['rating']):
                 pass
-
             # Step 2.5: store ratings
-
             v = db.merchants.find_one({"vendor_id": vID}, {"_id": False, "vendor_name": True})
             db.ratings.insert_one({
                 "vendor_id": vID,
@@ -86,20 +62,17 @@ def rate_merchant (request):
                 "vendor_name": v['vendor_name'],
                 "date": datetime.now()
             })
-
         # Step 3: Update order_data and resolve conflict        //Dicey, check code
         if das:
             status = "expired"
         else:
             status = "used"
-
         query = {
             "vendor_id": vID,
             "cID": data['cID'],
             "rcode": data['rcode'],
             "userID": uID
         }
-
         if db.order_data.count(query) == 0:
             if status == "used":
                 query.update({
@@ -111,7 +84,6 @@ def rate_merchant (request):
         else:
             while not check_dispute(query, status):
                 pass
-
         return response({"success": 1})
     except Exception, e:
         return response({"success": 0, "error": "Exception "+str(e)})
@@ -139,7 +111,6 @@ def get_ratings (request):
         records = db.ratings.find({"useID": userID}, {"_id": False, "comment": False})
         for record in records:
             record['date'] = record['date'].strftime("%d/%m/%Y")
-
         return response({"success": 1, "data": records})
     except Exception, e:
         return response({"success": 0, "error": "Exception "+str(e)})

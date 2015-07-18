@@ -64,8 +64,6 @@ def getUserDeals(request,userID):
         for x in t:
             x = x
 
-
-
 @csrf_exempt
 def check_coupon(request):
     try:
