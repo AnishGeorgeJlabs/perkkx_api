@@ -120,12 +120,15 @@ def rate_merchant (request):
 def check_pending (request):
     try:
         userID = request.GET['userID']
-        records = db.order_data.find_one({"userID": userID, "ustatus": "pending"},
+        records = db.order_data.find({"userID": userID, "ustatus": "pending"},
                                      {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True,"vendor_id":True})
-        vendor_data = db.merchants.find_one({"vendor_id":records['vendor_id']},
-            {"_id": False,"vendor_name":True,"address.text":True})
-        records.update(vendor_data)
-        return response({"success": 1, "data": records})
+        data = []
+        for x in records:
+            vendor_data = db.merchants.find_one({"vendor_id":x['vendor_id']},
+                            {"_id": False,"vendor_name":True,"address.text":True})
+            x.update(vendor_data)
+            data.append(x)
+        return response({"success": 1, "data": data})
     except Exception, e:
         return response({"success": 0, "error": "Exception "+str(e)})
 
