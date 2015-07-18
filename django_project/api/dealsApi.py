@@ -85,7 +85,7 @@ def get_deals(request,user, category, typ):
         if 'area' in request.GET.keys():
             search.update({"address.text":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['area'].split(",")]}})
         if 'name' in request.GET.keys():
-        	search.update({"vendor_name":request.GET['name']})
+        	search.update({"vendor_name":re.compile(request.GET['name'],re.IGNORECASE)})
         if 'type' in request.GET.keys():
             search.update({"type":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['type'].split(",")]}})
         if 'rate' in request.GET.keys():
