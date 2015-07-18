@@ -118,7 +118,7 @@ def get_deals(request,user, category, typ):
                 today = timing[datetime.datetime.today().weekday()]
                 if datetime.datetime.strptime(today['close_time'],"%H:%M") > datetime.datetime.strptime(datetime.datetime.now().time().strftime("%H:%M"),"%H:%M"):
                     op = True
-                 else:
+                else:
                     op = False
 
 #                merdata.pop("open_time")
