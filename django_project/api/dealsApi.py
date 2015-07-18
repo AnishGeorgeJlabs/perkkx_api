@@ -17,6 +17,8 @@ failure = dumps({ "success": 0 })
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
 
+dayMap = {0:1,1:2,2:3,3:4,4:5,5:6,6:0}
+
 def distance(obj):
     R = 6371
     dLat = (obj['l2'] - obj['l1']) * pi / 180
@@ -112,16 +114,13 @@ def get_deals(request,user, category, typ):
 #                deal.pop("rcodes")
 #               deal.pop("usedrcodes")
                 merdata.pop("cat")
-                try:
-                    if 'close_time' in merdata.keys():
-                        if datetime.datetime.strptime(merdata['close_time'],"%H:%M") > datetime.datetime.strptime(datetime.datetime.now().time().strftime("%H:%M"),"%H:%M"):
-                            op = True
-                        else:
-                            op = False
-                    else:
-                    	op = False
-                except:
-                    op = False
+                timing = merdata['timing']
+                today = timing[datetime.datetime.today().weekday()]
+                if datetime.datetime.strptime(today['close_time'],"%H:%M") > datetime.datetime.strptime(datetime.datetime.now().time().strftime("%H:%M"),"%H:%M"):
+                    op = True
+                 else:
+                 	op = False
+
 #                merdata.pop("open_time")
 #               merdata.pop("close_time")
                 merdata.pop("subcat")
