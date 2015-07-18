@@ -25,7 +25,6 @@ def distance(obj):
     dLon = (obj['ln2'] - obj['ln1']) * pi / 180
     lat1 = obj['l1'] * pi / 180
     lat2 = obj['l2'] * pi / 180
- 
     a = sin(dLat/2) * sin(dLat/2) + sin(dLon/2) * sin(dLon/2) * cos(lat1) * cos(lat2)
     c = 2 * atan2(sqrt(a), sqrt(1-a))
     d = R * c
@@ -35,13 +34,11 @@ def distance(obj):
 def get_deals(request,user, category, typ):
     global db
     try:
-        #client.perkkx
         mCollection = db.merchants
         dCollection = db.deals
         data = []
         try:
             pages = int(request.GET['pages'])
-
         except:
             pages = 1
         if 'lat' in request.GET.keys() and 'lon' in request.GET.keys():
@@ -87,7 +84,7 @@ def get_deals(request,user, category, typ):
         if 'area' in request.GET.keys():
             search.update({"address.text":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['area'].split(",")]}})
         if 'name' in request.GET.keys():
-        	search.update({"vendor_name":re.compile(request.GET['name'],re.IGNORECASE)})
+        	search.update({"vendor_name":request.GET['name']})
         if 'type' in request.GET.keys():
             search.update({"type":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['type'].split(",")]}})
         if 'rate' in request.GET.keys():
@@ -103,17 +100,9 @@ def get_deals(request,user, category, typ):
             deals = dCollection.find({"vendor_id": m["vendor_id"], "type": typ})
             if deals.count() == 0:
                 continue
-
             for deal in deals:
-                """
-                if len(deal['rcodes']) == 0:               # filter
-                    continue
-                """
                 merdata = {}
                 merdata.update(m)
-#                deal.pop("rcodes")
-#               deal.pop("usedrcodes")
-                merdata.pop("cat")
                 timing = merdata['timing']
                 today = timing[datetime.datetime.today().weekday()]
                 now = datetime.datetime.strptime(datetime.datetime.now().time().strftime("%H:%M"),"%H:%M")
@@ -121,19 +110,13 @@ def get_deals(request,user, category, typ):
                     op = True
                 else:
                     op = False
-
-#                merdata.pop("open_time")
-#               merdata.pop("close_time")
                 merdata.pop("subcat")
                 merdata['subcat'] = int(category)
                 price = merdata.pop("price")
                 try:
                     price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
                 except:
-                    pass
-                merdata['price'] = price
-                merdata.update({"open":op})
-                merdata.update({"cat":int(category)})
+                    pass    
                 if merdata['address']['lat'] and merdata['address']['lng']:
                     if lat:
                         data_for_distance = {
@@ -147,6 +130,12 @@ def get_deals(request,user, category, typ):
 	                    merdata.update({"distance":False})
                 else:
                     merdata.update({"distance":False})
+                merdata.pop("cat")
+                merdata.update({"cat":int(category)})
+                merdata['price'] = price
+                merdata.update({"open":op})
+                merdata['open_time'] = today['open_time']
+                merdata['close_time'] = today['close_time']
                 merdata.update(deal)
                 data.append(merdata)
         start = (pages-1)*10
@@ -157,7 +146,6 @@ def get_deals(request,user, category, typ):
             start = len(data) - 10
         if r:
             newlist = [x for x in data if x['distance']<r]
-
         else:
             newlist = data
         if ope:
@@ -177,7 +165,6 @@ def get_deals(request,user, category, typ):
 @csrf_exempt
 def get_totals(request):
     global db
-    #db = dbclient.perkkx
     res = {
         "single": [],
         "group": []
@@ -187,17 +174,6 @@ def get_totals(request):
         s = 0
         g = 0
         for mer in mers:
-            """
-            deals = db.deals.find({"vendor_id": mer['vendor_id'], "type": 'single'})
-            for deal in deals:
-                if len(deal['rcodes']) > 0:
-                    s += 1
-
-            deals = db.deals.find({"vendor_id": mer['vendor_id'], "type": 'group'})
-            for deal in deals:
-                if len(deal['rcodes']) > 0:
-                    g += 1
-            """
             s += db.deals.find({"vendor_id": mer['vendor_id'], "type": 'single', "rcodes" : {"$not": {"$size": 0}}}).count()
             g += db.deals.find({"vendor_id": mer['vendor_id'], "type": 'group', "rcodes" : {"$not": {"$size": 0}}}).count()
         res["single"].append(s)
