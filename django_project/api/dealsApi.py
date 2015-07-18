@@ -124,6 +124,8 @@ def get_deals(request,user, category, typ):
                     op = False
 #                merdata.pop("open_time")
 #               merdata.pop("close_time")
+				merdata.pop("subcat")
+				merdata['subcat'] = int(category)
                 price = merdata.pop("price")
                 try:
                     price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
