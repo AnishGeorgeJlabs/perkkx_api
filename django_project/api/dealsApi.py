@@ -116,7 +116,8 @@ def get_deals(request,user, category, typ):
                 merdata.pop("cat")
                 timing = merdata['timing']
                 today = timing[datetime.datetime.today().weekday()]
-                if datetime.datetime.strptime(today['close_time'],"%H:%M") > datetime.datetime.strptime(datetime.datetime.now().time().strftime("%H:%M"),"%H:%M"):
+                now = datetime.datetime.strptime(datetime.datetime.now().time().strftime("%H:%M"),"%H:%M")
+                if datetime.datetime.strptime(today['close_time'],"%H:%M") > now and datetime.datetime.strptime(today['open_time'],"%H:%M") < now:
                     op = True
                 else:
                     op = False
@@ -171,7 +172,6 @@ def get_deals(request,user, category, typ):
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
-    	raise
         return HttpResponse(dumps({"exception": "error : "+str(e), "type": typ}), content_type="application/json")
 
 @csrf_exempt
