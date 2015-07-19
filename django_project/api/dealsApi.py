@@ -110,8 +110,9 @@ def get_deals(request,user, category, typ):
                     op = True
                 else:
                     op = False
-                merdata.pop("subcat")
-                merdata['subcat'] = int(category)
+                if "subcat" in merdata:
+                    merdata.pop("subcat")
+                    merdata['subcat'] = int(category)
                 price = merdata.pop("price")
                 try:
                     price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
