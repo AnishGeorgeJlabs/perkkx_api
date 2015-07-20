@@ -18,22 +18,18 @@ def update_order_data (query, req_data):
     collection = db.order_data
     record = collection.find_one(query)
 
+    if not record:
+        return True                             # Just a safety precaution, dont think this code will ever execute
+    elif record['mstatus'] == 'used':           # Special case of multi-user operation
+        return True
+    ## This happens when one operator has entered the bill details in pending section but the other operator
+    ## has not refreshed his list. So, he can still make a POST for the given query, so we return true and not
+    ## make a bill update.
+
     # Section 0: Update cID if original is different
     record['cID'] = req_data['cID']
     record['mstatus'] = "used"
     _copy_bill(record, req_data)
-
-    '''
-    # Section 1: Merchant Initiated
-    if record['ustatus'] == "pending":
-    elif record['ustatus'] == 'used':          # Section 2: User Initiated, was disputed, will resolve dispute
-        _copy_bill(record, req_data)
-    elif record['ustatus'] == 'expired':       # Resolve dispute ## NOT possible
-        record['ustatus'] = 'used'
-        _copy_bill(record, req_data)
-    else:                                                                       # DISPUTE
-        record['mstatus'] = 'disputed'                                          # NOT possible
-    '''
 
     result = collection.update(query, record, False)        # IMPORTANT, cannot be updateOne
     return result['updatedExisting']
