@@ -36,15 +36,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dcors'
+#   'dcors',
 #   'corsheaders'
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-#    'corsheaders.middleware.CorsMiddleware',
+   'corsheaders.middleware.CorsMiddleware',
 #   'dcors.dcorsmiddleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+#    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -92,8 +92,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
-
-CORS_ALLOW_ORIGIN = "http://localhost:8100"
-CORS_ALLOW_HEADERS = [
-        "content-type", "Origin" , "X-Requested-With", "Content-Type", "Accept"
-]
