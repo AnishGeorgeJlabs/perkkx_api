@@ -85,6 +85,9 @@ def get(request, typ, vendor_id):
     for data in init_data:
         # Step 1. Get the deal value
         deal = db.deals.find_one({"cID": data["cID"]}, {"deal": True, "expiry": True})  # common
+
+        if not deal:
+            continue                                                                        # Testing use case, when we have inconsistent database
         data["deal"] = deal["deal"]
 
         # Step 2. Get expiry
