@@ -81,10 +81,15 @@ def get(request, typ, vendor_id):
 
     page, total_pages, init_data = get_data(request, int(vendor_id), typ)
 
+    error = ""
     result_list = []
     for data in init_data:
         # Step 1. Get the deal value
         deal = db.deals.find_one({"cID": data["cID"]}, {"deal": True, "expiry": True})  # common
+
+        if not deal:
+            error += "dealMiss: "+data["cID"]+"   "
+            continue                                                                        # Testing use case, when we have inconsistent database
         data["deal"] = deal["deal"]
 
         # Step 2. Get expiry
@@ -110,6 +115,8 @@ def get(request, typ, vendor_id):
         "total_pages": total_pages,
         "data": result_list
     }
+    if error != "":
+        result.update({"debug": error})
 
     return response(result)
 
