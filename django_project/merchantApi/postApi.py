@@ -80,12 +80,10 @@ def login(request):
             cred = collection.find_one({"username": data['username'], "password": data['password']})
             if cred:
                 vendor = db.merchants.find_one({"vendor_id": cred['vendor_id']}, {"vendor_name": True, "_id": False})
-                result = {"result": True, data: {
-                              "vendor_name": vendor['vendor_name'], "vendor_id": cred['vendor_id']
-                            }}
+                result = { "vendor_name": vendor['vendor_name'], "vendor_id": cred['vendor_id'] }
                 if 'address' in vendor:
                     result.update({"address": vendor['address']})
-                return response(result)
+                return response({"result": True, "data": result})
             else:
                 return response({"result": False})
         elif data['mode'] == "change_pass":
