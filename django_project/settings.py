@@ -36,7 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-#   'dcors',
+    'dcors'
 #   'corsheaders'
 )
 
@@ -95,3 +95,4 @@ STATIC_URL = '/static/'
 
 #CORS_ALLOW_ALL_HEADERS = "all"
 #CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGIN = "blah"
