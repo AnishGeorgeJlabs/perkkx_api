@@ -93,6 +93,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#CORS_ALLOW_ALL_HEADERS = "all"
-#CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ORIGIN = "http://localhost:8100"
+CORS_ALLOW_HEADERS = [
+        "content-type", "Origin" , "X-Requested-With", "Content-Type", "Accept"
+]
