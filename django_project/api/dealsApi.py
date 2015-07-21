@@ -30,6 +30,9 @@ def distance(obj):
     d = R * c
     return d
 
+def con_hours(t):
+    return datetime.timedelta(hours=t.hour, minutes=t.minute)
+
 @csrf_exempt
 def get_deals(request,user, category, typ):
     global db
@@ -105,11 +108,17 @@ def get_deals(request,user, category, typ):
                 merdata.update(m)
                 timing = merdata['timing']
                 today = timing[datetime.datetime.today().weekday()]
-                now = datetime.datetime.strptime(datetime.datetime.now().time().strftime("%H:%M"),"%H:%M")
-                if datetime.datetime.strptime(today['close_time'],"%H:%M") > now and datetime.datetime.strptime(today['open_time'],"%H:%M") < now:
+                now = con_hours(datetime.datetime.now())
+                close = con_hours(datetime.datetime.strptime(today['close_time'], "%H:%M"))
+                open = con_hours(datetime.datetime.strptime(today['open_time'], "%H:%M"))
+                if close < open:
+                    close += datetime.timedelta(hours=24)
+
+                if open <= now < close:
                     op = True
                 else:
                     op = False
+
                 if "subcat" in merdata:
                     merdata.pop("subcat")
                     merdata['subcat'] = int(category)
