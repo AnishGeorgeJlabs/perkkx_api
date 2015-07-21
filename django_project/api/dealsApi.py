@@ -114,9 +114,10 @@ def get_deals(request,user, category, typ):
                 if close < open:
                     close += datetime.timedelta(hours=24)
 
-                if now < close:
+                if open <= now < close:
                     op = True
-                else: op = False
+                else:
+                    op = False
 
                 if "subcat" in merdata:
                     merdata.pop("subcat")
