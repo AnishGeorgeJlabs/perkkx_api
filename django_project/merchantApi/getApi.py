@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.template import Template,Context
 import pymongo
-from datetime import datetime, date
+from datetime import datetime, timedelta
 import calendar
 from .data_query import db, get_data, response
 import re
@@ -75,7 +75,10 @@ def validate_code(request):
 
 @csrf_exempt
 def get(request, typ, vendor_id):
-    "GET requests for typ [pending, used, expired, disputed] and vendor_id"
+    """GET requests for typ [pending, used, expired, disputed] and vendor_id"""
+    expiryLimit = timedelta(weeks=(6*4))        # 6 months
+    today = datetime.now()
+
     if typ not in ['pending', 'used', 'expired', 'disputed']:
         return response({"error": "Unknown type"})
 
@@ -94,9 +97,9 @@ def get(request, typ, vendor_id):
 
         # Step 2. Get expiry
         if typ not in ["used"]:
-            data["expiry"] = int(calendar.timegm(                                           # common, except for disputed
-                datetime.strptime(deal["expiry"], "%d/%m/%Y").utctimetuple()
-            ) * 1000)
+            expiry = datetime.strptime(deal['expiry'], "%d/%m/%Y")
+            if expiry - today < expiryLimit:
+                data['expiry'] = int(calendar.timegm(expiry.utctimetuple()) * 1000)
             
         # Step 3. Get used_on
         if typ != "expired":
