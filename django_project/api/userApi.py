@@ -152,11 +152,13 @@ def user_coupons(request,uid):
             address = vendorData['address']['text']
             dealData = db.deals.find_one({"cID":x['cID']})
             rep = {"vendor_name":vendorData['vendor_name'],
-            "address":address,
-            "code":x['rcode'],
-            "expiry":dealData['expiry'],
-            "used_on":x['used_on'].strftime("%d/%m/%Y %H:%M:%S"),
-            "status":x['ustatus']}
+                "address":address,
+                "code":x['rcode'],
+                "expiry":dealData['expiry'],
+                "used_on":x['used_on'].strftime("%d/%m/%Y %H:%M:%S"),
+                "status":x['ustatus'],
+                "cID": x['cID']
+            }
             if x['ustatus'] in "pending":
                 pending.append(rep)
             elif x['ustatus'] in "used":
