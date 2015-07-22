@@ -4,12 +4,11 @@ import pymongo
 from datetime import datetime, timedelta
 import calendar
 from .data_query import db, get_data, response
+import time
 import re
 
 def _get_unix_timestamp(data):      # data is datetime
-    return int(calendar.timegm(
-            data.timetuple()
-        ) * 1000)
+    return int(data.strftime("%s")) * 1000
 
 
 def get_dealOpts(vendor_id):
@@ -61,7 +60,7 @@ def validate_code(request):
                 return response({"valid": False, "error": "No dealOpts"})
 
             result = {
-                "used_on": int(calendar.timegm(datetime.now().timetuple()) * 1000),
+                "used_on": int(time.time() * 1000),
                 "rcode": code,
                 "userID": code[:-2],
                 "dealOpts": dealOpts,
@@ -99,7 +98,7 @@ def get(request, typ, vendor_id):
         if typ not in ["used"]:
             expiry = datetime.strptime(deal['expiry'], "%d/%m/%Y")
             if expiry - today < expiryLimit:
-                data['expiry'] = int(calendar.timegm(expiry.timetuple()) * 1000)
+                data['expiry'] = _get_unix_timestamp(expiry)
             
         # Step 3. Get used_on
         if typ != "expired":
