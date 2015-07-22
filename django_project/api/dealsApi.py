@@ -99,56 +99,59 @@ def get_deals(request,user, category, typ):
             low = int(low) - 1
             high = int(high) - 1
             search.update({"price":{"$gt":low,"$lt":high}})
-        mer = mCollection.find(search, merchant_filter)
-        for m in mer:
-            deals = dCollection.find({"vendor_id": m["vendor_id"], "type": typ}, deal_filter)
+
+        merchants = mCollection.find(search, merchant_filter)
+
+        for mer in merchants:
+            deals = dCollection.find({"vendor_id": mer["vendor_id"], "type": typ}, deal_filter)
             if deals.count() == 0:
                 continue
-            for deal in deals:
-                merdata = {}
-                merdata.update(m)
-                timing = merdata['timing']
-                today = timing[datetime.datetime.today().weekday()]
-                now = con_hours(datetime.datetime.now())
-                close = con_hours(datetime.datetime.strptime(today['close_time'], "%H:%M"))
-                open = con_hours(datetime.datetime.strptime(today['open_time'], "%H:%M"))
-                if close < open:
-                    close += datetime.timedelta(hours=24)
 
-                if open <= now < close:
-                    op = True
-                else:
-                    op = False
+            timing = mer.pop('timing')
+            today = timing[datetime.datetime.today().weekday()]
+            now = con_hours(datetime.datetime.now())
+            close = con_hours(datetime.datetime.strptime(today['close_time'], "%H:%M"))
+            open = con_hours(datetime.datetime.strptime(today['open_time'], "%H:%M"))
+            if close < open:
+                close += datetime.timedelta(hours=24)
 
-                if "subcat" in merdata:
-                    merdata.pop("subcat")
-                    merdata['subcat'] = int(category)
-                price = merdata.pop("price")
-                try:
-                    price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
-                except:
-                    pass    
-                if merdata['address']['lat'] and merdata['address']['lng']:
-                    if lat:
-                        data_for_distance = {
+            if open <= now < close:
+                op = True
+            else:
+                op = False
+            if "subcat" in mer:
+                mer.pop("subcat")
+                mer['subcat'] = int(category)
+            price = mer.pop("price")
+            try:
+                price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
+            except:
+                pass
+
+            if mer['address']['lat'] and mer['address']['lng']:
+                if lat:
+                    data_for_distance = {
                         "l1":float(lat),
                         "ln1":float(lon),
-                        "l2":float(re.sub("[^0-9\.]","",str(merdata['address']['lat']))),
-                        "ln2":float(re.sub("[^0-9\.]","",str(merdata['address']['lng'])))
-                        }
-                        merdata.update({"distance":distance(data_for_distance)})
-                    else:
-	                    merdata.update({"distance":False})
+                        "l2":float(re.sub("[^0-9\.]","",str(mer['address']['lat']))),
+                        "ln2":float(re.sub("[^0-9\.]","",str(mer['address']['lng'])))
+                    }
+                    mer.update({"distance":distance(data_for_distance)})
                 else:
-                    merdata.update({"distance":False})
-                merdata.pop("cat")
-                merdata.update({"cat":int(category)})
-                merdata['price'] = price
-                merdata.update({"open":op})
-                merdata['open_time'] = today['open_time']
-                merdata['close_time'] = today['close_time']
-                merdata.update(deal)
-                data.append(merdata)
+                    mer.update({"distance":False})
+            else:
+                mer.update({"distance":False})
+            mer.pop("cat")
+            mer.update({"cat":int(category)})
+            mer['price'] = price
+            mer.update({"open":op})
+            mer['open_time'] = today['open_time']
+            mer['close_time'] = today['close_time']
+
+            for deal in deals:
+                deal.update(mer)
+                data.append(deal)
+
         start = (pages-1)*10
         end = start + 10
         if end > len(data):

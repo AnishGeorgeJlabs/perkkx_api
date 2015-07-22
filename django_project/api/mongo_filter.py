@@ -5,9 +5,9 @@ def _make_filter(keys, dict):
 # Merchant filters
 _msKeys = [
     '_id', 'company_name', 'corporate_address', 'cphone', 'saving',
-    'cemail'
+    'cemail', 'merchant_id'
 ]
-_mKeys = ['merchant_id']
+_mKeys = []
 
 
 merchant_filter_small = {}
