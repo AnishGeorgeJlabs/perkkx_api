@@ -7,13 +7,13 @@ _msKeys = [
     '_id', 'company_name', 'corporate_address', 'cphone', 'saving',
     'cemail', 'merchant_id'
 ]
-_mKeys = []
+_mKeys = ['pic', 'special_event', 'type', 'subcat']
 
 
-merchant_filter_small = {}
+merchant_filter_small = {}                      # TO be used with merchant page
 _make_filter(_msKeys, merchant_filter_small)
 
-merchant_filter = merchant_filter_small.copy()
+merchant_filter = merchant_filter_small.copy()  # To be used with deals catalogue
 _make_filter(_mKeys, merchant_filter)
 
 # Deal filters
