@@ -138,8 +138,6 @@ def get_deals(request,user, category, typ):
                     mer.update({"distance":False})
             else:
                 mer.update({"distance":False})
-            mer.pop("cat")
-            mer.update({"cat":int(category)})
             mer['price'] = price
             mer.update({"open":op})
             mer['open_time'] = today['open_time']

@@ -7,7 +7,8 @@ _msKeys = [
     '_id', 'company_name', 'corporate_address', 'cphone', 'saving',
     'cemail', 'merchant_id'
 ]
-_mKeys = ['pics', 'special_event', 'type', 'subcat', 'cuisine', 'delivery']
+_mKeys = ['pics', 'special_event', 'type', 'subcat',
+          'cuisine', 'delivery', 'cat', 'time', 'type']
 
 
 merchant_filter_small = {}                      # TO be used with merchant page
