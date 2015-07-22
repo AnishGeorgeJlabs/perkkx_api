@@ -119,9 +119,6 @@ def get_deals(request,user, category, typ):
                 op = True
             else:
                 op = False
-            if "subcat" in mer:
-                mer.pop("subcat")
-                mer['subcat'] = int(category)
             price = mer.pop("price")
             try:
                 price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
