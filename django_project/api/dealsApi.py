@@ -12,6 +12,7 @@ import re
 from unidecode import unidecode
 from dateutil.tz import *
 from math import pi, sin , cos , atan2,sqrt
+from mongo_filter import deal_filter, merchant_filter
 
 failure = dumps({ "success": 0 })
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
@@ -98,9 +99,9 @@ def get_deals(request,user, category, typ):
             low = int(low) - 1
             high = int(high) - 1
             search.update({"price":{"$gt":low,"$lt":high}})
-        mer = mCollection.find(search)
+        mer = mCollection.find(search, merchant_filter)
         for m in mer:
-            deals = dCollection.find({"vendor_id": m["vendor_id"], "type": typ})
+            deals = dCollection.find({"vendor_id": m["vendor_id"], "type": typ}, deal_filter)
             if deals.count() == 0:
                 continue
             for deal in deals:

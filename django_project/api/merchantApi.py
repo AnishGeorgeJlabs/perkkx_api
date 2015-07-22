@@ -7,6 +7,8 @@ import datetime
 import random
 import string
 import json
+from mongo_filter import merchant_filter, deal_filter
+
 failure = dumps({ "success": 0 })
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
@@ -14,14 +16,14 @@ db = dbclient.perkkx
 @csrf_exempt
 def merchants(request, mID):
     global db
-    merchant = db.merchants.find_one({"vendor_id": int(mID)})
+    merchant = db.merchants.find_one({"vendor_id": int(mID)}, merchant_filter)
     if merchant is None:
         return HttpResponse(dumps({}), content_type="application/json")
     s = []
     g = []
     deals = db.deals.find(
         {"vendor_id": merchant['vendor_id']},
-        {"rcodes": False, "usedrcodes": False}
+        deal_filter
     )
     for deal in deals:
         if deal['type'] == 'single':
@@ -33,6 +35,7 @@ def merchants(request, mID):
         "group": g
     }
     return HttpResponse(dumps(merchant), content_type="application/json")
+
 @csrf_exempt
 def get_coupons(request,mID):
 	global db
