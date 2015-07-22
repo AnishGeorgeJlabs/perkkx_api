@@ -82,7 +82,7 @@ def login(request):
                 vendor = db.merchants.find_one({"vendor_id": cred['vendor_id']}, {"vendor_name": True, "address": True, "_id": False})
                 result = { "vendor_name": vendor['vendor_name'], "vendor_id": cred['vendor_id'] }
                 if vendor.has_key('address'):
-                    result.update({"address": vendor['address']['text']})
+                    result.update({"address": vendor['address']['area']})
                 return response({"result": True, "data": result})
             else:
                 return response({"result": False})
