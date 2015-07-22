@@ -7,7 +7,7 @@ import datetime
 import random
 import string
 import json
-from mongo_filter import merchant_filter, deal_filter
+from mongo_filter import merchant_filter_small, deal_compact_filter
 
 failure = dumps({ "success": 0 })
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
@@ -16,17 +16,18 @@ db = dbclient.perkkx
 @csrf_exempt
 def merchants(request, mID):
     global db
-    merchant = db.merchants.find_one({"vendor_id": int(mID)}, merchant_filter)
+    merchant = db.merchants.find_one({"vendor_id": int(mID)}, merchant_filter_small)
     if merchant is None:
         return HttpResponse(dumps({}), content_type="application/json")
     s = []
     g = []
     deals = db.deals.find(
         {"vendor_id": merchant['vendor_id']},
-        deal_filter
+        deal_compact_filter
     )
     for deal in deals:
-        if deal['type'] == 'single':
+        type = deal.pop('type')
+        if type == 'single':
             s.append(deal)
         else:
             g.append(deal)

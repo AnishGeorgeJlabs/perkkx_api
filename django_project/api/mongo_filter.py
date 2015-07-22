@@ -21,5 +21,11 @@ _make_filter(_mKeys, merchant_filter)
 _dKeys = [
     '_id', 'saving'
 ]
+_dcKeys = [
+    'vendor_id', 'vendor_name'
+]
 deal_filter = {}
 _make_filter(_dKeys, deal_filter)
+
+deal_compact_filter = deal_filter.copy()
+_make_filter(_dcKeys, deal_compact_filter)
