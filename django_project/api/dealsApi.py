@@ -32,6 +32,7 @@ def distance(obj):
     d = R * c
     return d
 
+# TODO: Optimise the query using memoization
 @csrf_exempt
 def get_deals(request,user, category, typ):
     global db
@@ -105,7 +106,7 @@ def get_deals(request,user, category, typ):
             if deals.count() == 0:
                 continue
 
-            process_merchant(mer)       # Found in merchantApi
+            process_merchant(mer, save_timing=False)       # Found in merchantApi
 
             if mer['address']['lat'] and mer['address']['lng']:
                 if lat:

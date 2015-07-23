@@ -21,8 +21,11 @@ def con_hours(t):
 def deal_valid(deal):
     return True
 
-def process_merchant (mer):
-    timing = mer.pop('timing')
+def process_merchant (mer, save_timing):
+    if not save_timing:
+        timing = mer.pop('timing')
+    else:
+        timing = mer['timing']
     today = timing[(datetime.datetime.today().weekday() + 1) % 7]   # Because sunday is 0
     now = con_hours(datetime.datetime.now())
     close = con_hours(datetime.datetime.strptime(today['close_time'], "%H:%M"))
@@ -61,7 +64,7 @@ def merchants(request, mID):
         {"vendor_id": merchant['vendor_id']},
         deal_compact_filter
     )
-    process_merchant(merchant)
+    process_merchant(merchant, save_timing=True)
     for deal in deals:
         if not deal_valid(deal):
             continue
