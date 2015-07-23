@@ -106,61 +106,70 @@ def get_deals(request,user, category, typ):
             # --- Selecting a deal -------- #
             deal_query = {"vendor_id": mer['vendor_id'], "type": typ}
 
-            # Step 1, dynamic deals get preference
-            dyn_query = deal_query.copy()
-            dyn_query.update({
-                "$or": [
-                    { "valid_days": {"$exists": True}},
-                    { "valid_time": {"$exists": True}}
-                ]
-            })
-            dynamic_deals = [d for d in
-                             dCollection.find(dyn_query, deal_filter)
-                             if deal_valid(d) ]
+            try:
+                # Step 1, dynamic deals get preference
+                dyn_query = deal_query.copy()
+                dyn_query.update({
+                    "$or": [
+                        { "valid_days": {"$exists": True}},
+                        { "valid_time": {"$exists": True}}
+                    ]
+                })
+                dynamic_deals = [d for d in
+                                 dCollection.find(dyn_query, deal_filter)
+                                 if deal_valid(d) ]
+            except Exception, e:
+                return HttpResponse(dumps({"error": str(e), "step": 1}), content_type='application/json')
 
-            # Step 2, get the primary deal
-            deal_query.update({"deal_cat": "primary"})
-            pdeal = dCollection.find_one( deal_query, deal_filter )
+            try:
+                # Step 2, get the primary deal
+                deal_query.update({"deal_cat": "primary"})
+                pdeal = dCollection.find_one( deal_query, deal_filter )
 
-            deal_query.update({"deal_cat": "secondary"})
-            if pdeal in dynamic_deals:
-                pdeal = {}
-            elif deal_valid(pdeal):
-                secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
-                if secondary:
-                    pdeal['second_deal'] = secondary['deal']
-            elif len(dynamic_deals) == 0:
-                secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
-                if len(secondaries) == 0:
-                    continue
-                pdeal = secondaries[0]
-                if len(secondaries) > 1:
-                    pdeal['second_deal'] = secondaries[1]['deal']
+                deal_query.update({"deal_cat": "secondary"})
+                if pdeal in dynamic_deals:
+                    pdeal = {}
+                elif deal_valid(pdeal):
+                    secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
+                    if secondary:
+                        pdeal['second_deal'] = secondary['deal']
+                elif len(dynamic_deals) == 0:
+                    secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
+                    if len(secondaries) == 0:
+                        continue
+                    pdeal = secondaries[0]
+                    if len(secondaries) > 1:
+                        pdeal['second_deal'] = secondaries[1]['deal']
+            except Exception, e:
+                return HttpResponse(dumps({"error": str(e), "step": "2, get prime"}), content_type='application/json')
 
-            # ----- Setup Merchant data ------ #
-            process_merchant(mer, save_timing=False)       # Found in merchantApi
-            if mer['address']['lat'] and mer['address']['lng']:
-                if lat:
-                    data_for_distance = {
-                        "l1":float(lat),
-                        "ln1":float(lon),
-                        "l2":float(re.sub("[^0-9\.]","",str(mer['address']['lat']))),
-                        "ln2":float(re.sub("[^0-9\.]","",str(mer['address']['lng'])))
-                    }
-                    mer.update({"distance":distance(data_for_distance)})
-                else:
-                    mer.update({"distance":False})
+            try:
+                # ----- Setup Merchant data ------ #
+                process_merchant(mer, save_timing=False)       # Found in merchantApi
+                if mer['address']['lat'] and mer['address']['lng']:
+                    if lat:
+                        data_for_distance = {
+                            "l1":float(lat),
+                            "ln1":float(lon),
+                            "l2":float(re.sub("[^0-9\.]","",str(mer['address']['lat']))),
+                            "ln2":float(re.sub("[^0-9\.]","",str(mer['address']['lng'])))
+                        }
+                        mer.update({"distance":distance(data_for_distance)})
+                    else:
+                        mer.update({"distance":False})
 
-            # ----- Setup done ----- #
+                # ----- Setup done ----- #
 
-            # Adding to deals arrays
-            for d in dynamic_deals:
-                d.update(mer)
-                data_dynamic_deals.append(d)
+                # Adding to deals arrays
+                for d in dynamic_deals:
+                    d.update(mer)
+                    data_dynamic_deals.append(d)
 
-            if pdeal:
-                pdeal.update(mer)
-                data.append(pdeal)
+                if pdeal:
+                    pdeal.update(mer)
+                    data.append(pdeal)
+            except Exception, e:
+                return HttpResponse(dumps({"error": str(e), "step": "3, end"}), content_type='application/json')
 
         start = (pages-1)*10
         end = start + 10
