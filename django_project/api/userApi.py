@@ -17,14 +17,25 @@ db = dbclient.perkkx
 def fMerchant(request,user,vendor):
     try:
         collection = db.user
-        verified = collection.find_one({"userID":user})
-        if 'followed' in verified:
-            verified['followed'].update({vendor:datetime.datetime.now().strftime("%d/%m/%Y")})
+        #verified = collection.find_one({"userID":user})
+
+        inc = 0
+        updateQuery = {}
+        if request.GET['follow'].lower() == "true":
+            updateQuery = {"$set": {
+                "followed."+str(vendor): datetime.datetime.now().strftime("%d/%m/%Y")
+            }}
+            inc = 1
         else:
-            verified.update({"followed":{vendor:datetime.datetime.now().strftime("%d/%m/%Y")}})
-        collection.update({"userID":user},{"$set": verified} ,False)
-        db.merchants.update_one({"vendor_id": int(vendor)}, {"$inc": {"followers": 1}})
-        return HttpResponse(dumps({"success": '1'}),content_type="application/json")
+            updateQuery = {"$unset": {
+                "followed."+str(vendor): "blah"  # works like a charm
+            }}
+            inc = -1
+            pass
+
+        collection.update({"userID":user}, updateQuery, False)
+        db.merchants.update_one({"vendor_id": int(vendor)}, {"$inc": {"followers": inc}})
+        return HttpResponse(dumps({"success": '1'}), content_type="application/json")
     except Exception, e:
         return HttpResponse(dumps({"success": '0', 'error': "Exception: "+str(e)}),content_type="application/json")
 
