@@ -3,15 +3,87 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template import Template,Context
 import pymongo
-import datetime
+from datetime import datetime, timedelta
 import random
 import string
 import json
+import re
 from mongo_filter import merchant_filter_small, deal_compact_filter
 
 failure = dumps({ "success": 0 })
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+
+
+def con_hours(t):
+    return timedelta(hours=t.hour, minutes=t.minute)
+
+def deal_valid(deal):
+    today = datetime.today()
+    if today >= datetime.strptime(deal['expiry'], "%d/%m/%Y"):
+        return False
+    if 'valid_days' in deal and \
+            ((today.weekday() + 1) % 7) not in deal['valid_days']:
+        return False
+    try:
+        deal.pop('valid_days')
+    except:
+        pass
+
+    if 'valid_time' in deal:
+        res = check_time_between(
+            open=datetime.strptime(deal['valid_time'][0], "%H:%M"),
+            close=datetime.strptime(deal['valid_time'][1], "%H:%M"),
+            now=datetime.now()
+        )
+        deal.pop('valid_time')
+        return res
+
+    return True
+
+
+def check_time_between (open, close, now):
+    open = con_hours(open)
+    close = con_hours(close)
+    now = con_hours(now)
+    if close < open:
+        close += timedelta(hours=24)
+
+    if open <= now < close:
+        return True
+    else:
+        return False
+
+
+def process_merchant (mer, save_timing):
+    if not save_timing:
+        timing = mer.pop('timing')
+    else:
+        timing = mer['timing']
+    dayToday = (datetime.today().weekday() + 1) % 7
+    today = timing[dayToday]   # Because sunday is 0
+    op = check_time_between(
+        open=datetime.strptime(today['open_time'], "%H:%M"),
+        close=datetime.strptime(today['close_time'], "%H:%M"),
+        now=datetime.now()
+    )
+    price = mer.pop("price")
+    try:
+        price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
+    except:
+        pass
+
+    else:
+        mer.update({"distance":False})
+
+    mer['price'] = price
+    mer.update({"open":op})
+    if not save_timing:
+        mer['open_time'] = today['open_time']
+        mer['close_time'] = today['close_time']
+    else:
+        mer['today'] = dayToday
+
 
 @csrf_exempt
 def merchants(request, mID):
@@ -25,7 +97,10 @@ def merchants(request, mID):
         {"vendor_id": merchant['vendor_id']},
         deal_compact_filter
     )
+    process_merchant(merchant, save_timing=True)
     for deal in deals:
+        if not deal_valid(deal):
+            continue
         type = deal.pop('type')
         if type == 'single':
             s.append(deal)
@@ -37,16 +112,3 @@ def merchants(request, mID):
     }
     return HttpResponse(dumps(merchant), content_type="application/json")
 
-@csrf_exempt
-def get_coupons(request,mID):
-	global db
-	try:
-		collection = db.deals
-		result = collection.find({"vendor_id":int(mID)})
-		used = {}
-		for x in result:
-			used.update({x['cID']:x['usedrcodes']})
-		res = { "success": 1, "coupons": used }
-		return HttpResponse(dumps(res),content_type="application/json")
-	except:
-		return HttpResponse(failure, content_type="application/json")

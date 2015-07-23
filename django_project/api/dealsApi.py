@@ -13,6 +13,7 @@ from unidecode import unidecode
 from dateutil.tz import *
 from math import pi, sin , cos , atan2,sqrt
 from mongo_filter import deal_filter, merchant_filter
+from merchantApi import process_merchant, deal_valid
 
 failure = dumps({ "success": 0 })
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
@@ -31,9 +32,7 @@ def distance(obj):
     d = R * c
     return d
 
-def con_hours(t):
-    return datetime.timedelta(hours=t.hour, minutes=t.minute)
-
+# TODO: Optimise the query using memoization
 @csrf_exempt
 def get_deals(request,user, category, typ):
     global db
@@ -107,23 +106,7 @@ def get_deals(request,user, category, typ):
             if deals.count() == 0:
                 continue
 
-            timing = mer.pop('timing')
-            today = timing[datetime.datetime.today().weekday()]
-            now = con_hours(datetime.datetime.now())
-            close = con_hours(datetime.datetime.strptime(today['close_time'], "%H:%M"))
-            open = con_hours(datetime.datetime.strptime(today['open_time'], "%H:%M"))
-            if close < open:
-                close += datetime.timedelta(hours=24)
-
-            if open <= now < close:
-                op = True
-            else:
-                op = False
-            price = mer.pop("price")
-            try:
-                price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
-            except:
-                pass
+            process_merchant(mer, save_timing=False)       # Found in merchantApi
 
             if mer['address']['lat'] and mer['address']['lng']:
                 if lat:
@@ -136,14 +119,10 @@ def get_deals(request,user, category, typ):
                     mer.update({"distance":distance(data_for_distance)})
                 else:
                     mer.update({"distance":False})
-            else:
-                mer.update({"distance":False})
-            mer['price'] = price
-            mer.update({"open":op})
-            mer['open_time'] = today['open_time']
-            mer['close_time'] = today['close_time']
 
             for deal in deals:
+                if not deal_valid(deal):
+                    continue
                 deal.update(mer)
                 data.append(deal)
 
@@ -183,8 +162,19 @@ def get_totals(request):
         s = 0
         g = 0
         for mer in mers:
+            """
             s += db.deals.find({"vendor_id": mer['vendor_id'], "type": 'single', "rcodes" : {"$not": {"$size": 0}}}).count()
             g += db.deals.find({"vendor_id": mer['vendor_id'], "type": 'group', "rcodes" : {"$not": {"$size": 0}}}).count()
+            """
+            s += len([
+                d for d in db.deals.find({"vendor_id": mer['vendor_id'], "type": 'single'})
+                if deal_valid(d)
+            ])
+            g += len([
+                d for d in db.deals.find({"vendor_id": mer['vendor_id'], "type": 'group'})
+                if deal_valid(d)
+            ])
+
         res["single"].append(s)
         res["group"].append(g)
     return HttpResponse(dumps(res), content_type="application/json")
