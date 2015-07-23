@@ -9,7 +9,6 @@ import string
 import json
 import re
 from mongo_filter import merchant_filter_small, deal_compact_filter
-from dealsApi import deal_valid
 
 failure = dumps({ "success": 0 })
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
@@ -18,6 +17,9 @@ db = dbclient.perkkx
 
 def con_hours(t):
     return datetime.timedelta(hours=t.hour, minutes=t.minute)
+
+def deal_valid(deal):
+    return True
 
 def process_merchant (mer):
     timing = mer.pop('timing')

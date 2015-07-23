@@ -13,7 +13,7 @@ from unidecode import unidecode
 from dateutil.tz import *
 from math import pi, sin , cos , atan2,sqrt
 from mongo_filter import deal_filter, merchant_filter
-from merchantApi import process_merchant
+from merchantApi import process_merchant, deal_valid
 
 failure = dumps({ "success": 0 })
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
@@ -31,9 +31,6 @@ def distance(obj):
     c = 2 * atan2(sqrt(a), sqrt(1-a))
     d = R * c
     return d
-
-def deal_valid(deal):
-    return True
 
 @csrf_exempt
 def get_deals(request,user, category, typ):
