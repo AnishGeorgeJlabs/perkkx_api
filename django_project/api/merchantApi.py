@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.template import Template,Context
 import pymongo
-import datetime
+from datetime import datetime, timedelta
 import random
 import string
 import json
@@ -16,28 +16,56 @@ db = dbclient.perkkx
 
 
 def con_hours(t):
-    return datetime.timedelta(hours=t.hour, minutes=t.minute)
+    return timedelta(hours=t.hour, minutes=t.minute)
 
 def deal_valid(deal):
+    today = datetime.today()
+    if today >= datetime.strptime(deal['expiry'], "%d/%m/%Y"):
+        return False
+    if 'valid_days' in deal and \
+            ((today.weekday() + 1) % 7) not in deal['valid_days']:
+        return False
+    if 'valid_time' in deal:
+        res =  check_time_between(
+            open=datetime.strptime(deal['valid_time'][0], "%H:%M"),
+            close=datetime.strptime(deal['valid_time'][1], "%H:%M"),
+            now=datetime.now()
+        )
+        deal.pop('valid_time')
+        return res
+
+    try:
+        deal.pop('valid_days')
+    except:
+        pass
     return True
+
+
+def check_time_between (open, close, now):
+    open = con_hours(open)
+    close = con_hours(close)
+    now = con_hours(now)
+    if close < open:
+        close += timedelta(hours=24)
+
+    if open <= now < close:
+        return False
+    else:
+        return True
+
 
 def process_merchant (mer, save_timing):
     if not save_timing:
         timing = mer.pop('timing')
     else:
         timing = mer['timing']
-    dayToday = (datetime.datetime.today().weekday() + 1) % 7
+    dayToday = (datetime.today().weekday() + 1) % 7
     today = timing[dayToday]   # Because sunday is 0
-    now = con_hours(datetime.datetime.now())
-    close = con_hours(datetime.datetime.strptime(today['close_time'], "%H:%M"))
-    open = con_hours(datetime.datetime.strptime(today['open_time'], "%H:%M"))
-    if close < open:
-        close += datetime.timedelta(hours=24)
-
-    if open <= now < close:
-        op = True
-    else:
-        op = False
+    op = check_time_between(
+        open=datetime.strptime(today['open_time'], "%H:%M"),
+        close=datetime.strptime(today['close_time'], "%H:%M"),
+        now=datetime.now()
+    )
     price = mer.pop("price")
     try:
         price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
