@@ -25,7 +25,7 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
     url(r'^perkkx/redeem/check', redeemCoupon.check_coupon, name='redeemCoupon.check_coupon'),
     url(r'^perkkx/redeem', redeemCoupon.add_coupon, name='redeemCoupon.add_coupon'),
 
-    url(r'^perkkx/merchant/(?P<mID>\d+)', merchantApi.merchants, name='merchantApi.merchant'),
+    url(r'^perkkx/merchant/(?P<user>\w+)/(?P<vendor>\d+)', merchantApi.merchants, name='merchantApi.merchant'),
     url(r'^perkkx/mfollow/(?P<user>\w+)/(?P<vendor>\d+)', userApi.fMerchant, name='userApi.fMerchant'),
     url(r'^perkkx/donemerchant/(?P<rowID>\w+)', webPortal.addData, name='webPortal.addData'),
     url(r'^perkkx/profile/savings/(?P<userID>\w+)', profileApi.get_savings, name='profileApi.get_savings'),

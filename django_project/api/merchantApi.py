@@ -85,11 +85,16 @@ def process_merchant (mer, save_timing):
 
 
 @csrf_exempt
-def merchants(request, mID):
+def merchants(request, user, vendor):
     global db
-    merchant = db.merchants.find_one({"vendor_id": int(mID)}, merchant_filter_small)
+    merchant = db.merchants.find_one({"vendor_id": int(vendor)}, merchant_filter_small)
     if merchant is None:
         return HttpResponse(dumps({}), content_type="application/json")
+
+    if db.user.count({"userID": user, "followed."+str(vendor) : {"$exists": True}}) > 0:
+        merchant['followed'] = True
+    else:
+        merchant['followed'] = False
     s = []
     g = []
     deals = db.deals.find(
