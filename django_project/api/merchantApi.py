@@ -69,16 +69,13 @@ def process_merchant (mer, save_timing):
         close=datetime.strptime(today['close_time'], "%H:%M"),
         now=datetime.now()
     )
-    price = mer.pop("price")
     try:
+        price = mer["price"]
         price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
+        mer['price'] = price
     except:
         pass
 
-    else:
-        mer.update({"distance":False})
-
-    mer['price'] = price
     mer.update({"open":op})
     if not save_timing:
         mer['open_time'] = today['open_time']
