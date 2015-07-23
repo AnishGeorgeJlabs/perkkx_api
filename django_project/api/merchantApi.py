@@ -29,8 +29,9 @@ def deal_valid(deal):
         deal.pop('valid_days')
     except:
         pass
+
     if 'valid_time' in deal:
-        res =  check_time_between(
+        res = check_time_between(
             open=datetime.strptime(deal['valid_time'][0], "%H:%M"),
             close=datetime.strptime(deal['valid_time'][1], "%H:%M"),
             now=datetime.now()
@@ -49,9 +50,9 @@ def check_time_between (open, close, now):
         close += timedelta(hours=24)
 
     if open <= now < close:
-        return False
-    else:
         return True
+    else:
+        return False
 
 
 def process_merchant (mer, save_timing):
