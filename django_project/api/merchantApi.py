@@ -26,7 +26,8 @@ def process_merchant (mer, save_timing):
         timing = mer.pop('timing')
     else:
         timing = mer['timing']
-    today = timing[(datetime.datetime.today().weekday() + 1) % 7]   # Because sunday is 0
+    dayToday = (datetime.datetime.today().weekday() + 1) % 7
+    today = timing[dayToday]   # Because sunday is 0
     now = con_hours(datetime.datetime.now())
     close = con_hours(datetime.datetime.strptime(today['close_time'], "%H:%M"))
     open = con_hours(datetime.datetime.strptime(today['open_time'], "%H:%M"))
@@ -48,8 +49,11 @@ def process_merchant (mer, save_timing):
 
     mer['price'] = price
     mer.update({"open":op})
-    mer['open_time'] = today['open_time']
-    mer['close_time'] = today['close_time']
+    if not save_timing:
+        mer['open_time'] = today['open_time']
+        mer['close_time'] = today['close_time']
+    else:
+        mer['today'] = dayToday
 
 
 @csrf_exempt
