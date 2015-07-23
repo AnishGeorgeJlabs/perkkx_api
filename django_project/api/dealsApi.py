@@ -162,8 +162,19 @@ def get_totals(request):
         s = 0
         g = 0
         for mer in mers:
+            """
             s += db.deals.find({"vendor_id": mer['vendor_id'], "type": 'single', "rcodes" : {"$not": {"$size": 0}}}).count()
             g += db.deals.find({"vendor_id": mer['vendor_id'], "type": 'group', "rcodes" : {"$not": {"$size": 0}}}).count()
+            """
+            s += len([
+                d for d in db.deals.find({"vendor_id": mer['vendor_id'], "type": 'single'})
+                if deal_valid(d)
+            ])
+            g += len([
+                d for d in db.deals.find({"vendor_id": mer['vendor_id'], "type": 'group'})
+                if deal_valid(d)
+            ])
+
         res["single"].append(s)
         res["group"].append(g)
     return HttpResponse(dumps(res), content_type="application/json")
