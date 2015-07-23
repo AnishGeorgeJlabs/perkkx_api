@@ -25,6 +25,10 @@ def deal_valid(deal):
     if 'valid_days' in deal and \
             ((today.weekday() + 1) % 7) not in deal['valid_days']:
         return False
+    try:
+        deal.pop('valid_days')
+    except:
+        pass
     if 'valid_time' in deal:
         res =  check_time_between(
             open=datetime.strptime(deal['valid_time'][0], "%H:%M"),
@@ -34,10 +38,6 @@ def deal_valid(deal):
         deal.pop('valid_time')
         return res
 
-    try:
-        deal.pop('valid_days')
-    except:
-        pass
     return True
 
 
