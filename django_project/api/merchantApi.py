@@ -19,6 +19,8 @@ def con_hours(t):
     return timedelta(hours=t.hour, minutes=t.minute)
 
 def deal_valid(deal):
+    if not deal:
+        return False
     today = datetime.today()
     if today >= datetime.strptime(deal['expiry'], "%d/%m/%Y"):
         return False
