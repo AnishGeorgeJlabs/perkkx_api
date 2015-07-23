@@ -40,6 +40,7 @@ def get_deals(request,user, category, typ):
         mCollection = db.merchants
         dCollection = db.deals
         data = []
+        data_dynamic_deals = []
         try:
             pages = int(request.GET['pages'])
         except:
@@ -102,12 +103,42 @@ def get_deals(request,user, category, typ):
         merchants = mCollection.find(search, merchant_filter)
 
         for mer in merchants:
-            deals = dCollection.find({"vendor_id": mer["vendor_id"], "type": typ}, deal_filter)
-            if deals.count() == 0:
-                continue
+            # --- Selecting a deal -------- #
+            deal_query = {"vendor_id": mer['vendor_id'], "type": typ}
 
+            # Step 1, dynamic deals get preference
+            dyn_query = deal_query.copy()
+            dyn_query.update({
+                "$or": [
+                    { "valid_days": {"$exists": True}},
+                    { "valid_time": {"$exists": True}}
+                ]
+            })
+            dynamic_deals = [d for d in
+                             dCollection.find(dyn_query, deal_filter)
+                             if deal_valid(d) ]
+
+            # Step 2, get the primary deal
+            deal_query.update({"deal_cat": "primary"})
+            pdeal = dCollection.find_one( deal_query, deal_filter )
+
+            deal_query.update({"deal_cat": "secondary"})
+            if pdeal in dynamic_deals:
+                pdeal = {}
+            elif deal_valid(pdeal):
+                secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
+                if secondary:
+                    pdeal['second_deal'] = secondary['deal']
+            elif len(dynamic_deals) == 0:
+                secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
+                if len(secondaries) == 0:
+                    continue
+                pdeal = secondaries[0]
+                if len(secondaries) > 1:
+                    pdeal['second_deal'] = secondaries[1]['deal']
+
+            # ----- Setup Merchant data ------ #
             process_merchant(mer, save_timing=False)       # Found in merchantApi
-
             if mer['address']['lat'] and mer['address']['lng']:
                 if lat:
                     data_for_distance = {
@@ -120,14 +151,24 @@ def get_deals(request,user, category, typ):
                 else:
                     mer.update({"distance":False})
 
-            for deal in deals:
-                if not deal_valid(deal):
-                    continue
-                deal.update(mer)
-                data.append(deal)
+            # ----- Setup done ----- #
+
+            # Adding to deals arrays
+            for d in dynamic_deals:
+                d.update(mer)
+                data_dynamic_deals.append(d)
+
+            if pdeal:
+                pdeal.update(mer)
+                data.append(pdeal)
 
         start = (pages-1)*10
         end = start + 10
+
+        ## God knows how to sort within lists, so we prepend the priority list (dynamic_deals) to the data list
+        ## and hope for the best
+        data = data_dynamic_deals + data
+
         if end > len(data):
             end = len(data)
         if start > len(data):
