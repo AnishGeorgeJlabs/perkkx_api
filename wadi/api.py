@@ -23,10 +23,11 @@ def test(request):
 def block_number(request):
     num = request.GET['number']
     lan = 'English' if request.GET['language'].lower() in 'english' else 'Arabic'
-
-    cl_blocked.insert_one({
+    data = {
         "number": num,
         "language": lan
-    })
+    }
+    if cl_blocked.count(data) == 0:
+        cl_blocked.insert_one(data)
 
     return basic_success
