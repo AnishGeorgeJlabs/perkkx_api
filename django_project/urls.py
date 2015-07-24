@@ -25,6 +25,7 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
     url(r'^perkkx/getCompany', userApi.getFacility, name='userApi.getFacility'),
     url(r'^perkkx/redeem/check', redeemCoupon.check_coupon, name='redeemCoupon.check_coupon'),
     url(r'^perkkx/redeem', redeemCoupon.add_coupon, name='redeemCoupon.add_coupon'),
+    url(r'^perkkx/ecom/redeem', redeemCoupon.get_ecom_coupon, name='redeemCoupon.get_ecom_coupon'),
 
     url(r'^perkkx/merchant/(?P<user>\w+)/(?P<vendor>\d+)', merchantApi.merchants, name='merchantApi.merchant'),
     url(r'^perkkx/mfollow/(?P<user>\w+)/(?P<vendor>\d+)', userApi.fMerchant, name='userApi.fMerchant'),

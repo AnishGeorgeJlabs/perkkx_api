@@ -50,7 +50,7 @@ def post(request, vendor_id):
             }
             while not update_order_data(query, req_data):
                 pass
-            return response({ "success": 1, "debug": "case1" })
+            return response({ "result": True, "debug": "case1" })
             
         else:
             newData = {
@@ -65,10 +65,10 @@ def post(request, vendor_id):
             _copy_bill(newData, req_data)
             
             collection.insert(newData)
-            return response({ "success": 1 , "debug": "case2"})
+            return response({ "result": True , "debug": "case2"})
 
     except Exception, e:
-        return response({"success": 0, "error": str(e)})
+        return response({"result": False, "error": str(e)})
 
 
 @csrf_exempt
@@ -105,10 +105,12 @@ def signup(request):
     try:
         data = json.loads(request.body)
         if db.merchants.count({"vendor_id": data['vendor_id']}) == 0:
+            failure['error'] = "merchant does not exist"
             return response(failure)
 
         collection = db.credentials
         if collection.count({"username": data['username']}) > 0:
+            failure['reason'] = "username is not unique"
             return response(failure)
 
         collection.insert_one({

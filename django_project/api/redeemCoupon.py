@@ -19,9 +19,8 @@ def test(request):
         collection.insert({"hi":"hi"})
         return HttpResponse("Bad Request",content_type="application/json")
 
-""" OLD
 @csrf_exempt
-def get_coupon(request):
+def get_ecom_coupon(request):
 	try:
 		collection = db.deals
 		data = json.loads(request.body)
@@ -37,12 +36,11 @@ def get_coupon(request):
 			result['rcodes'] = codes
 			result['usedrcodes'].append(code)
 			collection.update({"vendor_id":data['vendor_id'],"cID":data["cID"]},{"$set":result},False)
-			couponRecord = {"vendor_id":data['vendor_id'],"cID":data["cID"],"userID":data['userID'],"rcode":code,"used_on":datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),"ustatus":"pending","mstatus":"pending"}
+			couponRecord = {"vendor_id":data['vendor_id'],"cID":data["cID"],"userID":data['userID'],"rcode":code,"used_on":datetime.datetime.now(),"ustatus":"pending","mstatus":"pending"}
 			db.order_data.insert(couponRecord)
 			return HttpResponse(dumps({ "success": 1, "code": code }), content_type="application/json")
 	except:
 		return HttpResponse(failure, content_type="application/json")
-"""
 
 """
 {
