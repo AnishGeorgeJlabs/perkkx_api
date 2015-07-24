@@ -12,7 +12,7 @@ import re
 from unidecode import unidecode
 from dateutil.tz import *
 from math import pi, sin , cos , atan2,sqrt
-from mongo_filter import deal_filter, merchant_filter
+from mongo_filter import deal_filter, merchant_filter, deal_compact_filter
 from merchantApi import process_merchant, deal_valid
 
 failure = dumps({ "success": 0 })
@@ -190,6 +190,15 @@ def get_deals(request,user, category, typ):
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
         return HttpResponse(dumps({"exception": "error : "+str(e), "type": typ}), content_type="application/json")
+
+@csrf_exempt
+def get_all_deals_for_vendor(request, typ, vendor):
+    try:
+        deals = [d for d in db.deals.find({"vendor_id": int(vendor), "type": typ}, deal_compact_filter)
+                 if deal_valid(d)]
+        return HttpResponse(dumps({"data": deals, "total": len(deals), "success": 1}))
+    except Exception, e:
+        return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}))
 
 @csrf_exempt
 def get_totals(request):
