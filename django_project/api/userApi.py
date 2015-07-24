@@ -150,6 +150,7 @@ def updateuser(request):
         failure['success'] = '0'
         failure['reason'] = "UPDATATION CAN'T BE PROCEEDED"
         return HttpResponse(dumps(failure),content_type="application/json")
+
 @csrf_exempt
 def user_coupons(request,uid):
     global db
@@ -160,7 +161,7 @@ def user_coupons(request,uid):
         used = []
         for x in usedDeals:
             vendorData = db.merchants.find_one({"vendor_id":int(x['vendor_id'])})
-            address = vendorData['address']['text']
+            address = vendorData['address']['area']
             dealData = db.deals.find_one({"cID":x['cID']})
             rep = {"vendor_name":vendorData['vendor_name'],
                 "address":address,
@@ -168,7 +169,8 @@ def user_coupons(request,uid):
                 "expiry":dealData['expiry'],
                 "used_on":x['used_on'].strftime("%d/%m/%Y %H:%M:%S"),
                 "status":x['ustatus'],
-                "cID": x['cID']
+                "cID": x['cID'],
+                "vendor_id": x['vendor_id']
             }
             if x['ustatus'] in "pending":
                 pending.append(rep)
