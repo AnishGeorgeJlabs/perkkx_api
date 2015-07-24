@@ -16,7 +16,7 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
     url(r'^perkkx/user', userApi.getdata, name='userApi.getdata'),
     
     url(r'^perkkx/update/user',userApi.updateuser, name='userApi.updateuser'),
-    url('^perkkx/check', userApi.user_exist, name="userApi.user_exist"),
+    url(r'^perkkx/check', userApi.user_exist, name="userApi.user_exist"),
     url(r'^perkkx/echo', 'preks.echo'),
     url(r'^perkkx/verifyUser/(?P<code>\w+)', userApi.verifyUser, name='userApi.verifyUser'),
     url(r'^perkkx/deals/all/(?P<typ>\w+)/(?P<vendor>\d+)', dealsApi.get_all_deals_for_vendor, name='dealsApi.get_all_deals_for_vendor'),

@@ -195,7 +195,7 @@ def getFacility(request):
 				x.pop("name")
 				x.pop("_id")
 				data.append(x)
-			return HttpResponse(dumps(data),content_type="application/json")
+			return HttpResponse(dumps({"success": 1, "data": data}),content_type="application/json")
 		else:
 			failure.update({"reason":"domain not found"})
 			return HttpResponse(dumps(failure),content_type="application/json")
