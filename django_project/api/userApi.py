@@ -192,7 +192,6 @@ def getFacility(request):
 		if temp.count() > 0:
 			for x in temp:
 				x.pop("domain")
-				x.pop("name")
 				x.pop("_id")
 				data.append(x)
 			return HttpResponse(dumps({"success": 1, "data": data}),content_type="application/json")
