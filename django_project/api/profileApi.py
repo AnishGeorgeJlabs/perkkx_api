@@ -55,7 +55,7 @@ def pre_app_check(request):
         userID = request.GET['userID']
         data = {}
         # Secion 1, verified user
-        user = db.user.find({"userID": userID})
+        user = db.user.find_one({"userID": userID})
         data['verified'] = True if user['verified'] == "Y" else False
         data['cinfo'] = True if 'cname' in user else False
         # Section 3, codes
