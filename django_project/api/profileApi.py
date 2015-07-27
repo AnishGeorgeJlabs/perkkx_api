@@ -68,6 +68,6 @@ def pre_app_check(request):
             x.update(vendor_data)
             data['codes'].append(x)
 
-        return response({"success": 1, "data": data})
+        return HttpResponse(dumps({"success": 1, "data": data}), content_type='application/json')
     except Exception, e:
-        return response({"success": 0, "error": "Exception "+str(e)})
+        return HttpResponse(dumps({"success": 0, "error": "Exception "+str(e)}), content_type='application/json')
