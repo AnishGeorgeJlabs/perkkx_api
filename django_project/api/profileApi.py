@@ -48,3 +48,26 @@ def get_followed(request, userID):      # Dummy
         return HttpResponse(dumps({"data":data}), content_type='application/json')
     except Exception, e:
         return HttpResponse(dumps({"sucess":0, "error": "exception: "+str(e)}), content_type='application/json')
+
+@csrf_exempt
+def pre_app_check(request):
+    try:
+        userID = request.GET['userID']
+        data = {}
+        # Secion 1, verified user
+        user = db.user.find({"userID": userID})
+        data['verified'] = True if user['verified'] == "Y" else False
+        data['cinfo'] = True if 'cname' in user else False
+        # Section 3, codes
+        records = db.order_data.find({"userID": userID, "ustatus": "pending"},
+                                     {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True,"vendor_id":True})
+        data['codes'] = []
+        for x in records:
+            vendor_data = db.merchants.find_one({"vendor_id":x['vendor_id']},
+                                                {"_id": False,"vendor_name":True,"address.text":True})
+            x.update(vendor_data)
+            data['codes'].append(x)
+
+        return response({"success": 1, "data": data})
+    except Exception, e:
+        return response({"success": 0, "error": "Exception "+str(e)})

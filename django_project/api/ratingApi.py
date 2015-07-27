@@ -89,22 +89,6 @@ def rate_merchant (request):
         return response({"success": 0, "error": "Exception "+str(e)})
 
 @csrf_exempt
-def check_pending (request):
-    try:
-        userID = request.GET['userID']
-        records = db.order_data.find({"userID": userID, "ustatus": "pending"},
-                                     {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True,"vendor_id":True})
-        data = []
-        for x in records:
-            vendor_data = db.merchants.find_one({"vendor_id":x['vendor_id']},
-                            {"_id": False,"vendor_name":True,"address.text":True})
-            x.update(vendor_data)
-            data.append(x)
-        return response({"success": 1, "data": data})
-    except Exception, e:
-        return response({"success": 0, "error": "Exception "+str(e)})
-
-@csrf_exempt
 def get_ratings (request):
     try:
         userID = request.GET['userID']
