@@ -54,8 +54,10 @@ def pre_app_check(request):
     try:
         userID = request.GET['userID']
         data = {}
-        # Section 1, verified user
         user = db.user.find_one({"userID": userID})
+        # Section 1, corporate info
+        data['cinfo'] = True if 'cname' in user else False
+        # Section 2, verified
         data['verified'] = True if user['verified'] == "Y" else False
         if not data['verified']:
             ocount = db.order_data.count({"userID": userID})
@@ -65,8 +67,6 @@ def pre_app_check(request):
                 if pending:
                     data['rcode'] = pending['rcode']
 
-        # Section 2, corporate info
-        data['cinfo'] = True if 'cname' in user else False
         # Section 3, codes
         if data['verified']:
             records = db.order_data.find({"userID": userID, "ustatus": "pending"},
