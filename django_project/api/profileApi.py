@@ -68,14 +68,15 @@ def pre_app_check(request):
         # Section 2, corporate info
         data['cinfo'] = True if 'cname' in user else False
         # Section 3, codes
-        records = db.order_data.find({"userID": userID, "ustatus": "pending"},
-                                     {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True,"vendor_id":True})
-        data['codes'] = []
-        for x in records:
-            vendor_data = db.merchants.find_one({"vendor_id":x['vendor_id']},
-                                                {"_id": False,"vendor_name":True,"address.text":True})
-            x.update(vendor_data)
-            data['codes'].append(x)
+        if data['verified']:
+            records = db.order_data.find({"userID": userID, "ustatus": "pending"},
+                                         {"_id": False, "rcode": True, "cID": True, "mstatus": True, "paid": True, "discount": True,"vendor_id":True})
+            data['codes'] = []
+            for x in records:
+                vendor_data = db.merchants.find_one({"vendor_id":x['vendor_id']},
+                                                    {"_id": False,"vendor_name":True,"address.text":True})
+                x.update(vendor_data)
+                data['codes'].append(x)
 
         return HttpResponse(dumps({"success": 1, "data": data}), content_type='application/json')
     except Exception, e:
