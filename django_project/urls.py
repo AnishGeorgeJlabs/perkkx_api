@@ -45,6 +45,7 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
     url(r'^perkkx/merchantapp/(?P<typ>\w+)/(?P<vendor_id>\d+)', getApi.get, name='getApi.get'),
     url(r'^perkkx/search', search.search, name='search.search'),
 
-    url(r'^wadi/', include('wadi.urls'))
+    url(r'^wadi/', include('wadi.urls')),
+    url(r'^manoj/', include('manoj.urls'))
 
 )
