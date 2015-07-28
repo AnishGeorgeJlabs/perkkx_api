@@ -81,3 +81,14 @@ def pre_app_check(request):
         return HttpResponse(dumps({"success": 1, "data": data}), content_type='application/json')
     except Exception, e:
         return HttpResponse(dumps({"success": 0, "error": "Exception "+str(e)}), content_type='application/json')
+
+@csrf_exempt
+def suggest_merchant(request):
+    try:
+        req_data = json.loads(request.body)
+        userID = req_data['userID']
+        data = req_data['data']
+        db.suggested_merchants.insert_one({"userID": userID, "timestamp": datetime.datetime.now(), "merchant_data": data})
+        return HttpResponse(dumps({"success": 1}), content_type='application/json')
+    except Exception, e:
+        return HttpResponse(dumps({"success": 0, "error": "Exception "+str(e)}), content_type='application/json')

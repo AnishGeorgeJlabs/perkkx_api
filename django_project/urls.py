@@ -35,6 +35,7 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
     url(r'^perkkx/profile/rate', ratingApi.rate_merchant, name='ratingApi.rate_merchant'),
     url(r'^perkkx/profile/check', profileApi.pre_app_check, name='profileApi.pre_app_check'),
     url(r'^perkkx/profile/ratings', ratingApi.get_ratings, name='ratingApi.get_ratings'),
+    url(r'^perkkx/profile/suggest', profileApi.suggest_merchant, name='profileApi.suggest_merchant'),
 
     url(r'^perkkx/merchantapp/validate', getApi.validate_code, name='getApi.validate_code'),
     url(r'^perkkx/merchantapp/login', postApi.login, name='postApi.login'),
