@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'wadi'
+    'wadi',
+    'manoj'
 )
 
 MIDDLEWARE_CLASSES = (
