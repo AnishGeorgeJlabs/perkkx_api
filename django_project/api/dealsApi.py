@@ -111,6 +111,7 @@ def get_deals(request,user, category, typ):
                     deal_query.update({"group_size": request.GET['group']})
                 dynamic_deals = [d for d in dCollection.find(deal_query, deal_filter)
                                  if deal_valid(d)]
+                pdeal = {}
             else:
                 # Step 1, dynamic deals get preference
                 dyn_query = deal_query.copy()
