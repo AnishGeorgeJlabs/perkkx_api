@@ -97,13 +97,16 @@ def merchants(request, user, vendor):
         merchant['followed'] = True
     else:
         merchant['followed'] = False
+
+    process_merchant(merchant, save_timing=True)
+
+    '''
     s = []
     g = []
     deals = db.deals.find(
         {"vendor_id": merchant['vendor_id']},
         deal_compact_filter
     )
-    process_merchant(merchant, save_timing=True)
     for deal in deals:
         if not deal_valid(deal):
             continue
@@ -116,5 +119,16 @@ def merchants(request, user, vendor):
         "single": s,
         "group": g
     }
+    '''
+    all_deals = db.deals.aggregate([
+        {"$match": {"vendor_id": int(vendor)}},
+        {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True}},
+        {"$group": {"_id": "$group_size", "deals": {"$push", "$$ROOT"}}},
+        {"$project": {"size": "$_id", "_id": False, "deals": True}}
+    ])
+    merchant['all_deals'] = []
+    for group in all_deals:
+        merchant['all_deals'].append(group)
+
     return HttpResponse(dumps(merchant), content_type="application/json")
 
