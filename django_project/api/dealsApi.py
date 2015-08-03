@@ -102,6 +102,7 @@ def get_deals(request, category):
             search.update({"price":{"$gt":low,"$lt":high}})
 
         merchants = mCollection.find(search, merchant_filter)
+        debug_message += "Count of merchants"+str(merchants.count())+"\n"
 
         for mer in merchants:
             # --- Selecting a deal -------- #
