@@ -45,7 +45,7 @@ def user_exist(request):
     data = json.loads(request.body)
     email = data['email']
     doc = db.user.find_one({"email":email}) 
-    if not doc:
+    if doc is not None:
         result['success'] = '1'
         result['userID'] = doc['userID']
         result['name'] = doc['fname'] + ' ' + doc['lname']
