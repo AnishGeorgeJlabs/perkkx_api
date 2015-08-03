@@ -111,8 +111,8 @@ def get_deals(request, category):
                 if len(larr) == 1:
                     deal_query.update({"gmin": int(larr[0])})
                 else:
-                    a = larr[0]
-                    b = larr[1]
+                    a = int(larr[0])
+                    b = int(larr[1])
                     deal_query.update({
                         "$or": [
                             {"$and": [{"gmin": {"$lte": a}}, {"gmax": {"$gt": a}}]},
