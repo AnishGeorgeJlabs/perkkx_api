@@ -122,13 +122,16 @@ def merchants(request, user, vendor):
     '''
     all_deals = db.deals.aggregate([
         {"$match": {"vendor_id": int(vendor)}},
-        {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True}},
-        {"$group": {"_id": "$group_size", "deals":{"$addToSet": {
-            "deal": "$deal",
-            "expiry": "$expiry",
-            "cID": "$cID"
-        }}}},
-        {"$project": {"size": "$_id", "_id": False, "deals": True}}
+        {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True}},
+        {"$group": {"_id": {"gsize": "$group_size", "gmin": "$gmin"},
+                    "deals": {
+                        "$addToSet": {
+                            "deal": "$deal",
+                            "expiry": "$expiry",
+                            "cID": "$cID"
+                        }}}},
+        {"$sort": {"gmin": 1}},
+        {"$project": {"size": "$_id.gsize", "_id": False, "deals": True}}
     ])
     merchant['all_deals'] = []
     for group in all_deals:

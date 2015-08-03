@@ -104,7 +104,7 @@ def get_deals(request,user, category, typ):
 
         for mer in merchants:
             # --- Selecting a deal -------- #
-            deal_query = {"vendor_id": mer['vendor_id'], "type": typ}
+            deal_query = {"vendor_id": mer['vendor_id']}
 
             if typ == "group":
                 if 'group' in request.GET:
