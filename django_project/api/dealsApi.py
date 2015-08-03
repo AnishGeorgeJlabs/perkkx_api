@@ -36,6 +36,7 @@ def distance(obj):
 @csrf_exempt
 def get_deals(request, category):
     global db
+    debug_message = ''
     try:
         mCollection = db.merchants
         dCollection = db.deals
@@ -84,7 +85,7 @@ def get_deals(request, category):
         if 'tag' in request.GET.keys():
             search.update({"icons":{"$in":request.GET['tag'].split(",")}})
         if 'vendor' in request.GET.keys():
-            search.update({"vendor_id": {"$in":[int(x.replace("u","").strip("'")) for x in request.GET['vendor'].split(",")]}})
+            search.update({"vendor_id": {"$in": [int(x.replace("u","").strip("'")) for x in request.GET['vendor'].split(",")]} })
         if 'area' in request.GET.keys():
             search.update({"address.text":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['area'].split(",")]}})
         if 'name' in request.GET.keys():
@@ -122,6 +123,8 @@ def get_deals(request, category):
 
             dynamic_deals = [d for d in dCollection.find(deal_query, deal_filter)
                              if deal_valid(d)]
+            debug_message += "Size of dynamic deals: "+str(len(dynamic_deals))+"\n"
+
             pdeal = {}
             """
                 # Step 1, dynamic deals get preference
@@ -207,7 +210,8 @@ def get_deals(request, category):
         res = {
             "total": len(newlist),
             "data": newlist[start:end],
-            "page": pages
+            "page": pages,
+            "debug": debug_message
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
