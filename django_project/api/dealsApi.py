@@ -106,13 +106,17 @@ def get_deals(request,user, category, typ):
             # --- Selecting a deal -------- #
             deal_query = {"vendor_id": mer['vendor_id']}
 
-            if typ == "group":
-                if 'group' in request.GET:
-                    deal_query.update({"group_size": request.GET['group']})
-                dynamic_deals = [d for d in dCollection.find(deal_query, deal_filter)
-                                 if deal_valid(d)]
-                pdeal = {}
-            else:
+            if 'group' in request.GET:
+                larr = request.GET['group'].split("-")
+                if len(larr) == 1:
+                    deal_query.update({"gmin": int(larr[0])})
+                else:
+                    deal_query.update({"gmin": {"$lte": int(larr[0])}, "gmax": {"$gt": int(larr[0])} })
+
+            dynamic_deals = [d for d in dCollection.find(deal_query, deal_filter)
+                             if deal_valid(d)]
+            pdeal = {}
+            """
                 # Step 1, dynamic deals get preference
                 dyn_query = deal_query.copy()
                 dyn_query.update({
@@ -143,6 +147,8 @@ def get_deals(request,user, category, typ):
                     pdeal = secondaries[0]
                     if len(secondaries) > 1:
                         pdeal['second_deal'] = secondaries[1]['deal']
+
+            """
 
             # ----- Setup Merchant data ------ #
             process_merchant(mer, save_timing=False)       # Found in merchantApi

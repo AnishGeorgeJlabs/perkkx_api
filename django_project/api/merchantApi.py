@@ -100,26 +100,7 @@ def merchants(request, user, vendor):
 
     process_merchant(merchant, save_timing=True)
 
-    '''
-    s = []
-    g = []
-    deals = db.deals.find(
-        {"vendor_id": merchant['vendor_id']},
-        deal_compact_filter
-    )
-    for deal in deals:
-        if not deal_valid(deal):
-            continue
-        type = deal.pop('type')
-        if type == 'single':
-            s.append(deal)
-        else:
-            g.append(deal)
-    merchant['deals'] = {
-        "single": s,
-        "group": g
-    }
-    '''
+    """ Works like a charm :sunglasses: """
     all_deals = db.deals.aggregate([
         {"$match": {"vendor_id": int(vendor)}},
         {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True}},

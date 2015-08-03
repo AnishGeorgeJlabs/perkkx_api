@@ -19,7 +19,7 @@ _make_filter(_mKeys, merchant_filter)
 
 # Deal filters
 _dKeys = [
-    '_id', 'saving', 'deal_cat'
+    '_id', 'saving', 'deal_cat', "gmin", "gmax", "deal_cat"
 ]
 _dcKeys = [
     'vendor_id', 'vendor_name'
