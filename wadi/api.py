@@ -1,6 +1,7 @@
 from data import cl_blocked, basic_success, jsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def test(request):
     if request.method == "GET":
         extra = {

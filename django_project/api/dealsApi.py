@@ -34,7 +34,7 @@ def distance(obj):
 
 # TODO: Optimise the query using memoization
 @csrf_exempt
-def get_deals(request,user, category, typ):
+def get_deals(request, category):
     global db
     try:
         mCollection = db.merchants
@@ -84,7 +84,7 @@ def get_deals(request,user, category, typ):
         if 'tag' in request.GET.keys():
             search.update({"icons":{"$in":request.GET['tag'].split(",")}})
         if 'vendor' in request.GET.keys():
-            search.update({"vendor_id":{"$in":[int(x.replace("u","").strip("'")) for x in request.GET['vendor'].split(",")]}})
+            search.update({"vendor_id": {"$in":[int(x.replace("u","").strip("'")) for x in request.GET['vendor'].split(",")]}})
         if 'area' in request.GET.keys():
             search.update({"address.text":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['area'].split(",")]}})
         if 'name' in request.GET.keys():
@@ -111,7 +111,7 @@ def get_deals(request,user, category, typ):
                 if len(larr) == 1:
                     deal_query.update({"gmin": int(larr[0])})
                 else:
-                    deal_query.update({"gmin": {"$lte": int(larr[0])}, "gmax": {"$gt": int(larr[0])} })
+                    deal_query.update({"gmin": {"$lte": int(larr[0])}, "gmax": {"$gt": int(larr[0])}})
 
             dynamic_deals = [d for d in dCollection.find(deal_query, deal_filter)
                              if deal_valid(d)]
@@ -160,11 +160,11 @@ def get_deals(request,user, category, typ):
                         "l2":float(re.sub("[^0-9\.]","",str(mer['address']['lat']))),
                         "ln2":float(re.sub("[^0-9\.]","",str(mer['address']['lng'])))
                     }
-                    mer.update({"distance":distance(data_for_distance)})
+                    mer.update({"distance": distance(data_for_distance)})
                 else:
-                    mer.update({"distance":False})
+                    mer.update({"distance": False})
             else:
-                mer.update({"distance":False})                
+                mer.update({"distance": False})
 
             # ----- Setup done ----- #
 
@@ -206,6 +206,7 @@ def get_deals(request,user, category, typ):
     except Exception, e:
         return HttpResponse(dumps({"exception": "error : "+str(e), "type": typ}), content_type="application/json")
 
+""" Deprecated """
 @csrf_exempt
 def get_all_deals_for_vendor(request, typ, vendor):
     try:
@@ -218,6 +219,20 @@ def get_all_deals_for_vendor(request, typ, vendor):
 @csrf_exempt
 def get_totals(request):
     global db
+    res = []
+    for i in range(1, 6):
+        mers = [int(m['vendor_id']) for m in
+                db.merchants.fin({"cat": i}, {"vendor_id": True, "_id": False})]
+        res.append(
+            db.deals.count({"vendor_id": {"$in": mers}})
+        )
+
+    return HttpResponse(dumps({"data": res}), content_type='application/json')
+
+""" Deprecated
+@csrf_exempt
+def get_totals(request):
+    global db
     res = {
         "single": [],
         "group": []
@@ -227,10 +242,6 @@ def get_totals(request):
         s = 0
         g = 0
         for mer in mers:
-            """
-            s += db.deals.find({"vendor_id": mer['vendor_id'], "type": 'single', "rcodes" : {"$not": {"$size": 0}}}).count()
-            g += db.deals.find({"vendor_id": mer['vendor_id'], "type": 'group', "rcodes" : {"$not": {"$size": 0}}}).count()
-            """
             s += len([
                 d for d in db.deals.find({"vendor_id": mer['vendor_id'], "type": 'single'})
                 if deal_valid(d)
@@ -243,3 +254,4 @@ def get_totals(request):
         res["single"].append(s)
         res["group"].append(g)
     return HttpResponse(dumps(res), content_type="application/json")
+"""
