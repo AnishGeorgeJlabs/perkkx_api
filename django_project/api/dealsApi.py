@@ -222,7 +222,7 @@ def get_totals(request):
     res = []
     for i in range(1, 6):
         mers = [int(m['vendor_id']) for m in
-                db.merchants.fin({"cat": i}, {"vendor_id": True, "_id": False})]
+                db.merchants.find({"cat": i}, {"vendor_id": True, "_id": False})]
         res.append(
             db.deals.count({"vendor_id": {"$in": mers}})
         )
