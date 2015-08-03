@@ -41,28 +41,31 @@ def fMerchant(request,user,vendor):
 
 @csrf_exempt
 def user_exist(request):
-    result = dict() 
-    data = json.loads(request.body)
-    email = data['email']
-    doc = db.user.find_one({"email":email}) 
-    if doc is not None:
-        result['success'] = '1'
-        result['userID'] = doc['userID']
-        result['name'] = doc['fname'] + ' ' + doc['lname']
-        result['email'] = doc['email']
-        if 'cname' in doc:
-            result['cname'] = doc['cname']
-        else:
-            result['cname'] = ""
-        regid = data['regId']
-        if regid not in doc['regId']:
-            db.user.update_one({"email": email}, {"$push": {"regId": regid}})
+    try:
+        result = dict()
+        data = json.loads(request.body)
+        email = data['email']
+        doc = db.user.find_one({"email": email})
+        if doc is not None:
+            result['success'] = '1'
+            result['userID'] = doc['userID']
+            result['name'] = doc['fname'] + ' ' + doc['lname']
+            result['email'] = doc['email']
+            if 'cname' in doc:
+                result['cname'] = doc['cname']
+            else:
+                result['cname'] = ""
+            regid = data['regId']
+            if regid not in doc['regId']:
+                db.user.update_one({"email": email}, {"$push": {"regId": regid}})
 
-        return HttpResponse(dumps(result), content_type="application/json")
-    else:
-        result['success']='0'
-        result['reason'] = "NO INFORMATION FOUND FOR GIVEN EMAIL : "+ email
-        return HttpResponse(dumps(result), content_type="application/json")
+            return HttpResponse(dumps(result), content_type="application/json")
+        else:
+            result['success']='0'
+            result['reason'] = "NO INFORMATION FOUND FOR GIVEN EMAIL : "+ email
+            return HttpResponse(dumps(result), content_type="application/json")
+    except Exception, e:
+        return HttpResponse(dumps({"success": 0, "exception": str(e)}))
         
 """ generating user ID"""
 def userIdGenPartial():
