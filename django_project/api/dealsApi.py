@@ -103,6 +103,7 @@ def get_deals(request, category):
 
         merchants = mCollection.find(search, merchant_filter)
         debug_message += "Count of merchants"+str(merchants.count())+"\n"
+        debug_message += "merchant query: "+str(search)+"\n"
 
         for mer in merchants:
             # --- Selecting a deal -------- #
