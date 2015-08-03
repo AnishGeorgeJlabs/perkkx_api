@@ -133,9 +133,7 @@ def merchants(request, user, vendor):
         {"$sort": {"gmin": 1}},
         {"$project": {"size": "$_id.gsize", "_id": False, "deals": True}}
     ])
-    merchant['all_deals'] = []
-    for group in all_deals:
-        merchant['all_deals'].append(group)
+    merchant['all_deals'] = list(all_deals)
 
     return HttpResponse(dumps(merchant), content_type="application/json")
 
