@@ -130,7 +130,7 @@ def merchants(request, user, vendor):
                             "expiry": "$expiry",
                             "cID": "$cID"
                         }}}},
-        {"$sort": {"gmin": 1}},
+        {"$sort": {"_id.gmin": 1}},
         {"$project": {"size": "$_id.gsize", "_id": False, "deals": True}}
     ])
     merchant['all_deals'] = list(all_deals)
