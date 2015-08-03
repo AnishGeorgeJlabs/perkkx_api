@@ -109,13 +109,14 @@ def get_deals(request, category):
             # --- Selecting a deal -------- #
             deal_query = {"vendor_id": mer['vendor_id']}
 
+            larr = [1]
             if 'group' in request.GET:
-                larr = request.GET['group'].split("-")
+                larr = map(lambda k: int(k), request.GET['group'].split("-"))
                 if len(larr) == 1:
-                    deal_query.update({"gmin": int(larr[0])})
+                    deal_query.update({"gmin": larr[0]})
                 else:
-                    a = int(larr[0])
-                    b = int(larr[1])
+                    a = larr[0]
+                    b = larr[1]
                     deal_query.update({
                         "$or": [
                             {"$and": [{"gmin": {"$lte": a}}, {"gmax": {"$gt": a}}]},
@@ -123,7 +124,7 @@ def get_deals(request, category):
                         ]
                     })
 
-            if int(larr[0]) == 1:
+            if larr[0] == 1:
                 # Step 1, dynamic deals get preference
                 dyn_query = deal_query.copy()
                 dyn_query.update({
@@ -134,7 +135,7 @@ def get_deals(request, category):
                 })
                 dynamic_deals = [d for d in
                                  dCollection.find(dyn_query, deal_filter)
-                                 if deal_valid(d) ]
+                                 if deal_valid(d)]
 
                 # Step 2, get the primary deal
                 deal_query.update({"deal_cat": "primary"})
@@ -253,7 +254,7 @@ def get_deals(request, category):
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
-        return HttpResponse(dumps({"exception": "error : "+str(e), "type": typ}), content_type="application/json")
+        return HttpResponse(dumps({"exception": "error : "+str(e)}), content_type="application/json")
 
 """ Deprecated """
 @csrf_exempt
