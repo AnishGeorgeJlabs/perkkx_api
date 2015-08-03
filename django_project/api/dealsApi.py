@@ -111,7 +111,14 @@ def get_deals(request, category):
                 if len(larr) == 1:
                     deal_query.update({"gmin": int(larr[0])})
                 else:
-                    deal_query.update({"gmin": {"$lte": int(larr[0])}, "gmax": {"$gt": int(larr[0])}})
+                    a = larr[0]
+                    b = larr[1]
+                    deal_query.update({
+                        "$or": [
+                            {"$and": [{"gmin": {"$lte": a}}, {"gmax": {"$gt": a}}]},
+                            {"$and": [{"gmin": {"$lt": b}}, {"gmax": {"$gte": b}}]}
+                        ]
+                    })
 
             dynamic_deals = [d for d in dCollection.find(deal_query, deal_filter)
                              if deal_valid(d)]
