@@ -45,7 +45,7 @@ def user_exist(request):
     data = json.loads(request.body)
     email = data['email']
     doc = db.user.find_one({"email":email}) 
-    if doc != None:
+    if not doc:
         result['success'] = '1'
         result['userID'] = doc['userID']
         result['name'] = doc['fname'] + ' ' + doc['lname']
@@ -54,6 +54,10 @@ def user_exist(request):
             result['cname'] = doc['cname']
         else:
             result['cname'] = ""
+        regid = data['regId']
+        if regid not in doc['regId']:
+            db.user.update_one({"email": email}, {"$push": {"regId": regid}})
+
         return HttpResponse(dumps(result), content_type="application/json")
     else:
         result['success']='0'
@@ -79,14 +83,15 @@ def signup(request):
     global db
     try:
         data = json.loads(request.body)
-	data = data['data']
+        data = data['data']
         failure = dict()
-	collection = db.user
+        collection = db.user
         if collection.find({"email": data['email']}).count() is not 0:
             return HttpResponse(failure,content_type="application/json")
         key = userIdGen()
         data.update({"userID":key})
         data.update({"verified":"N"})
+        data['regId'] = [data['regId']]
         collection.insert(data)
         res = { "success":'1', "userID": key }
         return HttpResponse(dumps(res),content_type="application/json")
