@@ -227,9 +227,13 @@ def get_deals(request, category):
 
 """ Deprecated """
 @csrf_exempt
-def get_all_deals_for_vendor(request, typ, vendor):
+def get_all_deals_for_vendor(request, vendor):
     try:
-        deals = [d for d in db.deals.find({"vendor_id": int(vendor), "type": typ}, deal_compact_filter)
+        deal_query = {'vendor_id': int(vendor)}
+        if 'group' in request.GET:
+            group_query_update(deal_query, request.GET['group'])
+
+        deals = [d for d in db.deals.find(deal_query, deal_compact_filter)
                  if deal_valid(d)]
         return HttpResponse(dumps({"data": deals, "total": len(deals), "success": 1}))
     except Exception, e:
