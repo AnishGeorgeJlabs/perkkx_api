@@ -32,6 +32,20 @@ def distance(obj):
     d = R * c
     return d
 
+def group_query_update(query, qStr):
+    larr = map(lambda k: int(k), qStr.split("-"))
+    if len(larr) == 1:
+        query.update({"gmin": larr[0]})
+    else:
+        a = larr[0]
+        b = larr[1]
+        query.update({
+            "$or": [
+                {"$and": [{"gmin": {"$lte": a}}, {"gmax": {"$gt": a}}]},
+                {"$and": [{"gmin": {"$lt": b}}, {"gmax": {"$gte": b}}]}
+            ]
+        })
+
 # TODO: Optimise the query using memoization
 @csrf_exempt
 def get_deals(request, category):
@@ -110,18 +124,7 @@ def get_deals(request, category):
             deal_query = {"vendor_id": mer['vendor_id']}
 
             if 'group' in request.GET:
-                larr = map(lambda k: int(k), request.GET['group'].split("-"))
-                if len(larr) == 1:
-                    deal_query.update({"gmin": larr[0]})
-                else:
-                    a = larr[0]
-                    b = larr[1]
-                    deal_query.update({
-                        "$or": [
-                            {"$and": [{"gmin": {"$lte": a}}, {"gmax": {"$gt": a}}]},
-                            {"$and": [{"gmin": {"$lt": b}}, {"gmax": {"$gte": b}}]}
-                        ]
-                    })
+                group_query_update(deal_query, request.GET['group'])
 
             # Step 1, dynamic deals get preference
             dyn_query = deal_query.copy()

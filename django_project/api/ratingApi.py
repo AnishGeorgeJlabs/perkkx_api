@@ -56,6 +56,7 @@ def rate_merchant (request):
             db.ratings.insert_one({
                 "vendor_id": vID,
                 "userID": uID,
+                "rcode": data['rcode'],
                 "cID": data['cID'],
                 "rating": data['rating'],
                 "comment": data['comment'],
