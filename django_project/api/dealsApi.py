@@ -124,7 +124,7 @@ def get_deals(request, category):
                         ]
                     })
 
-            if larr[0] == 1:
+            if True:
                 # Step 1, dynamic deals get preference
                 dyn_query = deal_query.copy()
                 dyn_query.update({
@@ -164,40 +164,6 @@ def get_deals(request, category):
                 debug_message += "\n Case 2 for dynamic"
 
             debug_message += "Size of dynamic deals: "+str(len(dynamic_deals))+"\n"
-
-            """
-                # Step 1, dynamic deals get preference
-                dyn_query = deal_query.copy()
-                dyn_query.update({
-                    "$or": [
-                        { "valid_days": {"$exists": True}},
-                        { "valid_time": {"$exists": True}}
-                    ]
-                })
-                dynamic_deals = [d for d in
-                                 dCollection.find(dyn_query, deal_filter)
-                                 if deal_valid(d) ]
-
-                # Step 2, get the primary deal
-                deal_query.update({"deal_cat": "primary"})
-                pdeal = dCollection.find_one( deal_query, deal_filter )
-
-                deal_query.update({"deal_cat": "secondary"})
-                if pdeal in dynamic_deals:
-                    pdeal = {}
-                elif pdeal and deal_valid(pdeal):
-                    secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
-                    if secondary:
-                        pdeal['second_deal'] = secondary['deal']
-                elif len(dynamic_deals) == 0:
-                    secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
-                    if len(secondaries) == 0:
-                        continue
-                    pdeal = secondaries[0]
-                    if len(secondaries) > 1:
-                        pdeal['second_deal'] = secondaries[1]['deal']
-
-            """
 
             # ----- Setup Merchant data ------ #
             process_merchant(mer, save_timing=False)       # Found in merchantApi
