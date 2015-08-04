@@ -51,6 +51,7 @@ def group_query_update(query, qStr):
 def get_deals(request, category):
     global db
     debug_message = ''
+    debug2 = ''
     try:
         mCollection = db.merchants
         dCollection = db.deals
@@ -126,6 +127,7 @@ def get_deals(request, category):
             if 'group' in request.GET:
                 group_query_update(deal_query, request.GET['group'])
 
+            debug2 += 'stage1deal_query: '+str(deal_query)+" :: "
             # Step 1, dynamic deals get preference
             dyn_query = deal_query.copy()
             dyn_query.update({
@@ -137,6 +139,7 @@ def get_deals(request, category):
             dynamic_deals = [d for d in
                              dCollection.find(dyn_query, deal_filter)
                              if deal_valid(d)]
+            debug2 += 'size of dynamic deals: '+str(len(dynamic_deals))+" :: "
 
             # Step 2, get the primary deal
             deal_query.update({"deal_cat": "primary"})
@@ -219,7 +222,8 @@ def get_deals(request, category):
             "total": len(newlist),
             "data": newlist[start:end],
             "page": pages,
-            "debug": debug_message
+            "debug": debug_message,
+            "debug2": debug2
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
