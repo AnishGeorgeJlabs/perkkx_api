@@ -93,6 +93,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 #CORS_ALLOW_ORIGIN = 'http://localhost:8100'
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8100'
 )
