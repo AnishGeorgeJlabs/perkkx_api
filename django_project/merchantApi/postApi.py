@@ -4,13 +4,14 @@ from datetime import datetime, date
 import calendar
 from .data_query import db, response
 import json
+import time
 
 def _time_transform(data):
     tm = datetime.fromtimestamp(int(data / 1000))
     return tm
 
 def _copy_bill(dest, source):
-    dest['submitted_on'] = _time_transform(source['submitted_on'])
+    dest['submitted_on'] = _time_transform(time.time() * 1000)
     dest['paid'] = source['paid']
     dest['discount'] = source['discount']
 
