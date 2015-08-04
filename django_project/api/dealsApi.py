@@ -41,8 +41,9 @@ def group_query_update(query, qStr):
         b = larr[1]
         query.update({
             "$or": [
-                {"$and": [{"gmin": {"$lte": a}}, {"gmax": {"$gt": a}}]},
-                {"$and": [{"gmin": {"$lt": b}}, {"gmax": {"$gte": b}}]}
+                {"$and": [{"gmin": {"$lte": a}}, {"gmax": {"$gte": a}}]},
+                {"$and": [{"gmin": {"$lte": b}}, {"gmax": {"$gte": b}}]},
+                {"$and": [{"gmin": {"$gt": a}}, {"gmax": {"$lt": b}}]}
             ]
         })
 
