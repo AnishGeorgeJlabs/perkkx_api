@@ -105,7 +105,7 @@ def get_deals(request, category):
         if 'area' in request.GET.keys():
             search.update({"address.text":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['area'].split(",")]}})
         if 'name' in request.GET.keys():
-        	search.update({"vendor_name":request.GET['name']})
+            search.update({"vendor_name":request.GET['name']})
         if 'type' in request.GET.keys():
             search.update({"type":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['type'].split(",")]}})
         if 'rate' in request.GET.keys():
@@ -224,7 +224,6 @@ def get_deals(request, category):
             "data": newlist[start:end],
             "page": pages,
             "debug": debug_message,
-            "debug2": debug2
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
