@@ -79,6 +79,10 @@ def login(request):
         collection = db.credentials
         if data['mode'] == "login":
             cred = collection.find_one({"username": data['username'], "password": data['password']})
+            if 'verified' not in cred or cred['verified'] is False:
+                verified = False
+            else:
+                verified = True
             if cred:
                 vendor = db.merchants.find_one({"vendor_id": cred['vendor_id']}, {"vendor_name": True, "address": True, "_id": False})
                 result = { "vendor_name": vendor['vendor_name'], "vendor_id": cred['vendor_id'] }
@@ -88,12 +92,12 @@ def login(request):
                         result.update({"address": add['area']})
                     else:
                         result.update({"address": add['text']})
-                return response({"result": True, "data": result})
+                return response({"result": True, "data": result, "verified": verified})
             else:
                 return response({"result": False})
         elif data['mode'] == "change_pass":
             result = collection.update({"username": data['username'], "password": data["password_old"]},
-                                           {"$set": {"password": data["password"]}})
+                                           {"$set": {"password": data["password"], 'verified': True}})
             return response({"result": result['updatedExisting']})
         else:
             return response({"result": False, "error": "Unknown mode"})
