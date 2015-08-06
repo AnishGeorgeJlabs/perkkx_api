@@ -10,6 +10,6 @@ urlpatterns = patterns(
     url(r'^block', api.block_number, name='block_number'),
     url(r'^hproxy/(?P<url>.*)$', HttpProxy.as_view(base_url='http://hymnary.org/')),
 
-    url(r'^interface/login$', interfaceApi.login, name='interface.login')
-
+    url(r'^interface/login$', interfaceApi.login, name='interface.login'),
+    url(r'^interface/post$', interfaceApi.formPost, name='interface.post')
 )
