@@ -1,0 +1,23 @@
+{
+  "name": "wadi-interface",
+  "version": "0.0.0",
+  "homepage": "http://45.55.72.208/interface/wadi",
+  "authors": [
+    "AnishGeorgeJlabs <anish.george@jlabs.co>"
+  ],
+  "description": "Web interface for wadi sms tool",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "jquery": "~2.1.4",
+    "angularjs": "~1.4.3"
+  }
+}
