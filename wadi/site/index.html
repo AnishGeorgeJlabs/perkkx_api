@@ -27,7 +27,7 @@
 <div class="container" ng-app="Wadi" ng-controller="MainCtrl">
   <div class="row">
     <div class="col-md-10">
-      <form>
+      <form ng-submit="submit()" id="dataForm">
         <div class="panel panel-default" ng-repeat="section in data">
           <div class="panel-heading">{{section.group}}</div>
           <div class="panel-body">
@@ -39,6 +39,7 @@
           </div>
         </div>
 
+        <button type="submit">Submit</button>
       </form>
     </div>
     <div class="col-md-2">

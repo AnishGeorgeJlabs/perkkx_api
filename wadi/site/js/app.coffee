@@ -3,7 +3,7 @@
 ###
 
 angular.module("Wadi", [])
-.controller 'MainCtrl', ($scope) ->
+.controller 'MainCtrl', ($scope, $log) ->
   $scope.data = [
     {
       group: "Platform of Purchase"
@@ -16,3 +16,6 @@ angular.module("Wadi", [])
   ]
 
   formdata = {}
+  submit = () ->
+    data = JSON.stringify($("#dataForm").serializeArray())
+    $log.info("Got form data: "+data)
