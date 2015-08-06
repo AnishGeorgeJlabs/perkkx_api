@@ -94,9 +94,15 @@ def signup(request):
         key = userIdGen()
         data.update({"userID":key})
         data.update({"verified":"N"})
+
+        verification_code = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
+        data['veri_code'] = verification_code
+
         data['regId'] = [data['regId']]
         collection.insert(data)
         res = { "success":'1', "userID": key }
+
+        mResult = conf_mail(data['cemail'], key+'_'+verification_code)
         return HttpResponse(dumps(res),content_type="application/json")
     except:
         failure['success'] = '0'
@@ -222,9 +228,8 @@ def verifyUser(request,code):
             try:
                 if data['verified'] == "Y":
                     return HttpResponse("Already Verified")
-                if data['code'] in code[1].strip():
-                    data['verified'] = "Y"
-                    collection.update({"userID":code[0]},{"$set": data} ,False)
+                if data['veri_code'] in code[1].strip():
+                    collection.update_one({"userID":code[0]},{"$set": {"verified": 'Y'}})
                     return HttpResponse("User has been verified. Continue to app")
                 else:
                     return HttpResponse("Invalid URL")
