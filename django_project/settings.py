@@ -92,7 +92,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/django/django_project/static'
+STATIC_ROOT = '/home/django/django_project/django_project/static'
 #CORS_ALLOW_ORIGIN = 'http://localhost:8100'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
