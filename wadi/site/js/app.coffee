@@ -15,7 +15,7 @@ angular.module("Wadi", [])
     }
   ]
 
-  formdata = {}
-  submit = () ->
+  $scope.formdata = {}
+  $scope.submit = () ->
     data = JSON.stringify($("#dataForm").serializeArray())
     $log.info("Got form data: "+data)

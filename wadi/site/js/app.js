@@ -6,7 +6,6 @@
 
 (function() {
   angular.module("Wadi", []).controller('MainCtrl', function($scope, $log) {
-    var formdata, submit;
     $scope.data = [
       {
         group: "Platform of Purchase",
@@ -16,8 +15,8 @@
         items: ["UAE", "KSA", "Others"]
       }
     ];
-    formdata = {};
-    return submit = function() {
+    $scope.formdata = {};
+    return $scope.submit = function() {
       var data;
       data = JSON.stringify($("#dataForm").serializeArray());
       return $log.info("Got form data: " + data);
