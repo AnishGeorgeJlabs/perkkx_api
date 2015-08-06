@@ -18,6 +18,7 @@ def formPost(request):
     try:
         data = json.loads(request.body)
         # Do processing here
+        return basic_success
     except Exception, e:
         return basic_error(e)
 
