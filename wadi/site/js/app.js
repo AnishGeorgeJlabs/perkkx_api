@@ -18,7 +18,7 @@
     $scope.formdata = {};
     return $scope.submit = function() {
       var data;
-      data = JSON.stringify($("#dataForm").serialize());
+      data = JSON.stringify($("#dataForm").serializeArray());
       return $log.info("Got form data: " + data);
     };
   });
