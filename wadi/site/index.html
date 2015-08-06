@@ -27,8 +27,11 @@
 
 <div class="container" ng-app="Wadi" ng-controller="MainCtrl">
   <div class="row">
-    <div class="col-md-10">
-      <form ng-submit="submit()" id="dataForm">
+
+    <form ng-submit="submit()" id="dataForm">
+
+      <div class="col-md-6">
+
         <div class="panel panel-default" ng-repeat="section in data">
           <div class="panel-heading">{{section.group}}</div>
           <div class="panel-body">
@@ -41,10 +44,23 @@
         </div>
 
         <button type="submit">Submit</button>
-      </form>
-    </div>
-    <div class="col-md-2">
-    </div>
+      </div>
+      <div class="col-md-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">SMS content</div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label>Arabic</label>
+              <input type="text" class='form-control' name="Arabic">
+            </div>
+            <div class="form-group">
+              <label>English</label>
+              <input type="text" class='form-control' name="English">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
 
