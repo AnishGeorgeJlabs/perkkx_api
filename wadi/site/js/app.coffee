@@ -37,7 +37,6 @@ angular.module("Wadi", [])
   $scope.submit = () ->
     nData = $("#dataForm").serializeObject()
     $log.info("Object mode: "+JSON.stringify(nData))
-
-  $http.post "http://45.55.72.208/wadi/post", nData
-  .success (res) ->
-    $log.info "Got result: "+JSON.stringify(res)
+    $http.post "http://45.55.72.208/wadi/post", nData
+    .success (res) ->
+      $log.info "Got result: "+JSON.stringify(res)

@@ -32,14 +32,14 @@
   angular.module("Wadi", []).controller('MainCtrl', function($scope, $log, $http) {
     $scope.data = staticData;
     $scope.formdata = {};
-    $scope.submit = function() {
+    return $scope.submit = function() {
       var nData;
       nData = $("#dataForm").serializeObject();
-      return $log.info("Object mode: " + JSON.stringify(nData));
+      $log.info("Object mode: " + JSON.stringify(nData));
+      return $http.post("http://45.55.72.208/wadi/post", nData).success(function(res) {
+        return $log.info("Got result: " + JSON.stringify(res));
+      });
     };
-    return $http.post("http://45.55.72.208/wadi/post", nData).success(function(res) {
-      return $log.info("Got result: " + JSON.stringify(res));
-    });
   });
 
 }).call(this);
