@@ -4,7 +4,7 @@
 
 angular.module("Wadi", [])
 .controller 'MainCtrl', ($scope) ->
-  data = [
+  $scope.data = [
     {
       group: "Platform of Purchase"
       items: ["Desktop", "Mobile"]

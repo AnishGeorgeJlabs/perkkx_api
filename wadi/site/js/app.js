@@ -6,8 +6,8 @@
 
 (function() {
   angular.module("Wadi", []).controller('MainCtrl', function($scope) {
-    var data, formdata;
-    data = [
+    var formdata;
+    $scope.data = [
       {
         group: "Platform of Purchase",
         items: ["Desktop", "Mobile"]
