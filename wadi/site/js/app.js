@@ -36,7 +36,7 @@
       var nData;
       nData = $("#dataForm").serializeObject();
       $log.info("Object mode: " + JSON.stringify(nData));
-      return $http.post("http://45.55.72.208/wadi/post", nData).success(function(res) {
+      return $http.post("http://45.55.72.208/wadi/interface/post", nData).success(function(res) {
         return $log.info("Got result: " + JSON.stringify(res));
       });
     };
