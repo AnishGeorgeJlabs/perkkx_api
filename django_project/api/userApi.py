@@ -95,19 +95,21 @@ def signup(request):
         data.update({"userID":key})
         data.update({"verified":"N"})
 
+        '''
         verification_code = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
         data['veri_code'] = verification_code
+        '''
 
         data['regId'] = [data['regId']]
         collection.insert(data)
         res = { "success":'1', "userID": key }
 
-        mResult = conf_mail(data['cemail'], key+'_'+verification_code)
+        #mResult = conf_mail(data['cemail'], key+'_'+verification_code)
         return HttpResponse(dumps(res),content_type="application/json")
     except:
         failure['success'] = '0'
         failure['reason'] = "DATA ALREADY EXIST"
-	return HttpResponse(dumps(failure), content_type="application/json")
+        return HttpResponse(dumps(failure), content_type="application/json")
 
 @csrf_exempt
 def getdata(request):
