@@ -106,9 +106,9 @@ def signup(request):
 
         #mResult = conf_mail(data['cemail'], key+'_'+verification_code)
         return HttpResponse(dumps(res),content_type="application/json")
-    except:
+    except Exception, e:
         failure['success'] = '0'
-        failure['reason'] = "DATA ALREADY EXIST"
+        failure['reason'] = str(e)
         return HttpResponse(dumps(failure), content_type="application/json")
 
 @csrf_exempt
