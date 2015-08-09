@@ -26,7 +26,7 @@ def deal_valid(deal):
         return False
 
     if 'deal_start' in deal and \
-        today < datetime.strptime(deal['deal_start', "%d/%m/%Y"]):
+        today < datetime.strptime(deal['deal_start'], "%d/%m/%Y"):
         return False
 
     if 'valid_days' in deal and \
