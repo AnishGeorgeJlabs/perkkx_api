@@ -22,8 +22,13 @@ def deal_valid(deal):
     if not deal:
         return False
     today = datetime.today()
-    if today >= datetime.strptime(deal['expiry'], "%d/%m/%Y"):
+    if 'expiry' in deal and today >= datetime.strptime(deal['expiry'], "%d/%m/%Y"):
         return False
+
+    if 'deal_start' in deal and \
+        today < datetime.strptime(deal['deal_start', "%d/%m/%Y"]):
+        return False
+
     if 'valid_days' in deal and \
             ((today.weekday() + 1) % 7) not in deal['valid_days']:
         return False

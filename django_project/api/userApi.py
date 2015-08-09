@@ -95,11 +95,6 @@ def signup(request):
         data.update({"userID":key})
         data.update({"verified":"N"})
 
-        '''
-        verification_code = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
-        data['veri_code'] = verification_code
-        '''
-
         data['regId'] = [data['regId']]
         collection.insert(data)
         res = { "success":'1', "userID": key }
@@ -157,7 +152,8 @@ def updateuser(request):
                 code = key + "_" + verify
                 status,msg = conf_mail(data['cemail'],code)
                 data['veri_code'] = verify
-                data['verified'] = "N"
+                if 'verified' not in verified:
+                    data['verified'] = "N"
         except:
             print "hi"
         collection.update({"userID":key},{"$set": data} ,False)
