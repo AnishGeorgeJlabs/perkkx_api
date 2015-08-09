@@ -156,7 +156,7 @@ def updateuser(request):
                 verify = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
                 code = key + "_" + verify
                 status,msg = conf_mail(data['cemail'],code)
-                data['code'] = verify
+                data['veri_code'] = verify
                 data['verified'] = "N"
         except:
             print "hi"
