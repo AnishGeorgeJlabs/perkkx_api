@@ -173,7 +173,7 @@ def get_deals(request, category):
                 debug_message += "\n Case 2 for dynamic"
             """
 
-            debug_message += "Size of dynamic deals: "+str(len(dynamic_deals))+"\n"
+            # debug_message += "Size of dynamic deals: "+str(len(dynamic_deals))+"\n"
 
             # ----- Setup Merchant data ------ #
             process_merchant(mer, save_timing=False)       # Found in merchantApi
@@ -194,9 +194,11 @@ def get_deals(request, category):
             # ----- Setup done ----- #
 
             # Adding to deals arrays
+            '''
             for d in dynamic_deals:
                 d.update(mer)
                 data_dynamic_deals.append(d)
+            '''
 
             if pdeal:
                 pdeal.update(mer)
