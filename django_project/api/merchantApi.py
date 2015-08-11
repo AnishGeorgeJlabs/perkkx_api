@@ -90,6 +90,15 @@ def process_merchant (mer, save_timing):
     else:
         mer['today'] = dayToday
 
+def custom_filter(deal):
+    if deal_valid(deal):
+        if 'gmin' in deal:
+            deal.pop('gmin')
+        if 'group_size' in deal:
+            deal.pop('group_size')
+        return True
+    else:
+        return False
 
 @csrf_exempt
 def merchants(request, user, vendor):
@@ -121,7 +130,7 @@ def merchants(request, user, vendor):
     merchant['all_deals'] = filter(
         lambda group: len(group['deals']) > 0,
         map(
-            lambda group: {'size': group['size'], 'deals': filter(deal_valid, group['deals'])},
+            lambda group: {'size': group['size'], 'deals': filter(custom_filter, group['deals'])},
             all_deals
         )
     )
