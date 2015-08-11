@@ -36,6 +36,10 @@ def block_number(request):
 @csrf_exempt
 def test_query(request):
     return jsonResponse({
-        "query": "select distinct b.number,if(a.fk_language=1,'English','Arabic') as language from customer a inner join customer_phone b on b.fk_customer = a.id_customer where a.fk_country = 3 order by a.id_customer desc limit 10"
+        "pipeline": ['category', 'customer'],
+        'options': {
+            'mode': 'all',
+            'cat_list': ['Sports Shoes', 'Pumps']
+        }
     })
 
