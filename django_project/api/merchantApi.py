@@ -108,18 +108,23 @@ def merchants(request, user, vendor):
     """ Works like a charm :sunglasses: """
     all_deals = db.deals.aggregate([
         {"$match": {"vendor_id": int(vendor)}},
-        {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True}},
+        {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True,
+                      "valid_days": True, "valid_time": True, "deal_start": True}},
         {"$group": {"_id": {"gsize": "$group_size", "gmin": "$gmin"},
                     "deals": {
-                        "$addToSet": {
-                            "deal": "$deal",
-                            "expiry": "$expiry",
-                            "cID": "$cID"
-                        }}}},
+                        "$addToSet": "$$ROOT"
+                    }}},
         {"$sort": {"_id.gmin": 1}},
         {"$project": {"size": "$_id.gsize", "_id": False, "deals": True}}
     ])
-    merchant['all_deals'] = list(all_deals)
+    all_deals = list(all_deals)
+    merchant['all_deals'] = filter(
+        lambda group: len(group['deals']) > 0,
+        map(
+            lambda group: {'size': group['size'], 'deals': filter(deal_valid, group['deals'])},
+            all_deals
+        )
+    )
 
     return HttpResponse(dumps(merchant), content_type="application/json")
 
