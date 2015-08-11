@@ -228,7 +228,7 @@ def get_deals(request, category):
             "page": pages,
             "debug": debug_message,
         }
-        return HttpResponse(dumps(res), content_type="application/json")
+        return HttpResponse(dumps(rs), content_type="application/json")
     except Exception, e:
         return HttpResponse(dumps({"exception": "error : "+str(e)}), content_type="application/json")
 
@@ -258,6 +258,23 @@ def get_totals(request):
         )
 
     return HttpResponse(dumps({"data": res}), content_type='application/json')
+
+@csrf_exempt
+def get_one_time_deals(request):
+    try:
+        if 'userID' not in request.GET:
+            return HttpResponse(dumps({"success": 0, "error": "No user id in get request"}))
+
+        userID = request.GET['userID']
+
+        deals = [
+            deal
+            for deal in db.one_time_deals.find({}, deal_filter)
+            if db.order_data.count({"userID": userID, "cID": deal['cID']}) == 0
+        ]
+        return HttpResponse(dumps({"success": 1, "data": deals}))
+    except Exception, e:
+        return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}))
 
 """ Deprecated
 @csrf_exempt
