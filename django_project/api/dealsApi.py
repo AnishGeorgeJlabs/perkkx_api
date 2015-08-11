@@ -128,6 +128,7 @@ def get_deals(request, category):
             if 'group' in request.GET:
                 group_query_update(deal_query, request.GET['group'])
 
+            '''
             debug2 += 'stage1deal_query: '+str(deal_query)+" :: "
             # Step 1, dynamic deals get preference
             dyn_query = deal_query.copy()
@@ -141,19 +142,21 @@ def get_deals(request, category):
                              dCollection.find(dyn_query, deal_filter)
                              if deal_valid(d)]
             debug2 += 'size of dynamic deals: '+str(len(dynamic_deals))+" :: "
-
-            # Step 2, get the primary deal
+            '''
+            # Step 2, get the primary deal, now step 1
             deal_query.update({"deal_cat": "primary"})
             pdeal = dCollection.find_one( deal_query, deal_filter )
 
             deal_query.update({"deal_cat": "secondary"})
+            '''
             if pdeal in dynamic_deals:
                 pdeal = {}
-            elif pdeal and deal_valid(pdeal):
+            '''
+            if pdeal and deal_valid(pdeal):
                 secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
                 if secondary:
                     pdeal['second_deal'] = secondary['deal']
-            elif len(dynamic_deals) == 0:
+            else:
                 secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
                 if len(secondaries) == 0:
                     continue
