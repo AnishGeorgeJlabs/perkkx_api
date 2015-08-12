@@ -26,7 +26,7 @@ def formPost(request):
 
         campaign = data['campaign']
         date = campaign['date']
-        time = datetime.strptime(data['time'], "%H:%M")
+        time = datetime.strptime(campaign['time'], "%H:%M")
         hour = time.hour
         minute = time.minute
         english = campaign['text']['english']
