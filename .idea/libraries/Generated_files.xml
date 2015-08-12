@@ -3,10 +3,12 @@
     <properties>
       <sourceFilesUrls>
         <item url="file://$PROJECT_DIR$/wadi/site/js/app.js" />
+        <item url="file://$PROJECT_DIR$/wadi/site/js/app_form.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/wadi/site/js/app.js" />
+      <root url="file://$PROJECT_DIR$/wadi/site/js/app_form.js" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

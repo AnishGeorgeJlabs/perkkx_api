@@ -2,14 +2,14 @@
   Wadi sms tool web interface
 ###
 
-angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect'])
+angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect', 'Wadi.form'])
 .config ($stateProvider, $urlRouterProvider) ->
   $stateProvider
   .state('login',
     templateUrl: './templates/view_login.html'
     controller: 'LoginCtrl'
   )
-  .state('main',
+  .state('form',
     templateUrl: './templates/view_main.html'
     controller: 'FormCtrl'
   )
@@ -20,7 +20,7 @@ angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect'])
 
 .controller 'MainCtrl', ($scope, $state, $http, $log) ->
   $log.debug "Main executed"
-  $state.go('main')     # TODO, change
+  $state.go('form')     # TODO, change
 
   isLoggedIn = false
 
@@ -36,7 +36,7 @@ angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect'])
       $log.debug "Got result: #{JSON.stringify(result)}"
       isLoggedIn = result.success
       if isLoggedIn
-        $state.go('main')
+        $state.go('form')
       else
         alert "Authentication failed"
 
@@ -53,27 +53,13 @@ angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect'])
     $scope.data.username = ''
     $scope.data.password = ''
 
-
-
-.controller 'FormCtrl', ($scope, $state, $log, $http) ->
-  $scope.checkLogin = () ->
-    $log.info "Checking login status at FormCtrl"
-    if not $scope.$parent.checkLogin()
-      $state.go('login')
-  # $scope.checkLogin() TODO, change
-
-  $scope.formData = []
-
-  $http.get 'http://45.55.72.208/wadi/interface/form'
-  .success (data) ->
-    $scope.formData = data
-
-
 .controller 'TestCtrl', ($scope, $state, $log) ->
   $scope.selected = []
   $scope.sampleData = [
     'electronics', 'shoes', 'sports bags', 'goodies'
   ]
+
+
 
   ###
   $scope.sampleData = [

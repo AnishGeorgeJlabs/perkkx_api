@@ -1,3 +1,68 @@
-<div class="row">
-  {{formData}}
-</div>
+  <form class="form-horizontal">
+    <div class="row">
+    <div class="col-md-6">
+      <h3>Configure Target consumer</h3>
+
+      <div class="form-group" ng-repeat="item in simpleParts" ng-if="simpleParts.length">
+        <div class="col-sm-6">
+          <label>{{item.pretty}}</label>
+        </div>
+        <div class="col-sm-6">
+          <span ng-dropdown-multiselect="" options="item.values"
+                selected-model="selectedSimpleParts[item.operation]"></span>
+        </div>
+      </div>
+
+      <div class="form-group" ng-if="advancedParts['customer']" ng-init="item = advancedParts.customer">
+        <div class="col-sm-6">
+          <label>{{item.pretty}}</label>
+        </div>
+        <div class="col-sm-6">
+            <span ng-dropdown-multiselect="" options="item.values"
+                  selected-model="selectedAdvancedParts[item.operation]"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <h3>Configure Campaign</h3>
+      <div class="panel panel-primary">
+        <div class="panel-heading">SMS content</div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label class="control-label col-sm-2">Arabic</label>
+            <div class="col-sm-10">
+              <input type="text" dir="rtl" class='form-control' name="Arabic" ng-model="campaign.text.arabic">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2">English</label>
+            <div class="col-sm-10">
+              <input type="text" class='form-control' name="English" ng-model="campaign.text.english">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">Execution date time (Riyadh timezone)</div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label class="control-label col-sm-2">Date</label>
+            <div class="col-sm-10">
+              <input type="datetime-local" class="form-control" ng-model="campaign.date">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+    <div class="row">
+      <div class="col-sm-offset-3 col-sm-6">
+        <div class="form-group">
+            <button class="btn btn-success form-control" ng-click="submit()">Submit</button>
+        </div>
+      </div>
+
+    </div>
+  </form>

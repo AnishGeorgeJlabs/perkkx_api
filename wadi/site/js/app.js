@@ -5,11 +5,11 @@
  */
 
 (function() {
-  angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect']).config(function($stateProvider, $urlRouterProvider) {
+  angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect', 'Wadi.form']).config(function($stateProvider, $urlRouterProvider) {
     return $stateProvider.state('login', {
       templateUrl: './templates/view_login.html',
       controller: 'LoginCtrl'
-    }).state('main', {
+    }).state('form', {
       templateUrl: './templates/view_main.html',
       controller: 'FormCtrl'
     }).state('test', {
@@ -19,7 +19,7 @@
   }).controller('MainCtrl', function($scope, $state, $http, $log) {
     var isLoggedIn;
     $log.debug("Main executed");
-    $state.go('main');
+    $state.go('form');
     isLoggedIn = false;
     $scope.checkLogin = function() {
       return isLoggedIn;
@@ -33,7 +33,7 @@
         $log.debug("Got result: " + (JSON.stringify(result)));
         isLoggedIn = result.success;
         if (isLoggedIn) {
-          return $state.go('main');
+          return $state.go('form');
         } else {
           return alert("Authentication failed");
         }
@@ -50,17 +50,6 @@
       $scope.data.username = '';
       return $scope.data.password = '';
     };
-  }).controller('FormCtrl', function($scope, $state, $log, $http) {
-    $scope.checkLogin = function() {
-      $log.info("Checking login status at FormCtrl");
-      if (!$scope.$parent.checkLogin()) {
-        return $state.go('login');
-      }
-    };
-    $scope.formData = [];
-    return $http.get('http://45.55.72.208/wadi/interface/form').success(function(data) {
-      return $scope.formData = data;
-    });
   }).controller('TestCtrl', function($scope, $state, $log) {
     $scope.selected = [];
     return $scope.sampleData = ['electronics', 'shoes', 'sports bags', 'goodies'];

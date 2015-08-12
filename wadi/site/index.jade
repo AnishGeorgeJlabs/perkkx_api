@@ -4,11 +4,14 @@ html(ng-app='Wadi')
     meta(charset='utf-8')
     title Wadi SMS tool
 
-    - var files = ['jquery/dist/jquery.min.js', 'angularjs/angular.min.js', 'bootstrap/dist/js/bootstrap.min.js', 'angular-ui-router/release/angular-ui-router.min.js', 'angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js', 'blueimp-md5/js/md5.min.js', 'lodash/dist/lodash.min.js']
+    - var files1 = ['jquery/dist/jquery.min.js', 'angularjs/angular.min.js', 'bootstrap/dist/js/bootstrap.min.js']
+    - var files2 = ['angular-ui-router/release/angular-ui-router.min.js', 'angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js', 'blueimp-md5/js/md5.min.js']
+    - var files3 = ['lodash/dist/lodash.min.js', 'underscore/underscore-min.js']
+    - var files = files1.concat(files2, files3)
     each file in files
       script(src='bower_components/'+file)
 
-    each file in ['external', 'app']
+    each file in ['external', 'app', 'app_form']
       script(src='js/'+file+'.js')
 
     link(href='bower_components/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet')
