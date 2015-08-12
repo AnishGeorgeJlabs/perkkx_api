@@ -33,7 +33,9 @@ def formPost(request):
         arabic = campaign['text']['arabic']
         row = ['Once', 'external', date, hour, minute, english, arabic, url]
         wrk_sheet = get_scheduler_sheet()
-        wrk_sheet.append_row(row)
+
+        size = len(wrk_sheet.get_all_values())
+        wrk_sheet.insert_row(row, size+1)
 
         res = {'success': True, 'data_received': data, "row created ": row}
         return jsonResponse(res)
