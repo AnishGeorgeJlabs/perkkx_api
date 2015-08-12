@@ -6,4 +6,4 @@ def reference(request):
     context = {
         'filename': filename
     }
-    return render(request, './templates/index.html',context)
+    return render(request, 'wadi/file.html',context)
