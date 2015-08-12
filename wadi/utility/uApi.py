@@ -14,4 +14,4 @@ def reference(request):
 def upload(request):
     file = request.FILES['upload']
     name = request.POST['file']
-    return HttpResponse(json.dumps({"success": name}))
+    return HttpResponse(json.dumps({"success": name}), content_type='application/json')
