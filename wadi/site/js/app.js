@@ -6,15 +6,24 @@
 
 (function() {
   angular.module('Wadi', ['ui.router']).config(function($stateProvider, $urlRouterProvider) {
-    $stateProvider.state('home', {
-      url: '/',
-      abstract: true,
-      templateUrl: 'index.html'
-    }).state('home.login', {
-      url: '/login',
-      templateUrl: 'templates/view_login.html'
+    return $stateProvider.state('login', {
+      templateUrl: './templates/view_login.html'
     });
-    return $urlRouterProvider.otherwise('/login');
+  }).controller('MainCtrl', function($scope, $state, $http) {
+    var isLoggedIn;
+    $state.go('login');
+    isLoggedIn = false;
+    $state.checkLogin = function() {
+      return isLoggedIn;
+    };
+    return $state.login = function(username, pass) {
+      return $http.post("45.55.72.208/interface/wadi/login", {
+        username: username,
+        password: pass
+      }).success(function(result) {
+        return isLoggedIn = result.success;
+      });
+    };
   });
 
 

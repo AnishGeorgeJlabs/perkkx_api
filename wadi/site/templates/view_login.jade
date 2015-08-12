@@ -3,10 +3,16 @@
     .panel.panel-default
       .panel-heading Login
       .panel-body
-        form
+        form.form-horizontal
           .form-group
-            label Username
-            input(type='text' name='username')
+            label.col-sm-4.control-label Username
+            .col-sm-8
+              input(type='text' name='username').form-control
           .form-group
-            label Password
-            input(type='password' name='password')
+            label.col-sm-4.control-label Password
+            .col-sm-8
+              input(type='password' name='password').form-control
+
+          .form-group
+            .col-sm-offset-4.col-sm-8
+              button(type='submit').btn.btn-primary Sign In

@@ -5,18 +5,23 @@
 angular.module('Wadi', ['ui.router'])
 .config ($stateProvider, $urlRouterProvider) ->
   $stateProvider
-  .state('home',
-    url: '/'
-    abstract: true
-    templateUrl: 'index.html'
+  .state('login',
+    templateUrl: './templates/view_login.html'
   )
-  .state('home.login',
-    url: '/login',
-    templateUrl: 'templates/view_login.html'
-  )
+.controller 'MainCtrl', ($scope, $state, $http) ->
+  $state.go('login')
 
-  $urlRouterProvider.otherwise('/login')
+  isLoggedIn = false
 
+  $state.checkLogin = () -> isLoggedIn
+
+  $state.login = (username, pass) ->
+    $http.post "45.55.72.208/interface/wadi/login", {
+      username: username,
+      password: pass
+    }
+    .success (result) ->
+      isLoggedIn = result.success
 ###
 angular.module("Wadi", [])
 .controller 'MainCtrl', ($scope, $log, $http) ->
