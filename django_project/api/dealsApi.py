@@ -128,6 +128,7 @@ def get_deals(request, category):
             if 'group' in request.GET:
                 group_query_update(deal_query, request.GET['group'])
 
+            '''
             debug2 += 'stage1deal_query: '+str(deal_query)+" :: "
             # Step 1, dynamic deals get preference
             dyn_query = deal_query.copy()
@@ -141,19 +142,21 @@ def get_deals(request, category):
                              dCollection.find(dyn_query, deal_filter)
                              if deal_valid(d)]
             debug2 += 'size of dynamic deals: '+str(len(dynamic_deals))+" :: "
-
-            # Step 2, get the primary deal
+            '''
+            # Step 2, get the primary deal, now step 1
             deal_query.update({"deal_cat": "primary"})
             pdeal = dCollection.find_one( deal_query, deal_filter )
 
             deal_query.update({"deal_cat": "secondary"})
+            '''
             if pdeal in dynamic_deals:
                 pdeal = {}
-            elif pdeal and deal_valid(pdeal):
+            '''
+            if pdeal and deal_valid(pdeal):
                 secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
                 if secondary:
                     pdeal['second_deal'] = secondary['deal']
-            elif len(dynamic_deals) == 0:
+            else:
                 secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
                 if len(secondaries) == 0:
                     continue
@@ -170,7 +173,7 @@ def get_deals(request, category):
                 debug_message += "\n Case 2 for dynamic"
             """
 
-            debug_message += "Size of dynamic deals: "+str(len(dynamic_deals))+"\n"
+            # debug_message += "Size of dynamic deals: "+str(len(dynamic_deals))+"\n"
 
             # ----- Setup Merchant data ------ #
             process_merchant(mer, save_timing=False)       # Found in merchantApi
@@ -191,9 +194,11 @@ def get_deals(request, category):
             # ----- Setup done ----- #
 
             # Adding to deals arrays
+            '''
             for d in dynamic_deals:
                 d.update(mer)
                 data_dynamic_deals.append(d)
+            '''
 
             if pdeal:
                 pdeal.update(mer)
@@ -255,6 +260,23 @@ def get_totals(request):
         )
 
     return HttpResponse(dumps({"data": res}), content_type='application/json')
+
+@csrf_exempt
+def get_one_time_deals(request):
+    try:
+        if 'userID' not in request.GET:
+            return HttpResponse(dumps({"success": 0, "error": "No user id in get request"}))
+
+        userID = request.GET['userID']
+
+        deals = [
+            deal
+            for deal in db.one_time_deals.find({}, deal_filter)
+            if db.order_data.count({"userID": userID, "cID": deal['cID']}) == 0
+        ]
+        return HttpResponse(dumps({"success": 1, "data": deals}))
+    except Exception, e:
+        return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}))
 
 """ Deprecated
 @csrf_exempt

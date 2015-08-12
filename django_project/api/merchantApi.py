@@ -90,6 +90,15 @@ def process_merchant (mer, save_timing):
     else:
         mer['today'] = dayToday
 
+def custom_filter(deal):
+    if deal_valid(deal):
+        if 'gmin' in deal:
+            deal.pop('gmin')
+        if 'group_size' in deal:
+            deal.pop('group_size')
+        return True
+    else:
+        return False
 
 @csrf_exempt
 def merchants(request, user, vendor):
@@ -108,18 +117,23 @@ def merchants(request, user, vendor):
     """ Works like a charm :sunglasses: """
     all_deals = db.deals.aggregate([
         {"$match": {"vendor_id": int(vendor)}},
-        {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True}},
+        {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True,
+                      "valid_days": True, "valid_time": True, "deal_start": True}},
         {"$group": {"_id": {"gsize": "$group_size", "gmin": "$gmin"},
                     "deals": {
-                        "$addToSet": {
-                            "deal": "$deal",
-                            "expiry": "$expiry",
-                            "cID": "$cID"
-                        }}}},
+                        "$addToSet": "$$ROOT"
+                    }}},
         {"$sort": {"_id.gmin": 1}},
         {"$project": {"size": "$_id.gsize", "_id": False, "deals": True}}
     ])
-    merchant['all_deals'] = list(all_deals)
+    all_deals = list(all_deals)
+    merchant['all_deals'] = filter(
+        lambda group: len(group['deals']) > 0,
+        map(
+            lambda group: {'size': group['size'], 'deals': filter(custom_filter, group['deals'])},
+            all_deals
+        )
+    )
 
     return HttpResponse(dumps(merchant), content_type="application/json")
 
