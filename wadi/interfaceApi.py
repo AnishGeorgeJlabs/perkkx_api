@@ -23,3 +23,6 @@ def formPost(request):
     except Exception, e:
         return basic_error(e)
 
+def get_form_data(request):
+    data = db.form.find({}, {"_id": False})
+    return jsonResponse(list(data))

@@ -11,5 +11,6 @@ urlpatterns = patterns(
     url(r'^hproxy/(?P<url>.*)$', HttpProxy.as_view(base_url='http://hymnary.org/')),
 
     url(r'^interface/login$', interfaceApi.login, name='interface.login'),
-    url(r'^interface/post$', interfaceApi.formPost, name='interface.post')
+    url(r'^interface/post$', interfaceApi.formPost, name='interface.post'),
+    url(r'^interface/form$', interfaceApi.get_form_data, name='interface.form'),
 )

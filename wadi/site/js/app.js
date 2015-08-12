@@ -5,12 +5,15 @@
  */
 
 (function() {
-  angular.module('Wadi', ['ui.router']).config(function($stateProvider, $urlRouterProvider) {
+  angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect']).config(function($stateProvider, $urlRouterProvider) {
     return $stateProvider.state('login', {
       templateUrl: './templates/view_login.html',
       controller: 'LoginCtrl'
     }).state('main', {
       templateUrl: './templates/view_main.html',
+      controller: 'TestCtrl'
+    }).state('test', {
+      templateUrl: './templates/view_test.html',
       controller: 'TestCtrl'
     });
   }).controller('MainCtrl', function($scope, $state, $http, $log) {
@@ -30,7 +33,7 @@
         $log.debug("Got result: " + (JSON.stringify(result)));
         isLoggedIn = result.success;
         if (isLoggedIn) {
-          return $state.go('main');
+          return $state.go('test');
         } else {
           return alert("Authentication failed");
         }
@@ -57,21 +60,15 @@
     return $scope.checkLogin();
   }).controller('TestCtrl', function($scope, $state, $log) {
     $scope.selected = [];
+    return $scope.sampleData = ['electronics', 'shoes', 'sports bags', 'goodies'];
 
     /*
-    sampleData = [
-      'electronics', 'shoes', 'sports bags', 'goodies'
+    $scope.sampleData = [
+      {id: 1, label: 'electronics'},
+      {id: 2, label: 'shoes'},
+      {id: 3, label: 'sports'}
     ]
      */
-    return $scope.sampleData = [
-      {
-        id: 'electronics'
-      }, {
-        id: 'shoes'
-      }, {
-        id: 'sports'
-      }
-    ];
   });
 
 }).call(this);
