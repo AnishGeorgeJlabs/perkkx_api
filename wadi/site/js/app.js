@@ -7,20 +7,27 @@
 (function() {
   angular.module('Wadi', ['ui.router']).config(function($stateProvider, $urlRouterProvider) {
     return $stateProvider.state('login', {
-      templateUrl: './templates/view_login.html'
+      templateUrl: './templates/view_login.html',
+      controller: 'LoginCtrl'
+    }).state('main', {
+      templateUrl: './templates/view_main.html',
+      controller: 'FormCtrl'
     });
-  }).controller('MainCtrl', function($scope, $state, $http) {
+  }).controller('MainCtrl', function($scope, $state, $http, $log) {
     var isLoggedIn;
+    $log.debug("Main executed");
     $state.go('login');
     isLoggedIn = false;
     $scope.checkLogin = function() {
       return isLoggedIn;
     };
     return $scope.login = function(username, pass) {
+      $log.debug("Got submission " + username + ", " + pass);
       return $http.post("http://45.55.72.208/wadi/interface/login", {
         username: username,
         password: pass
       }).success(function(result) {
+        $log.debug("Got result: " + (JSON.stringify(result)));
         isLoggedIn = result.success;
         if (isLoggedIn) {
           return $state.go('main');
@@ -29,16 +36,25 @@
         }
       });
     };
-  }).controller('LoginCtrl', function($scope) {
+  }).controller('LoginCtrl', function($scope, $log) {
     $scope.data = {
       username: '',
       password: ''
     };
     return $scope.submit = function() {
+      $log.debug("Submitting : " + (JSON.stringify($scope.data)));
       $scope.$parent.login($scope.data.username, md5($scope.data.password));
       $scope.data.username = '';
       return $scope.data.password = '';
     };
+  }).controller('FormCtrl', function($scope, $state, $log) {
+    $scope.checkLogin = function() {
+      $log.info("Checking login status at FormCtrl");
+      if (!$scope.$parent.checkLogin()) {
+        return $state.go('login');
+      }
+    };
+    return $scope.checkLogin();
   });
 
 

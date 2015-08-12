@@ -7,8 +7,15 @@ angular.module('Wadi', ['ui.router'])
   $stateProvider
   .state('login',
     templateUrl: './templates/view_login.html'
+    controller: 'LoginCtrl'
   )
-.controller 'MainCtrl', ($scope, $state, $http) ->
+  .state('main',
+    templateUrl: './templates/view_main.html'
+    controller: 'FormCtrl'
+  )
+
+.controller 'MainCtrl', ($scope, $state, $http, $log) ->
+  $log.debug "Main executed"
   $state.go('login')
 
   isLoggedIn = false
@@ -16,27 +23,38 @@ angular.module('Wadi', ['ui.router'])
   $scope.checkLogin = () -> isLoggedIn
 
   $scope.login = (username, pass) ->
+    $log.debug "Got submission #{username}, #{pass}"
     $http.post "http://45.55.72.208/wadi/interface/login", {
       username: username,
       password: pass
     }
     .success (result) ->
+      $log.debug "Got result: #{JSON.stringify(result)}"
       isLoggedIn = result.success
       if isLoggedIn
         $state.go('main')
       else
         alert "Authentication failed"
 
-.controller 'LoginCtrl', ($scope) ->
+.controller 'LoginCtrl', ($scope, $log) ->
   $scope.data = {
     username: ''
     password: ''
   }
 
   $scope.submit = () ->
+    $log.debug "Submitting : #{JSON.stringify($scope.data)}"
     $scope.$parent.login($scope.data.username, md5($scope.data.password))
     $scope.data.username = ''
     $scope.data.password = ''
+
+.controller 'FormCtrl', ($scope, $state, $log) ->
+  $scope.checkLogin = () ->
+    $log.info "Checking login status at FormCtrl"
+    if not $scope.$parent.checkLogin()
+      $state.go('login')
+
+  $scope.checkLogin()
 
 ###
 angular.module("Wadi", [])
