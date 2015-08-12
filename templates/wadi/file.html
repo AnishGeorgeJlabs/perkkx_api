@@ -41,7 +41,9 @@
       fd.append('filename', "{{filename}}")
       xhr.send(fd);
     }
-    $('form').on('submit', function() {uploadFile(file)})
+    $('form').on('submit', function(e) {
+      e.preventDefault();
+      uploadFile(file)})
   })
 </script>
 </body>
