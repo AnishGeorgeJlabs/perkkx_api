@@ -32,6 +32,7 @@ angular.module('Wadi.form', [])
         arabic: ''
         english: ''
       date:''
+      time:''
     }
 
     for k in ['category']

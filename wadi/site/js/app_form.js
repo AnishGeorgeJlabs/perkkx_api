@@ -34,7 +34,8 @@
           arabic: '',
           english: ''
         },
-        date: ''
+        date: '',
+        time: ''
       };
       ref = ['category'];
       for (i = 0, len = ref.length; i < len; i++) {
