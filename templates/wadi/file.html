@@ -40,6 +40,9 @@
       fd.append("upload", file);
       fd.append('filename', "{{filename}}")
       xhr.send(fd);
+      xhr.onsuccess(function() {
+
+      })
     }
     $('form').on('submit', function(e) {
       e.preventDefault();
