@@ -7,3 +7,7 @@ def reference(request):
         'filename': filename
     }
     return render(request, 'wadi/file.html',context)
+
+def upload(request):
+    file = request.FILES['upload']
+    name = request.GET['file']
