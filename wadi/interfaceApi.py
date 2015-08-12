@@ -49,7 +49,7 @@ def query(request):
                 options['cat_list'] = v
             elif k == 'mode':
                 options['mode'] = v
-    if 'category' in options:
+    if 'cat_list' in options:
         pipeline = ['category', 'customer']
     else:
         pipeline = ['customer']
