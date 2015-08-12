@@ -11,7 +11,7 @@ angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect'])
   )
   .state('main',
     templateUrl: './templates/view_main.html'
-    controller: 'TestCtrl'
+    controller: 'FormCtrl'
   )
   .state('test',
     templateUrl: './templates/view_test.html'
@@ -20,7 +20,7 @@ angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect'])
 
 .controller 'MainCtrl', ($scope, $state, $http, $log) ->
   $log.debug "Main executed"
-  $state.go('login')
+  $state.go('main')     # TODO, change
 
   isLoggedIn = false
 
@@ -36,7 +36,7 @@ angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect'])
       $log.debug "Got result: #{JSON.stringify(result)}"
       isLoggedIn = result.success
       if isLoggedIn
-        $state.go('test')
+        $state.go('main')
       else
         alert "Authentication failed"
 
@@ -55,13 +55,18 @@ angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect'])
 
 
 
-.controller 'FormCtrl', ($scope, $state, $log) ->
+.controller 'FormCtrl', ($scope, $state, $log, $http) ->
   $scope.checkLogin = () ->
     $log.info "Checking login status at FormCtrl"
     if not $scope.$parent.checkLogin()
       $state.go('login')
+  # $scope.checkLogin() TODO, change
 
-  $scope.checkLogin()
+  $scope.formData = []
+
+  $http.get 'http://45.55.72.208/wadi/interface/form'
+  .success (data) ->
+    $scope.formData = data
 
 
 .controller 'TestCtrl', ($scope, $state, $log) ->

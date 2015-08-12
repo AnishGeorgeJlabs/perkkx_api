@@ -11,7 +11,7 @@
       controller: 'LoginCtrl'
     }).state('main', {
       templateUrl: './templates/view_main.html',
-      controller: 'TestCtrl'
+      controller: 'FormCtrl'
     }).state('test', {
       templateUrl: './templates/view_test.html',
       controller: 'TestCtrl'
@@ -19,7 +19,7 @@
   }).controller('MainCtrl', function($scope, $state, $http, $log) {
     var isLoggedIn;
     $log.debug("Main executed");
-    $state.go('login');
+    $state.go('main');
     isLoggedIn = false;
     $scope.checkLogin = function() {
       return isLoggedIn;
@@ -33,7 +33,7 @@
         $log.debug("Got result: " + (JSON.stringify(result)));
         isLoggedIn = result.success;
         if (isLoggedIn) {
-          return $state.go('test');
+          return $state.go('main');
         } else {
           return alert("Authentication failed");
         }
@@ -50,14 +50,17 @@
       $scope.data.username = '';
       return $scope.data.password = '';
     };
-  }).controller('FormCtrl', function($scope, $state, $log) {
+  }).controller('FormCtrl', function($scope, $state, $log, $http) {
     $scope.checkLogin = function() {
       $log.info("Checking login status at FormCtrl");
       if (!$scope.$parent.checkLogin()) {
         return $state.go('login');
       }
     };
-    return $scope.checkLogin();
+    $scope.formData = [];
+    return $http.get('http://45.55.72.208/wadi/interface/form').success(function(data) {
+      return $scope.formData = data;
+    });
   }).controller('TestCtrl', function($scope, $state, $log) {
     $scope.selected = [];
     return $scope.sampleData = ['electronics', 'shoes', 'sports bags', 'goodies'];

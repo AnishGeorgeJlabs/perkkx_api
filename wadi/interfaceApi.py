@@ -27,5 +27,5 @@ def get_form_data(request):
     data = db.form.find({}, {"_id": False})
     result = {}
     for item in data:
-        result[item['name']] = item
+        result[item['operation']] = item
     return jsonResponse(result)
