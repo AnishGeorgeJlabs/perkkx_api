@@ -11,7 +11,7 @@
       controller: 'LoginCtrl'
     }).state('main', {
       templateUrl: './templates/view_main.html',
-      controller: 'FormCtrl'
+      controller: 'TestCtrl'
     });
   }).controller('MainCtrl', function($scope, $state, $http, $log) {
     var isLoggedIn;
@@ -55,22 +55,24 @@
       }
     };
     return $scope.checkLogin();
+  }).controller('TestCtrl', function($scope, $state, $log) {
+    $scope.selected = [];
+
+    /*
+    sampleData = [
+      'electronics', 'shoes', 'sports bags', 'goodies'
+    ]
+     */
+    return $scope.sampleData = [
+      {
+        id: 'electronics'
+      }, {
+        id: 'shoes'
+      }, {
+        id: 'sports'
+      }
+    ];
   });
-
-
-  /*
-  angular.module("Wadi", [])
-  .controller 'MainCtrl', ($scope, $log, $http) ->
-    $scope.data = staticData
-  
-    $scope.formdata = {}
-    $scope.submit = () ->
-      nData = $("#dataForm").serializeObject()
-      $log.info("Object mode: "+JSON.stringify(nData))
-      $http.post "http://45.55.72.208/wadi/interface/post", nData
-      .success (res) ->
-        $log.info "Got result: "+JSON.stringify(res)
-   */
 
 }).call(this);
 

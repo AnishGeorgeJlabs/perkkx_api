@@ -11,7 +11,7 @@ angular.module('Wadi', ['ui.router'])
   )
   .state('main',
     templateUrl: './templates/view_main.html'
-    controller: 'FormCtrl'
+    controller: 'TestCtrl'
   )
 
 .controller 'MainCtrl', ($scope, $state, $http, $log) ->
@@ -36,6 +36,7 @@ angular.module('Wadi', ['ui.router'])
       else
         alert "Authentication failed"
 
+
 .controller 'LoginCtrl', ($scope, $log) ->
   $scope.data = {
     username: ''
@@ -48,6 +49,8 @@ angular.module('Wadi', ['ui.router'])
     $scope.data.username = ''
     $scope.data.password = ''
 
+
+
 .controller 'FormCtrl', ($scope, $state, $log) ->
   $scope.checkLogin = () ->
     $log.info "Checking login status at FormCtrl"
@@ -56,16 +59,16 @@ angular.module('Wadi', ['ui.router'])
 
   $scope.checkLogin()
 
-###
-angular.module("Wadi", [])
-.controller 'MainCtrl', ($scope, $log, $http) ->
-  $scope.data = staticData
 
-  $scope.formdata = {}
-  $scope.submit = () ->
-    nData = $("#dataForm").serializeObject()
-    $log.info("Object mode: "+JSON.stringify(nData))
-    $http.post "http://45.55.72.208/wadi/interface/post", nData
-    .success (res) ->
-      $log.info "Got result: "+JSON.stringify(res)
-###
+.controller 'TestCtrl', ($scope, $state, $log) ->
+  $scope.selected = []
+  ###
+  sampleData = [
+    'electronics', 'shoes', 'sports bags', 'goodies'
+  ] ####
+
+  $scope.sampleData = [
+    {id: 'electronics'},
+    {id: 'shoes'},
+    {id: 'sports'}
+  ]

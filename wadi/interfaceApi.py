@@ -7,9 +7,9 @@ def login(request):
     try:
         data = json.loads(request.body)
         if db.credentials.count({"username": data['username'], "password": data['password']}) > 0:
-            return basic_success
+            return jsonResponse({"success": True})
         else:
-            return basic_failure
+            return jsonResponse({"success": False})
     except Exception, e:
         return basic_error(e)
 

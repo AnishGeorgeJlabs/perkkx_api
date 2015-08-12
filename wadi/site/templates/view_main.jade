@@ -1,3 +1,8 @@
 .row
-  .col-md-6
-    p Got to main, congo
+  form.form-horizontal
+    .col-sm-6
+      .form-group-lg
+        label.form-control.col-sm-4 Test select
+        .div(ng-dropdown-multiselect='' options='sampleData' selected-model='selected')
+    .col-sm-6
+      {{ selected }}
