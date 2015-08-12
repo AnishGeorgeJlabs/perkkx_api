@@ -100,7 +100,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/home/django/django_project/django_project/static'
 STATICFILES_DIRS = (
-    ("wadi", "/home/django/django_project/wadi/site")
+    ("wadi_sms", "/home/django/django_project/wadi/site")
 )
 
 #CORS_ALLOW_ORIGIN = 'http://localhost:8100'
