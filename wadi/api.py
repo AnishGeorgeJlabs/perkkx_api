@@ -14,7 +14,7 @@ def test(request):
             "requestData": request.body
         }
     return jsonResponse({
-        "result": True,
+        "success": True,
         "Message": "Test api, ECHO",
         "extra": extra
     })

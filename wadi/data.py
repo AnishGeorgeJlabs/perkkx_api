@@ -6,11 +6,11 @@ from bson.json_util import dumps
 def jsonResponse(obj):
     return HttpResponse(dumps(obj), content_type='application/json')
 
-basic_success = jsonResponse({"result": True})
-basic_failure = jsonResponse({"result": False})
+basic_success = jsonResponse({"success": True})
+basic_failure = jsonResponse({"success": False})
 def basic_error(e):
     return jsonResponse({
-        "result": False,
+        "success": False,
         "error": str(e)
     })
 

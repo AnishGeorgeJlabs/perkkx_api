@@ -18,7 +18,7 @@ def formPost(request):
     try:
         data = json.loads(request.body)
         # Do processing here
-        res = {'result': True, 'data_received': data}
+        res = {'success': True, 'data_received': data}
         return jsonResponse(res)
     except Exception, e:
         return basic_error(e)
