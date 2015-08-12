@@ -10,4 +10,4 @@ def reference(request):
 
 def upload(request):
     file = request.FILES['upload']
-    name = request.GET['file']
+    name = request.POST['file']

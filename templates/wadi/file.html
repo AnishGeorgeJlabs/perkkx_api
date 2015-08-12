@@ -27,7 +27,7 @@
    }, false);
 
     function uploadFile(file){
-      var url = 'http://45.55.72.208/wadi/upload?file={{filename}}';
+      var url = 'http://45.55.72.208/wadi/upload';
       var xhr = new XMLHttpRequest();
       var fd = new FormData();
       xhr.open("POST", url, true);
@@ -38,6 +38,7 @@
         }
       };
       fd.append("upload", file);
+      fd.append('filename', "{{filename}}")
       xhr.send(fd);
     }
     $('form').on('submit', function() {uploadFile(file)})
