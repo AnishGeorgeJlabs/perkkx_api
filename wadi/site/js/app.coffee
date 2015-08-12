@@ -13,15 +13,31 @@ angular.module('Wadi', ['ui.router'])
 
   isLoggedIn = false
 
-  $state.checkLogin = () -> isLoggedIn
+  $scope.checkLogin = () -> isLoggedIn
 
-  $state.login = (username, pass) ->
-    $http.post "45.55.72.208/interface/wadi/login", {
+  $scope.login = (username, pass) ->
+    $http.post "http://45.55.72.208/wadi/interface/login", {
       username: username,
       password: pass
     }
     .success (result) ->
       isLoggedIn = result.success
+      if isLoggedIn
+        $state.go('main')
+      else
+        alert "Authentication failed"
+
+.controller 'LoginCtrl', ($scope) ->
+  $scope.data = {
+    username: ''
+    password: ''
+  }
+
+  $scope.submit = () ->
+    $scope.$parent.login($scope.data.username, md5($scope.data.password))
+    $scope.data.username = ''
+    $scope.data.password = ''
+
 ###
 angular.module("Wadi", [])
 .controller 'MainCtrl', ($scope, $log, $http) ->

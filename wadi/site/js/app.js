@@ -13,16 +13,31 @@
     var isLoggedIn;
     $state.go('login');
     isLoggedIn = false;
-    $state.checkLogin = function() {
+    $scope.checkLogin = function() {
       return isLoggedIn;
     };
-    return $state.login = function(username, pass) {
-      return $http.post("45.55.72.208/interface/wadi/login", {
+    return $scope.login = function(username, pass) {
+      return $http.post("http://45.55.72.208/wadi/interface/login", {
         username: username,
         password: pass
       }).success(function(result) {
-        return isLoggedIn = result.success;
+        isLoggedIn = result.success;
+        if (isLoggedIn) {
+          return $state.go('main');
+        } else {
+          return alert("Authentication failed");
+        }
       });
+    };
+  }).controller('LoginCtrl', function($scope) {
+    $scope.data = {
+      username: '',
+      password: ''
+    };
+    return $scope.submit = function() {
+      $scope.$parent.login($scope.data.username, md5($scope.data.password));
+      $scope.data.username = '';
+      return $scope.data.password = '';
     };
   });
 
