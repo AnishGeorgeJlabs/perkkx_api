@@ -24,12 +24,13 @@ def formPost(request):
         result = db.queries.insert_one(data)
         url = 'http://45.55.72.208/wadi/query?id='+str(result.inserted_id)
 
-        date = data['date']
+        campaign = data['campaign']
+        date = campaign['date']
         time = datetime.strptime(data['time'], "%H:%M")
         hour = time.hour
         minute = time.minute
-        english = data['text']['english']
-        arabic = data['text']['arabic']
+        english = campaign['text']['english']
+        arabic = campaign['text']['arabic']
         row = ['Once', 'external', date, hour, minute, english, arabic, url]
 
         res = {'success': True, 'data_received': data, "row created ": row}
