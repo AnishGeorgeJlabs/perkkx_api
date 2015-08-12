@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    title Wadi SMS tool
+
+    - var files = ['jquery/dist/jquery.min.js', 'angularjs/angular.min.js', 'bootstrap/dist/js/bootstrap.min.js', 'angular-ui-router/release/angular-ui-router.min.js', 'angularjs-dropdown-multiselect/dist/angularjs-dropdown-multiselect.min.js']
+    each file in files
+      script(src='bower_components/'+file)
+
+    each file in ['external', 'app']
+      script(src='js/'+file+'.js')
+
+    link(href='bower_components/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet')
+
+  body
+    .jumbotron
+      .container
+        h1 Wadi SMS Tool
+        p This interface is a work in progress, ok
+
+    .container
+      ui-view
