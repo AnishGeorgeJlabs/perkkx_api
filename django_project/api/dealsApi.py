@@ -239,12 +239,13 @@ def get_deals(request, category):
 def get_all_deals_for_vendor(request, vendor):
     try:
         deal_query = {'vendor_id': int(vendor)}
+        one_time_deals = list(db.one_time_deals.find(deal_query, deal_compact_filter))
         if 'group' in request.GET:
             group_query_update(deal_query, request.GET['group'])
 
         deals = [d for d in db.deals.find(deal_query, deal_compact_filter)
                  if deal_valid(d)]
-        return HttpResponse(dumps({"data": deals, "total": len(deals), "success": 1}))
+        return HttpResponse(dumps({"data": deals, "total": len(deals), "one_time_deals": one_time_deals, "success": 1}))
     except Exception, e:
         return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}))
 

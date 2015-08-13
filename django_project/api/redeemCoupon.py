@@ -79,7 +79,7 @@ def check_coupon(request):
             return HttpResponse(dumps(result), content_type="application/json")
 
         # 2. Security check, validity of cID
-        if db.deals.find({"cID": data["cID"]}).count() == 0:
+        if db.deals.count({"cID": data["cID"]}) == 0 and db.one_time_deals.count({"cID": data['cID']}) == 0:
             result = failure.copy()
             result.update({"error": "Invalid cID"})
             return HttpResponse(dumps(result), content_type="application/json")
