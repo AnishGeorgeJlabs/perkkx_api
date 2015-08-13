@@ -194,27 +194,32 @@ def user_coupons(request,uid):
     except Exception, e:
         failure = {"success": 0, "reason": str(e)}
         return HttpResponse(dumps(failure),content_type="application/json")
+
 @csrf_exempt
 def getFacility(request):
-	failure = {"success": 0}
-	if "domain" in request.GET.keys():
-		domain = str(request.GET['domain'])
-		collection = db.corp
-		data = []
-		search = {"domain":domain}
-		temp = collection.find(search)
-		if temp.count() > 0:
-			for x in temp:
-				x.pop("domain")
-				x.pop("_id")
-				data.append(x)
-			return HttpResponse(dumps({"success": 1, "data": data}),content_type="application/json")
-		else:
-			failure.update({"reason":"domain not found"})
-			return HttpResponse(dumps(failure),content_type="application/json")
-	else:
-		failure.update({"reason":"Bad Request"})
-		return HttpResponse(dumps(failure),content_type="application/json")
+    failure = {"success": 0}
+    if "domain" in request.GET.keys():
+        domain = request.GET['domain']
+        collection = db.corp
+        data = list(collection.find({"domain": domain}, {"_id": False, "domain": False}))
+        '''
+        data = []
+        search = {"domain": domain}
+        temp = collection.find(search)
+        if temp.count() > 0:
+            for x in temp:
+                x.pop("domain")
+                x.pop("_id")
+                data.append(x)
+        '''
+        if len(data) > 0:
+            return HttpResponse(dumps({"success": 1, "data": data}),content_type="application/json")
+        else:
+            failure.update({"reason": "domain not found"})
+            return HttpResponse(dumps(failure),content_type="application/json")
+    else:
+        failure.update({"reason": "Bad Request"})
+        return HttpResponse(dumps(failure),content_type="application/json")
 
 @csrf_exempt
 def verifyUser(request,code):
