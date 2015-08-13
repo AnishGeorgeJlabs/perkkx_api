@@ -135,5 +135,7 @@ def merchants(request, user, vendor):
         )
     )
 
+    merchant['one_time_deals'] = list(db.one_time_deals.find({'vendor_id': int(vendor)}), deal_compact_filter)
+
     return HttpResponse(dumps(merchant), content_type="application/json")
 
