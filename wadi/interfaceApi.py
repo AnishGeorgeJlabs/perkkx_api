@@ -52,7 +52,7 @@ def query(request):
         if 'customer' not in options:
             options['mode'] = 'all'
         else:
-            cust = options['customer']
+            cust = options.pop('customer')
             if len(cust) == 2:
                 options['mode'] = 'all'
             else:
