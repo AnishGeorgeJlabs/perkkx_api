@@ -5,6 +5,9 @@ import json
 from datetime import datetime
 from bson.objectid import ObjectId
 from external.sheet import get_scheduler_sheet
+import calendar
+
+monthDict = dict((v, k) for k,v in enumerate(calendar.month_name))
 
 @csrf_exempt
 def login(request):
@@ -45,7 +48,6 @@ def formPost(request):
 
 def query(request):
     id = request.GET['id']
-
     obj = db.queries.find_one({"_id": ObjectId(id)})
     if obj:
         options = obj['target_config']
@@ -57,6 +59,10 @@ def query(request):
                 options['mode'] = 'all'
             else:
                 options['mode'] = cust[0]
+
+        if 'purchase_month' in options:
+            options['purchase_month'] = [monthDict[a] for a in options['purchase_month']]
+
         pipeline = [k for k, v in options.items() if k != 'mode']
         pipeline.append('customer')
 

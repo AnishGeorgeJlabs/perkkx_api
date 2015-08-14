@@ -90,12 +90,14 @@ def get(request, typ, vendor_id):
         deal = db.deals.find_one({"cID": data["cID"]}, {"deal": True, "expiry": True})  # common
 
         if not deal:
-            error += "dealMiss: "+data["cID"]+"   "
-            continue                                                                        # Testing use case, when we have inconsistent database
+            deal = db.one_time_deals.find_one({"cID": data['cID']}, {"deal": True, "expiry": True})
+            if not deal:
+                error += "dealMiss: "+data["cID"]+"   "
+                continue                                                                        # Testing use case, when we have inconsistent database
         data["deal"] = deal["deal"]
 
         # Step 2. Get expiry
-        if typ not in ["used"]:
+        if typ not in ["used"] and 'expiry' in deal:
             expiry = datetime.strptime(deal['expiry'], "%d/%m/%Y")
             if expiry - today < expiryLimit:
                 data['expiry'] = _get_unix_timestamp(expiry)
