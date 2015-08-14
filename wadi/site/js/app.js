@@ -20,7 +20,7 @@
   }).controller('MainCtrl', function($scope, $state, $http, $log) {
     var isLoggedIn;
     $log.debug("Main executed");
-    $state.go('form');
+    $state.go('login');
     isLoggedIn = false;
     $scope.checkLogin = function() {
       return isLoggedIn;

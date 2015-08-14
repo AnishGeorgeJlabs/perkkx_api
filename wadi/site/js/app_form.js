@@ -8,6 +8,7 @@
         return $state.go('login');
       }
     };
+    $scope.checkLogin();
     $http.get('http://45.55.72.208/wadi/interface/form').success(function(data) {
       return configureForm(data);
     });

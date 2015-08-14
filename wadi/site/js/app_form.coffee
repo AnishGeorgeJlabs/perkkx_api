@@ -4,7 +4,7 @@ angular.module('Wadi.form', [])
     $log.info "Checking login status at FormCtrl"
     if not $scope.$parent.checkLogin()
       $state.go('login')
-  # $scope.checkLogin() TODO, change
+  $scope.checkLogin()
   $http.get 'http://45.55.72.208/wadi/interface/form'
   .success (data) ->
     configureForm(data)
