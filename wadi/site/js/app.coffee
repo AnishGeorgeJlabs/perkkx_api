@@ -2,7 +2,7 @@
   Wadi sms tool web interface
 ###
 
-angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'angularjs-dropdown-multiselect', 'Wadi.form'])
+angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form'])
 .config ($stateProvider, $urlRouterProvider, uiSelectConfig) ->
   uiSelectConfig.theme = 'bootstrap'
   $stateProvider
