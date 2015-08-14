@@ -57,7 +57,7 @@ def query(request):
                 options['mode'] = 'all'
             else:
                 options['mode'] = cust[0]
-        pipeline = [k for k, v in options.items if k != 'mode']
+        pipeline = [k for k, v in options.items() if k != 'mode']
         pipeline.append('customer')
 
         return jsonResponse({"pipeline": pipeline, "options": options})
