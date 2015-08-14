@@ -22,16 +22,16 @@ def formPost(request):
     try:
         data = json.loads(request.body)
         # Do processing here
-        result = db.queries.insert_one(data)
-        url = 'http://45.55.72.208/wadi/query?id='+str(result.inserted_id)
 
-        campaign = data['campaign']
+        campaign = data['campaign_config']
         date = campaign['date']
         time = datetime.strptime(campaign['time'], "%H:%M")
         hour = time.hour
         minute = time.minute
         english = campaign['text']['english']
         arabic = campaign['text']['arabic']
+        result = db.queries.insert_one(data)
+        url = 'http://45.55.72.208/wadi/query?id='+str(result.inserted_id)
         row = ['Once', 'external', date, hour, minute, english, arabic, url]
         wrk_sheet = get_scheduler_sheet()
 
