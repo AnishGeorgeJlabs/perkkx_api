@@ -46,17 +46,17 @@ def query(request):
     id = request.GET['id']
 
     obj = db.queries.find_one({"_id": ObjectId(id)})
-    options = {}
-    if obj:
-        for k, v in obj['target_config'].items():
-            if k == 'category':
-                options['cat_list'] = v
-            elif k == 'mode':
-                options['mode'] = v
-    if 'cat_list' in options:
-        pipeline = ['category', 'customer']
+    options = obj['target_config']
+    if 'customer' not in options:
+        options['mode'] = 'all'
     else:
-        pipeline = ['customer']
+        cust = options['customer']
+        if len(cust) == 2:
+            options['mode'] = 'all'
+        else:
+            options['mode'] = cust[0]
+    pipeline = [k for k, v in options.items if k != 'mode']
+    pipeline.append('customer')
 
     return jsonResponse({"pipeline": pipeline, "options": options})
 
