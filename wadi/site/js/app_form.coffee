@@ -9,6 +9,7 @@ angular.module('Wadi.form', [])
   .success (data) ->
     configureForm(data)
 
+  # ------- Target Configuration --------- #
   $scope.multi = {}
   $scope.single = {}
 
@@ -19,22 +20,32 @@ angular.module('Wadi.form', [])
     for data in mainData
       if data.type == 'single'
         $scope.single[data.operation] = {name: data.pretty, values: data.values }
-        $scope.selectedSingle[data.operation] = []
+        $scope.selectedSingle[data.operation] = ''
       else
         $scope.multi[data.operation] = {name: data.pretty, values: data.values }
         $scope.selectedMulti[data.operation] = []
 
-    $log.info "Singles: "+JSON.stringify($scope.single)
-    $log.info "Multi: "+JSON.stringify($scope.multi)
+  cleanObj = (obj) ->
+    _.pick obj, (val, key, o) ->
+      val.length > 0
 
+  # ------------------------------------- #
 
-    ###
+  $scope.campaign =
+    text:
+      arabic: ''
+      english: ''
+    date: ''
+    time: ''
+
   $scope.submit = () ->
-    result = {}
-    result['target_config'] = formPartial()
-    result['campaign'] = $scope.campaign
-    $log.info "Posting: "+JSON.stringify(result)
+    resM = cleanObj($scope.selectedMulti)
+    resS = cleanObj($scope.selectedSingle)
+    target_config = _.extend({}, resS, resM)
 
+    result = { target_config: target_config, campaign_config: $scope.campaign }
+    $log.info "Final submission: "+JSON.stringify(result)
+    ###
     $http.post('http://45.55.72.208/wadi/interface/post', result)
     .success (res) ->
       $log.info "Got result: "+JSON.stringify(res)
