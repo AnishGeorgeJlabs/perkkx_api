@@ -46,17 +46,21 @@
         arabic: '',
         english: ''
       },
-      date: '',
-      time: ''
+      date: ''
     };
     return $scope.submit = function() {
-      var resM, resS, result, target_config;
+      var dt, resM, resS, result, target_config;
       resM = cleanObj($scope.selectedMulti);
       resS = cleanObj($scope.selectedSingle);
       target_config = _.extend({}, resS, resM);
+      dt = moment($scope.campaign.date).format("MM/DD/YYYY HH:mm").split(" ");
       result = {
         target_config: target_config,
-        campaign_config: $scope.campaign
+        campaign_config: {
+          text: $scope.campaign.text,
+          date: dt[0],
+          time: dt[1]
+        }
       };
       return $log.info("Final submission: " + JSON.stringify(result));
 

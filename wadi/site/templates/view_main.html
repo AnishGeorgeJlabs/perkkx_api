@@ -10,13 +10,13 @@
           <div class="form-group">
             <label class="control-label col-sm-2">Arabic</label>
             <div class="col-sm-10">
-              <input type="text" dir="rtl" class='form-control' name="Arabic" ng-model="campaign.text.arabic">
+              <input type="text" dir="rtl" class='form-control' name="Arabic" ng-model="campaign.text.arabic" required>
             </div>
           </div>
           <div class="form-group">
             <label class="control-label col-sm-2">English</label>
             <div class="col-sm-10">
-              <input type="text" class='form-control' name="English" ng-model="campaign.text.english">
+              <input type="text" class='form-control' name="English" ng-model="campaign.text.english" required>
             </div>
           </div>
         </div>
@@ -25,15 +25,10 @@
         <div class="panel-heading">Execution date time (Riyadh timezone)</div>
         <div class="panel-body">
           <div class="form-group">
-            <label class="control-label col-sm-2">Date</label>
+            <label class="control-label col-sm-2">Date Time</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" ng-model="campaign.date" placeholder="mm/dd/yyyy">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-sm-2">Time</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" ng-model="campaign.time" placeholder="HH:mm">
+              <!--<input type="text" class="form-control" ng-model="campaign.date" placeholder="mm/dd/yyyy"> -->
+              <input type="datetime-local" class="form-control" ng-model="campaign.date" required>
             </div>
           </div>
         </div>

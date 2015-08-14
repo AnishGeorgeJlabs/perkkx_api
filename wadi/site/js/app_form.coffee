@@ -36,14 +36,15 @@ angular.module('Wadi.form', [])
       arabic: ''
       english: ''
     date: ''
-    time: ''
 
   $scope.submit = () ->
     resM = cleanObj($scope.selectedMulti)
     resS = cleanObj($scope.selectedSingle)
     target_config = _.extend({}, resS, resM)
 
-    result = { target_config: target_config, campaign_config: $scope.campaign }
+    dt = moment($scope.campaign.date).format("MM/DD/YYYY HH:mm").split(" ")
+
+    result = { target_config: target_config, campaign_config: {text: $scope.campaign.text, date: dt[0], time: dt[1]} }
     $log.info "Final submission: "+JSON.stringify(result)
     ###
     $http.post('http://45.55.72.208/wadi/interface/post', result)

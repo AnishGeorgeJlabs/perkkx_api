@@ -24,6 +24,7 @@
     "angularjs-dropdown-multiselect": "~1.5.2",
     "underscore": "~1.8.3",
     "angular-ui-select": "~0.12.1",
-    "angular-sanitize": "~1.4.4"
+    "angular-sanitize": "~1.4.4",
+    "moment": "~2.10.6"
   }
 }
