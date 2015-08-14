@@ -62,7 +62,7 @@ def query(request):
 
         return jsonResponse({"pipeline": pipeline, "options": options})
     else:
-        return Http404()
+        raise Http404
 
 def get_form_data(request):
     data = db.form.find({}, {"_id": False})
