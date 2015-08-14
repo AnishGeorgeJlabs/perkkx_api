@@ -62,13 +62,10 @@
           time: dt[1]
         }
       };
-      return $log.info("Final submission: " + JSON.stringify(result));
-
-      /*
-      $http.post('http://45.55.72.208/wadi/interface/post', result)
-      .success (res) ->
-        $log.info "Got result: "+JSON.stringify(res)
-       */
+      $log.info("Final submission: " + JSON.stringify(result));
+      return $http.post('http://45.55.72.208/wadi/interface/post', result).success(function(res) {
+        return $log.info("Got result: " + JSON.stringify(res));
+      });
     };
   });
 

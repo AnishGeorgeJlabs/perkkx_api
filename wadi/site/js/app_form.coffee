@@ -46,9 +46,6 @@ angular.module('Wadi.form', [])
 
     result = { target_config: target_config, campaign_config: {text: $scope.campaign.text, date: dt[0], time: dt[1]} }
     $log.info "Final submission: "+JSON.stringify(result)
-    ###
     $http.post('http://45.55.72.208/wadi/interface/post', result)
     .success (res) ->
       $log.info "Got result: "+JSON.stringify(res)
-
-    ###
