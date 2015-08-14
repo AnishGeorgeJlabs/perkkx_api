@@ -2,8 +2,9 @@
   Wadi sms tool web interface
 ###
 
-angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect', 'Wadi.form'])
-.config ($stateProvider, $urlRouterProvider) ->
+angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'angularjs-dropdown-multiselect', 'Wadi.form'])
+.config ($stateProvider, $urlRouterProvider, uiSelectConfig) ->
+  uiSelectConfig.theme = 'bootstrap'
   $stateProvider
   .state('login',
     templateUrl: './templates/view_login.html'
@@ -54,10 +55,12 @@ angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect', 'Wadi.for
     $scope.data.password = ''
 
 .controller 'TestCtrl', ($scope, $state, $log) ->
-  $scope.selected = []
+  $scope.data =
+    selected: []
   $scope.sampleData = [
-    'electronics', 'shoes', 'sports bags', 'goodies'
+    'electronics', 'shoes', 'sports bags', 'goodies', 'long list', 'another useless item', 'someone else'
   ]
+  $log.debug "Wer have sample Data: "+JSON.stringify($scope.sampleData)
 
 
 

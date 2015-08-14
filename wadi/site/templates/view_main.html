@@ -1,27 +1,9 @@
   <form class="form-horizontal">
+
     <div class="row">
     <div class="col-md-6">
       <h3>Configure Target consumer</h3>
 
-      <div class="form-group" ng-repeat="item in simpleParts" ng-if="simpleParts.length">
-        <div class="col-sm-6">
-          <label>{{item.pretty}}</label>
-        </div>
-        <div class="col-sm-6">
-          <span ng-dropdown-multiselect="" options="item.values"
-                selected-model="selectedSimpleParts[item.operation]"></span>
-        </div>
-      </div>
-
-      <div class="form-group" ng-if="advancedParts['customer']" ng-init="item = advancedParts.customer">
-        <div class="col-sm-6">
-          <label>{{item.pretty}}</label>
-        </div>
-        <div class="col-sm-6">
-            <span ng-dropdown-multiselect="" options="item.values"
-                  selected-model="selectedAdvancedParts[item.operation]"></span>
-        </div>
-      </div>
     </div>
 
     <div class="col-md-6">

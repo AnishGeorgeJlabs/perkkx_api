@@ -5,7 +5,8 @@
  */
 
 (function() {
-  angular.module('Wadi', ['ui.router', 'angularjs-dropdown-multiselect', 'Wadi.form']).config(function($stateProvider, $urlRouterProvider) {
+  angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'angularjs-dropdown-multiselect', 'Wadi.form']).config(function($stateProvider, $urlRouterProvider, uiSelectConfig) {
+    uiSelectConfig.theme = 'bootstrap';
     return $stateProvider.state('login', {
       templateUrl: './templates/view_login.html',
       controller: 'LoginCtrl'
@@ -51,8 +52,11 @@
       return $scope.data.password = '';
     };
   }).controller('TestCtrl', function($scope, $state, $log) {
-    $scope.selected = [];
-    return $scope.sampleData = ['electronics', 'shoes', 'sports bags', 'goodies'];
+    $scope.data = {
+      selected: []
+    };
+    $scope.sampleData = ['electronics', 'shoes', 'sports bags', 'goodies', 'long list', 'another useless item', 'someone else'];
+    return $log.debug("Wer have sample Data: " + JSON.stringify($scope.sampleData));
 
     /*
     $scope.sampleData = [
