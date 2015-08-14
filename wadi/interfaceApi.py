@@ -1,4 +1,5 @@
 from data import basic_success, jsonResponse, db, basic_failure, basic_error
+from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 import json
 from datetime import datetime
@@ -46,19 +47,22 @@ def query(request):
     id = request.GET['id']
 
     obj = db.queries.find_one({"_id": ObjectId(id)})
-    options = obj['target_config']
-    if 'customer' not in options:
-        options['mode'] = 'all'
-    else:
-        cust = options['customer']
-        if len(cust) == 2:
+    if obj:
+        options = obj['target_config']
+        if 'customer' not in options:
             options['mode'] = 'all'
         else:
-            options['mode'] = cust[0]
-    pipeline = [k for k, v in options.items if k != 'mode']
-    pipeline.append('customer')
+            cust = options['customer']
+            if len(cust) == 2:
+                options['mode'] = 'all'
+            else:
+                options['mode'] = cust[0]
+        pipeline = [k for k, v in options.items if k != 'mode']
+        pipeline.append('customer')
 
-    return jsonResponse({"pipeline": pipeline, "options": options})
+        return jsonResponse({"pipeline": pipeline, "options": options})
+    else:
+        return Http404()
 
 def get_form_data(request):
     data = db.form.find({}, {"_id": False})
