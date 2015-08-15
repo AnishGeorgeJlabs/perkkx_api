@@ -14,8 +14,10 @@
     });
     $scope.multi = {};
     $scope.single = {};
+    $scope.range = {};
     $scope.selectedMulti = {};
     $scope.selectedSingle = {};
+    $scope.selectedRange = {};
     configureForm = function(mainData) {
       var data, i, len, results;
       results = [];
@@ -27,12 +29,18 @@
             values: data.values
           };
           results.push($scope.selectedSingle[data.operation] = '');
-        } else {
+        } else if (data.type === 'multi') {
           $scope.multi[data.operation] = {
             name: data.pretty,
             values: data.values
           };
           results.push($scope.selectedMulti[data.operation] = []);
+        } else if (data.type === 'range') {
+          results.push($scope.range[data.operation] = {
+            name: data.pretty
+          });
+        } else {
+          results.push(void 0);
         }
       }
       return results;
@@ -50,10 +58,11 @@
       date: ''
     };
     return $scope.submit = function() {
-      var dt, resM, resS, result, target_config;
+      var dt, resM, resR, resS, result, target_config;
       resM = cleanObj($scope.selectedMulti);
       resS = cleanObj($scope.selectedSingle);
-      target_config = _.extend({}, resS, resM);
+      resR = cleanObj($scope.selectedRange);
+      target_config = _.extend({}, resS, resM, resR);
       dt = moment($scope.campaign.date).format("MM/DD/YYYY HH:mm").split(" ");
       result = {
         target_config: target_config,

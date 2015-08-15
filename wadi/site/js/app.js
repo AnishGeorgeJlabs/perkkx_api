@@ -5,7 +5,7 @@
  */
 
 (function() {
-  angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form']).config(function($stateProvider, $urlRouterProvider, uiSelectConfig) {
+  angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form', 'Wadi.directives']).config(function($stateProvider, $urlRouterProvider, uiSelectConfig) {
     uiSelectConfig.theme = 'bootstrap';
     return $stateProvider.state('login', {
       templateUrl: './templates/view_login.html',
@@ -20,7 +20,7 @@
   }).controller('MainCtrl', function($scope, $state, $http, $log) {
     var isLoggedIn;
     $log.debug("Main executed");
-    $state.go('login');
+    $state.go('form');
     isLoggedIn = false;
     $scope.checkLogin = function() {
       return isLoggedIn;
@@ -53,10 +53,10 @@
     };
   }).controller('TestCtrl', function($scope, $state, $log) {
     $scope.data = {
-      selected: []
+      selected: [],
+      set: ''
     };
-    $scope.sampleData = ['electronics', 'shoes', 'sports bags', 'goodies', 'long list', 'another useless item', 'someone else'];
-    return $log.debug("Wer have sample Data: " + JSON.stringify($scope.sampleData));
+    return $scope.sampleData = ['electronics', 'shoes', 'sports bags', 'goodies', 'long list', 'another useless item', 'someone else'];
 
     /*
     $scope.sampleData = [

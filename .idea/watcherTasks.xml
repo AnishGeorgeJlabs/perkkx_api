@@ -21,14 +21,14 @@
       </option>
       <option name="outputFromStdout" value="false" />
       <option name="passParentEnvs" value="true" />
-      <option name="program" value="/usr/bin/coffee" />
+      <option name="program" value="$USER_HOME$/.npm-packages/bin/coffee" />
       <option name="scopeName" value="Current File" />
       <option name="trackOnlyRoot" value="true" />
       <option name="workingDir" value="$FileDir$" />
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="-P $FileName$" />
+      <option name="arguments" value="$FileName$" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" value="Compiles .jade files into .html files" />
       <option name="exitCodeBehavior" value="ERROR" />
@@ -41,7 +41,7 @@
       </option>
       <option name="outputFromStdout" value="false" />
       <option name="passParentEnvs" value="true" />
-      <option name="program" value="/usr/local/bin/jade" />
+      <option name="program" value="$USER_HOME$/.npm-packages/bin/jade" />
       <option name="scopeName" value="Project Files" />
       <option name="trackOnlyRoot" value="true" />
       <option name="workingDir" value="$FileDir$" />

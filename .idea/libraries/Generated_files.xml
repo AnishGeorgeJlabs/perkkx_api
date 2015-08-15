@@ -2,13 +2,15 @@
   <library name="Generated files" type="javaScript">
     <properties>
       <sourceFilesUrls>
-        <item url="file://$PROJECT_DIR$/wadi/site/js/app.js" />
+        <item url="file://$PROJECT_DIR$/wadi/site/js/directives.js" />
         <item url="file://$PROJECT_DIR$/wadi/site/js/app_form.js" />
+        <item url="file://$PROJECT_DIR$/wadi/site/js/app.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/wadi/site/js/app.js" />
+      <root url="file://$PROJECT_DIR$/wadi/site/js/directives.js" />
       <root url="file://$PROJECT_DIR$/wadi/site/js/app_form.js" />
+      <root url="file://$PROJECT_DIR$/wadi/site/js/app.js" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

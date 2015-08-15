@@ -1,4 +1,5 @@
 <div class="row">
+  <!--
   <form>
     <ui-select multiple ng-model="data.selected" title="Choose a color">
       <ui-select-match placeholder="Select colors...">{{$item}}</ui-select-match>
@@ -8,4 +9,9 @@
     </ui-select>
   </form>
   {{ data.selected }}
+  -->
+  <form class="form-horizontal">
+    <wd-range-input model="data.set"></wd-range-input>
+  </form>
+  {{data.set}}
 </div>

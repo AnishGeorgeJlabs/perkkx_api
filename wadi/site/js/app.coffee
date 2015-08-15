@@ -2,7 +2,7 @@
   Wadi sms tool web interface
 ###
 
-angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form'])
+angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form', 'Wadi.directives'])
 .config ($stateProvider, $urlRouterProvider, uiSelectConfig) ->
   uiSelectConfig.theme = 'bootstrap'
   $stateProvider
@@ -21,7 +21,7 @@ angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form'])
 
 .controller 'MainCtrl', ($scope, $state, $http, $log) ->
   $log.debug "Main executed"
-  $state.go('login')     # TODO, change
+  $state.go('form')     # TODO, change
 
   isLoggedIn = false
 
@@ -57,11 +57,10 @@ angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form'])
 .controller 'TestCtrl', ($scope, $state, $log) ->
   $scope.data =
     selected: []
+    set: ''
   $scope.sampleData = [
     'electronics', 'shoes', 'sports bags', 'goodies', 'long list', 'another useless item', 'someone else'
   ]
-  $log.debug "Wer have sample Data: "+JSON.stringify($scope.sampleData)
-
 
 
   ###
