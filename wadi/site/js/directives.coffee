@@ -37,6 +37,13 @@ angular.module('Wadi.directives', [])
         compileResult()
     )
 
+    $scope.$watch(
+      'model',
+      (nVal, oVal) ->
+        if oVal != '' and nVal == ''
+          $scope.data.op = ''
+    )
+
     # The genius touch, add this handler to the ng-blur of both inputs
     $scope.recover = () ->
       if $scope.data.min == null or $scope.data.min <= 0

@@ -59,7 +59,7 @@
       },
       datetime: null
     };
-    return $scope.submit = function() {
+    $scope.submit = function() {
       var dt, resM, resR, resS, result, target_config;
       resM = cleanObj($scope.selectedMulti);
       resS = cleanObj($scope.selectedSingle);
@@ -72,9 +72,23 @@
         target_config: target_config,
         campaign_config: $scope.campaign
       };
-      $log.info("Final submission: " + JSON.stringify(result));
-      return $http.post('http://45.55.72.208/wadi/interface/post', result).success(function(res) {
-        return $log.info("Got result: " + JSON.stringify(res));
+      return $log.info("Final submission: " + JSON.stringify(result));
+
+      /*
+      $http.post('http://45.55.72.208/wadi/interface/post', result)
+      .success (res) ->
+        $log.info "Got result: "+JSON.stringify(res)
+       */
+    };
+    return $scope.reset = function() {
+      $scope.selectedMulti = _.mapObject($scope.selectedMulti, function() {
+        return [];
+      });
+      $scope.selectedSingle = _.mapObject($scope.selectedSingle, function() {
+        return '';
+      });
+      return $scope.selectedRange = _.mapObject($scope.selectedRange, function() {
+        return '';
       });
     };
   });

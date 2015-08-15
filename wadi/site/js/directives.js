@@ -48,6 +48,11 @@
           }
           return compileResult();
         });
+        $scope.$watch('model', function(nVal, oVal) {
+          if (oVal !== '' && nVal === '') {
+            return $scope.data.op = '';
+          }
+        });
         return $scope.recover = function() {
           if ($scope.data.min === null || $scope.data.min <= 0) {
             $scope.data.min = 1;

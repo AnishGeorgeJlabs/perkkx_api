@@ -5,6 +5,8 @@ angular.module('Wadi.form', [])
     if not $scope.$parent.checkLogin()
       $state.go('login')
   $scope.checkLogin()
+
+
   $http.get 'http://45.55.72.208/wadi/interface/form'
   .success (data) ->
     $scope.loading = false
@@ -56,6 +58,12 @@ angular.module('Wadi.form', [])
     result = { target_config: target_config, campaign_config: $scope.campaign }
     $log.info "Final submission: "+JSON.stringify(result)
 
+    ###
     $http.post('http://45.55.72.208/wadi/interface/post', result)
     .success (res) ->
       $log.info "Got result: "+JSON.stringify(res)
+###
+  $scope.reset = () ->
+    $scope.selectedMulti = _.mapObject($scope.selectedMulti, () -> [] )
+    $scope.selectedSingle = _.mapObject($scope.selectedSingle, () -> '')
+    $scope.selectedRange = _.mapObject($scope.selectedRange, () -> '')
