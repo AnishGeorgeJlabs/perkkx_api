@@ -21,7 +21,7 @@ angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form', 'Wa
 
 .controller 'MainCtrl', ($scope, $state, $http, $log) ->
   $log.debug "Main executed"
-  $state.go('form')     # TODO, change
+  $state.go('login')
 
   isLoggedIn = false
 
