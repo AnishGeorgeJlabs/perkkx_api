@@ -28,7 +28,7 @@
       <envs />
     </TaskOptions>
     <TaskOptions isEnabled="true">
-      <option name="arguments" value="$FileName$" />
+      <option name="arguments" value="-P $FileName$" />
       <option name="checkSyntaxErrors" value="true" />
       <option name="description" value="Compiles .jade files into .html files" />
       <option name="exitCodeBehavior" value="ERROR" />

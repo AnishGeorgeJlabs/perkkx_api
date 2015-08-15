@@ -15,7 +15,9 @@ html(ng-app='Wadi')
     each file in ['external', 'app', 'app_form', 'directives']
       script(src='js/'+file+'.js')
 
-    link(href='bower_components/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet')
+    // link(href='bower_components/bootstrap/dist/css/bootstrap.min.css' rel='stylesheet')
+
+    link(href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/lumen/bootstrap.min.css", rel="stylesheet")
     link(href='bower_components/angular-ui-select/dist/select.min.css' rel='stylesheet')
 
   body(ng-controller='MainCtrl')

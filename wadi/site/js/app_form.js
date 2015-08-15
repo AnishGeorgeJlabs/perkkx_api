@@ -47,7 +47,7 @@
     };
     cleanObj = function(obj) {
       return _.pick(obj, function(val, key, o) {
-        return val.length > 0;
+        return val && val.length > 0;
       });
     };
     $scope.campaign = {
@@ -55,7 +55,7 @@
         arabic: '',
         english: ''
       },
-      date: ''
+      datetime: null
     };
     return $scope.submit = function() {
       var dt, resM, resR, resS, result, target_config;
@@ -63,14 +63,12 @@
       resS = cleanObj($scope.selectedSingle);
       resR = cleanObj($scope.selectedRange);
       target_config = _.extend({}, resS, resM, resR);
-      dt = moment($scope.campaign.date).format("MM/DD/YYYY HH:mm").split(" ");
+      dt = moment($scope.campaign.datetime).format("MM/DD/YYYY HH:mm").split(" ");
+      $scope.campaign.date = dt[0];
+      $scope.campaign.time = dt[1];
       result = {
         target_config: target_config,
-        campaign_config: {
-          text: $scope.campaign.text,
-          date: dt[0],
-          time: dt[1]
-        }
+        campaign_config: $scope.campaign
       };
       $log.info("Final submission: " + JSON.stringify(result));
       return $http.post('http://45.55.72.208/wadi/interface/post', result).success(function(res) {

@@ -3,7 +3,9 @@
   <div class="row">
     <!-- Configuring the campaign -->
     <div class="col-md-4 col-md-push-8">
-      <h3>Configure Campaign</h3>
+      <div class="page-header">
+        <h3 class="text-center">Configure Campaign</h3>
+      </div>
       <div class="panel panel-primary">
         <div class="panel-heading">SMS content</div>
         <div class="panel-body">
@@ -28,7 +30,7 @@
             <label class="control-label col-sm-2">Date Time</label>
             <div class="col-sm-10">
               <!--<input type="text" class="form-control" ng-model="campaign.date" placeholder="mm/dd/yyyy"> -->
-              <input type="datetime-local" class="form-control" ng-model="campaign.date" required>
+              <input type="datetime-local" class="form-control" ng-model="campaign.datetime" required>
             </div>
           </div>
         </div>
@@ -37,7 +39,9 @@
 
     <!-- Configuring the target consumer -->
     <div class="col-md-8 col-md-pull-4">
-      <h3>Configure Target consumer</h3>
+      <div class="page-header">
+        <h3 class="text-center">Configure Target consumer</h3>
+      </div>
 
       <div class="form-group" ng-repeat="(operation, config) in multi">
         <label class="control-label col-sm-4">{{config.name}}</label>
@@ -55,7 +59,7 @@
         <label class="control-label col-sm-4">{{config.name}}</label>
         <div class="col-sm-8">
           <ui-select ng-model="selectedSingle[operation]" title="{{config.name}}">
-            <ui-select-match placeholder="Select {{config.name}}">{{$select.selected}}</ui-select-match>
+            <ui-select-match allow-clear placeholder="Select {{config.name}}">{{$select.selected}}</ui-select-match>
             <ui-select-choices repeat="opt in config.values | filter:$select.search">
               {{opt}}
             </ui-select-choices>
