@@ -7,9 +7,11 @@ angular.module('Wadi.form', [])
   $scope.checkLogin()
   $http.get 'http://45.55.72.208/wadi/interface/form'
   .success (data) ->
+    $scope.loading = false
     configureForm(data)
 
   # ------- Target Configuration --------- #
+  $scope.loading = true
   $scope.multi = {}
   $scope.single = {}
   $scope.range = {}
