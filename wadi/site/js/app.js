@@ -5,7 +5,7 @@
  */
 
 (function() {
-  angular.module('Wadi', ['ui.router', 'ui.select', 'ngSanitize', 'Wadi.form', 'Wadi.directives']).config(function($stateProvider, $urlRouterProvider, uiSelectConfig) {
+  angular.module('Wadi', ['ui.router', 'ui.select', 'ui.bootstrap', 'ngSanitize', 'Wadi.form', 'Wadi.directives']).config(function($stateProvider, $urlRouterProvider, uiSelectConfig) {
     uiSelectConfig.theme = 'bootstrap';
     return $stateProvider.state('login', {
       templateUrl: './templates/view_login.html',
