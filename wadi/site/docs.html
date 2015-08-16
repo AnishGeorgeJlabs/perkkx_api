@@ -44,6 +44,19 @@ The system also supports the use of the **Cancel** state which needs to be enter
 timing is wrong against the cron. It is therefore advised to wait a few seconds after modifying the status to check whether the server has changed it back or not. If it has, simply
 modify the status again.
 
+
+# Creating custom campaigns
+Custom campaigns are created using the Wadi [SMS tool interface](http://45.55.72.208/interface/wadi).
+These campaigns will have the campain type _external_ in the scheduling sheet.
+The tool provides you with a dynamic form which has two parts
+
+1. **Campaign Configuration:** It is a compulsory section which involves configuring the sms content and execution time. (Currently, external campaigns only support the _Once_ repeat type)
+2. **Target Configuration:** It is an optional section which provides different filter options for the resulting data set. It has 3 kinds of controls:
+  - _Multi-select_ controls where you can search for specific values and add multiple of them to the filter. Records matching any one or more of these values will be present in the resulting dataset.
+    Filters like Customer Base, Purchase month are provided as multi-selects.
+  - _Single select_ controls from which only one option may be selected.
+  - _Range selectors_ which provide you with a dynamic way to select number ranges. Provides options for 'Equal to n', 'More than n', 'Less than n' and 'Between n and m' kind of
+    ranges.
 </xmp>
 
 <script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
