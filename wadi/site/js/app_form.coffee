@@ -6,6 +6,7 @@ angular.module('Wadi.form', [])
       $state.go('login')
   $scope.checkLogin()
 
+  $scope.submitting = false
 
   $http.get 'http://45.55.72.208/wadi/interface/form'
   .success (data) ->
@@ -46,6 +47,7 @@ angular.module('Wadi.form', [])
     datetime: null
 
   $scope.submit = () ->
+    $scope.submitting = true
     resM = cleanObj($scope.selectedMulti)
     resS = cleanObj($scope.selectedSingle)
     resR = cleanObj($scope.selectedRange)
@@ -61,6 +63,7 @@ angular.module('Wadi.form', [])
 
     $http.post('http://45.55.72.208/wadi/interface/post', result)
     .success (res) ->
+      $scope.submitting = false
       $modal.open(
         controller: ($scope, $modalInstance) ->
           $scope.result = res

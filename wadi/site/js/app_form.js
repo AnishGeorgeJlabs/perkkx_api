@@ -9,6 +9,7 @@
       }
     };
     $scope.checkLogin();
+    $scope.submitting = false;
     $http.get('http://45.55.72.208/wadi/interface/form').success(function(data) {
       $scope.loading = false;
       return configureForm(data);
@@ -61,6 +62,7 @@
     };
     $scope.submit = function() {
       var dt, resM, resR, resS, result, target_config;
+      $scope.submitting = true;
       resM = cleanObj($scope.selectedMulti);
       resS = cleanObj($scope.selectedSingle);
       resR = cleanObj($scope.selectedRange);
@@ -74,6 +76,7 @@
       };
       $log.info("Final submission: " + JSON.stringify(result));
       return $http.post('http://45.55.72.208/wadi/interface/post', result).success(function(res) {
+        $scope.submitting = false;
         return $modal.open({
           controller: function($scope, $modalInstance) {
             $scope.result = res;
