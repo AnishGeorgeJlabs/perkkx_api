@@ -34,6 +34,10 @@ def formPost(request):
         minute = time.minute
         english = campaign['text']['english']
         arabic = campaign['text']['arabic']
+        if len(english.strip()) == 0:
+            english = '_'
+        if len(arabic.strip()) == 0:
+            arabic = '_'
         data['timestamp'] = datetime.now()
 
         result = db.queries.insert_one(data)
@@ -44,7 +48,6 @@ def formPost(request):
         if 'debug' in data and data['debug'] is True:
             db.queries.remove({"_id": result.inserted_id})
             return jsonResponse({'success': True, 'data_received': data, 'row created': row})
-
         else:
             wrk_sheet = get_scheduler_sheet()
             size = len(wrk_sheet.get_all_values())
