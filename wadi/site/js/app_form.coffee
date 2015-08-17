@@ -57,7 +57,7 @@ angular.module('Wadi.form', [])
     $scope.campaign.date = dt[0]
     $scope.campaign.time = dt[1]
 
-    result = { target_config: target_config, campaign_config: $scope.campaign, debug: true} # TODO, change
+    result = { target_config: target_config, campaign_config: $scope.campaign, debug: false}
     $log.info "Final submission: "+JSON.stringify(result)
 
 
