@@ -57,7 +57,7 @@ angular.module('Wadi.form', [])
     $scope.campaign.date = dt[0]
     $scope.campaign.time = dt[1]
 
-    result = { target_config: target_config, campaign_config: $scope.campaign, debug: false}
+    result = { target_config: target_config, campaign_config: $scope.campaign, debug: true} # TODO, change
     $log.info "Final submission: "+JSON.stringify(result)
 
 
@@ -72,6 +72,7 @@ angular.module('Wadi.form', [])
             $modalInstance.dismiss('ok')
         templateUrl: 'templates/modal_submission.html'
       )
+
 
   $scope.reset = () ->
     $scope.selectedMulti = _.mapObject($scope.selectedMulti, () -> [] )

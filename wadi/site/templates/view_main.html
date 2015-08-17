@@ -12,13 +12,15 @@
           <div class="form-group">
             <label class="control-label col-sm-2">Arabic</label>
             <div class="col-sm-10">
-              <input type="text" dir="rtl" class='form-control' name="Arabic" ng-model="campaign.text.arabic" required>
+              <input type="text" dir="rtl" class='form-control' name="Arabic" ng-model="campaign.text.arabic"
+                     ng-disabled="selectedSingle.language && selectedSingle.language != 'Arabic'" required>
             </div>
           </div>
           <div class="form-group">
             <label class="control-label col-sm-2">English</label>
             <div class="col-sm-10">
-              <input type="text" class='form-control' name="English" ng-model="campaign.text.english" required>
+              <input type="text" class='form-control' name="English" ng-model="campaign.text.english"
+                     ng-disabled="selectedSingle.language && selectedSingle.language != 'English'" required>
             </div>
           </div>
         </div>
@@ -79,7 +81,7 @@
   </div>
   <div class="row">
     <div class="col-sm-offset-2 col-sm-4">
-      <button class="btn btn-default btn-lg btn-block" ng-click="reset()">Reset</button>
+      <a class="btn btn-default btn-lg btn-block" ng-click="reset()">Reset</a>    <!-- Because a button messes up -->
     </div>
     <div class="col-sm-4">
       <button type='submit' class="btn btn-success btn-lg btn-block" ng-disabled="submitting">{{ submitting ? "submitting...": "Submit" }}</button>

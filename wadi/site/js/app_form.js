@@ -73,7 +73,7 @@
       result = {
         target_config: target_config,
         campaign_config: $scope.campaign,
-        debug: false
+        debug: true
       };
       $log.info("Final submission: " + JSON.stringify(result));
       return $http.post('http://45.55.72.208/wadi/interface/post', result).success(function(res) {
