@@ -57,12 +57,13 @@ angular.module('Wadi.form', [])
     $scope.campaign.date = dt[0]
     $scope.campaign.time = dt[1]
 
-    result = { target_config: target_config, campaign_config: $scope.campaign }
+    result = { target_config: target_config, campaign_config: $scope.campaign, debug: false}
     $log.info "Final submission: "+JSON.stringify(result)
 
 
     $http.post('http://45.55.72.208/wadi/interface/post', result)
     .success (res) ->
+      $log.debug "Submission result: "+JSON.stringify(res)
       $scope.submitting = false
       $modal.open(
         controller: ($scope, $modalInstance) ->

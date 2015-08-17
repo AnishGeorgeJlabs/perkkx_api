@@ -72,10 +72,12 @@
       $scope.campaign.time = dt[1];
       result = {
         target_config: target_config,
-        campaign_config: $scope.campaign
+        campaign_config: $scope.campaign,
+        debug: false
       };
       $log.info("Final submission: " + JSON.stringify(result));
       return $http.post('http://45.55.72.208/wadi/interface/post', result).success(function(res) {
+        $log.debug("Submission result: " + JSON.stringify(res));
         $scope.submitting = false;
         return $modal.open({
           controller: function($scope, $modalInstance) {
