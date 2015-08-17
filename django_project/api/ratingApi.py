@@ -24,6 +24,8 @@ def check_dispute (query, ustatus):
     mstatus = order['mstatus']
     if ustatus == 'used' and mstatus == 'pending':      # New rules
         res = 'disputed'
+    elif ustatus == 'used' and mstatus == 'used':
+        res = 'used'
     elif ustatus == 'expired' and mstatus == 'pending':
         res = 'expired'
     elif ustatus == 'expired' and mstatus == 'used':    # resolve dispute
