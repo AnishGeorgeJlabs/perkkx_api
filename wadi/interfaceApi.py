@@ -39,13 +39,17 @@ def formPost(request):
 
         url = 'http://45.55.72.208/wadi/query?id='+str(result.inserted_id)
         row = ['Once', 'external', date, hour, minute, english, arabic, url]
-        wrk_sheet = get_scheduler_sheet()
 
-        size = len(wrk_sheet.get_all_values())
-        wrk_sheet.insert_row(row, size+1)
+        if 'debug' in data and data['debug'] is True:
+            db.queries.remove({"_id": result.inserted_id})
+            return jsonResponse({'success': True, 'data_received': data, 'row created': row})
 
-        res = {'success': True, 'data_received': data, "row created ": row}
-        return jsonResponse(res)
+        else:
+            wrk_sheet = get_scheduler_sheet()
+            size = len(wrk_sheet.get_all_values())
+            wrk_sheet.insert_row(row, size+1)
+            return jsonResponse({'success': True})
+
     except Exception, e:
         return basic_error(e)
 
