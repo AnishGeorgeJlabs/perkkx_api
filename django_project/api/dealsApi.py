@@ -272,9 +272,21 @@ def get_one_time_deals(request):
 
         deals = [
             deal
-            for deal in db.one_time_deals.find({}, deal_filter)
+            for deal in db.one_time_deals.find()
             if db.order_data.count({"userID": userID, "cID": deal['cID']}) == 0
         ]
+
+        for deal in deals:
+            m = db.merchants.find_one({'vendor_id': deal['vendor_id']})
+            if not m:
+                continue
+            deal['vendor_name'] = m['vendor_name']
+            deal['area'] = m['address']['area']
+            if isinstance(m['cat'], list):
+                deal['cat'] = m['cat'][0]
+            else:
+                deal['cat'] = m['cat']
+            deal['img']= m['img']
         return HttpResponse(dumps({"success": 1, "data": deals}))
     except Exception, e:
         return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}))
