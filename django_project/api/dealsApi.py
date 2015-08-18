@@ -286,7 +286,8 @@ def get_one_time_deals(request):
                 deal['cat'] = m['cat'][0]
             else:
                 deal['cat'] = m['cat']
-            deal['img']= m['img']
+            if 'img' in m:
+                deal['img']= m['img']
         return HttpResponse(dumps({"success": 1, "data": deals}))
     except Exception, e:
         return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}))
