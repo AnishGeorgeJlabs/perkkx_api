@@ -175,9 +175,13 @@ def user_coupons(request,uid):
             vendorData = db.merchants.find_one({"vendor_id":int(x['vendor_id'])})
             address = vendorData['address']['area']
             dealData = db.deals.find_one({"cID":x['cID']})
+            if not dealData:
+                dealData = db.one_time_deals.find_one({"cID": x['cID']})
+
             rep = {"vendor_name":vendorData['vendor_name'],
                 "address":address,
                 "code":x['rcode'],
+                "deal": dealData['deal'],
                 "expiry":dealData['expiry'],
                 "used_on":x['used_on'].strftime("%d/%m/%Y %H:%M:%S"),
                 "status":x['ustatus'],
@@ -187,6 +191,10 @@ def user_coupons(request,uid):
             if x['ustatus'] in "pending":
                 pending.append(rep)
             elif x['ustatus'] in "used":
+                ratingDoc = db.ratings.find_one({"cID": rep['cID'], "userID": uid}, {"rating": True,"comment": True})
+                if ratingDoc:
+                    rep['rating'] = ratingDoc['rating']
+                    rep['comment'] = ratingDoc['comment']
                 used.append(rep)
             elif x['ustatus'] in "expired":
                 expired.append(rep)
