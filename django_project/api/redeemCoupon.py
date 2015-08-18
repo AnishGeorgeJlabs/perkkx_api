@@ -21,26 +21,30 @@ def test(request):
 
 @csrf_exempt
 def get_ecom_coupon(request):
-	try:
-		collection = db.deals
-		data = json.loads(request.body)
-		result = collection.find_one({"vendor_id":data['vendor_id'],"cID":data["cID"]})
-		user = db.order_data.find_one({"userID":data['userID'],"cID":data["cID"]})
-		if user:
-			return HttpResponse(dumps({ "success": 1, "code": user['rcode'] }), content_type="application/json")
-		if db.order_data.find({"userID":data['userID'],"ustatus":"pending"}).count() >=2:
-			return HttpResponse(dumps({ "success": 0, "reason": "redeem limit reached" }), content_type="application/json")
-		else:
-			codes = result['rcodes']
-			code = codes.pop()
-			result['rcodes'] = codes
-			result['usedrcodes'].append(code)
-			collection.update({"vendor_id":data['vendor_id'],"cID":data["cID"]},{"$set":result},False)
-			couponRecord = {"vendor_id":data['vendor_id'],"cID":data["cID"],"userID":data['userID'],"rcode":code,"used_on":datetime.datetime.now(),"ustatus":"pending","mstatus":"pending"}
-			db.order_data.insert(couponRecord)
-			return HttpResponse(dumps({ "success": 1, "code": code }), content_type="application/json")
-	except:
-		return HttpResponse(failure, content_type="application/json")
+    try:
+        collection = db.deals
+        data = json.loads(request.body)
+        result = collection.find_one({"vendor_id":data['vendor_id'],"cID":data["cID"]})
+        if not result:
+            result = db.one_time_deals.find_one({"vendor_id":data['vendor_id'],"cID":data["cID"]})
+            collection = db.one_time_deals
+
+        user = db.order_data.find_one({"userID":data['userID'],"cID":data["cID"]})
+        if user:
+            return HttpResponse(dumps({ "success": 1, "code": user['rcode'] }), content_type="application/json")
+        if db.order_data.find({"userID":data['userID'],"ustatus":"pending"}).count() >=2:
+            return HttpResponse(dumps({ "success": 0, "reason": "redeem limit reached" }), content_type="application/json")
+        else:
+            codes = result['rcodes']
+            code = codes.pop()
+            result['rcodes'] = codes
+            result['usedrcodes'].append(code)
+            collection.update({"vendor_id":data['vendor_id'],"cID":data["cID"]},{"$set":result},False)
+            couponRecord = {"vendor_id":data['vendor_id'],"cID":data["cID"],"userID":data['userID'],"rcode":code,"used_on":datetime.datetime.now(),"ustatus":"pending","mstatus":"pending"}
+            db.order_data.insert(couponRecord)
+            return HttpResponse(dumps({ "success": 1, "code": code }), content_type="application/json")
+    except:
+        return HttpResponse(failure, content_type="application/json")
 
 """
 {
