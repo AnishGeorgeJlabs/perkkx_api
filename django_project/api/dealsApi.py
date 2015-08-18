@@ -272,7 +272,7 @@ def get_one_time_deals(request):
 
         deals = [
             deal
-            for deal in db.one_time_deals.find()
+            for deal in db.one_time_deals.find({}, {"_id": False, "rcodes": False, "usedrcodes": False})
             if db.order_data.count({"userID": userID, "cID": deal['cID']}) == 0
         ]
 
