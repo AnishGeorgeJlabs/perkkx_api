@@ -12,6 +12,11 @@ lasttouch_dict = (db.form.find_one({"operation": "channel"}, {"regex": True}))['
 
 @csrf_exempt
 def login(request):
+    """
+    Simple login protocol
+    method: POST
+    post data: { username: string, password: <md5 hash> String }
+    """
     try:
         data = json.loads(request.body)
         if db.credentials.count({"username": data['username'], "password": data['password']}) > 0:
@@ -23,6 +28,9 @@ def login(request):
 
 @csrf_exempt
 def formPost(request):
+    """
+    Form submission api
+    """
     try:
         data = json.loads(request.body)
         # Do processing here
@@ -58,6 +66,9 @@ def formPost(request):
         return basic_error(e)
 
 def query(request):
+    """
+    Get the pipeline and options for the wadi system
+    """
     id = request.GET['id']
     obj = db.queries.find_one({"_id": ObjectId(id)})
     if obj:
@@ -86,10 +97,19 @@ def query(request):
         raise Http404
 
 def get_form_data(request):
+    """
+    Get the form
+    """
     data = db.form.find({}, {"_id": False, "regex": False})
-    '''
-    result = {}
-    for item in data:
-        result[item['operation']] = item
-    '''
     return jsonResponse(data)
+
+def status_updates(request):
+    """
+    Api endpoint which will be used by the wadi tool to submit status updates
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        pass
