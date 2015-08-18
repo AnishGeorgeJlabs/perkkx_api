@@ -127,7 +127,7 @@ def getdata(request):
 #-------------Mailing Function-----------------#
 def conf_mail(email,code):
     import sendgrid
-    sg = sendgrid.SendGridClient('bandishshah', 'perkkx@123')
+    sg = sendgrid.SendGridClient('bandishshah', 'bandishshah@123')
     message = sendgrid.Mail()
     message.add_to(email)
     message.set_subject("Verify your Corporate ID")
