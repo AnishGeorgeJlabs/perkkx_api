@@ -22,10 +22,17 @@ def test(request):
 
 @csrf_exempt
 def get_conf(request, namespace, key):
-    res = db.configuration.find_one({"namespace": namespace})
-    if not res:
-        return jsonResponse({"success": False, "error": "Wrong namespace: "+namespace})
-    if key not in res:
-        return jsonResponse({"success": False, "error": "Wrong key: "+key})
+    if request.method == 'GET':
+        res = db.configuration.find_one({"namespace": namespace})
+
+        if not res:
+            return jsonResponse({"success": False, "error": "Wrong namespace: "+namespace})
+
+        if len(key) == 0:
+            return jsonResponse({"success": True, "namespace": namespace, "keys": res['conf'].keys()})
+        if key not in res['conf']:
+            return jsonResponse({"success": False, "error": "Wrong key: "+key})
+        else:
+            return jsonResponse({"success": True, "value": res['conf'][key]})
     else:
-        return jsonResponse({"success": True, "data": res[key]})
+        raise Http404

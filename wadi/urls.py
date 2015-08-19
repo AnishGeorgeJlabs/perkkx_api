@@ -13,5 +13,5 @@ urlpatterns = patterns(
     url(r'^interface/login$', interfaceApi.login, name='interface.login'),
     url(r'^interface/post$', interfaceApi.formPost, name='interface.post'),
     url(r'^interface/form$', interfaceApi.get_form_data, name='interface.form'),
-    url(r'^configuration/(?P<namespace>\w+)/(?P<key>.*)$', api.get_conf, name='configurations'),
+    url(r'^configuration/(?P<namespace>\w+)/(?P<key>\w+)$', api.get_conf, name='configurations'),
 )
