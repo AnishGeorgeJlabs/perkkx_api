@@ -1,4 +1,5 @@
-from data import cl_blocked, basic_success, jsonResponse
+from data import cl_blocked, basic_success, jsonResponse, db
+from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
@@ -19,27 +20,12 @@ def test(request):
         "extra": extra
     })
 
-
 @csrf_exempt
-def block_number(request):
-    num = request.GET['number']
-    lan = 'English' if request.GET['language'].lower() in 'english' else 'Arabic'
-    data = {
-        "number": num,
-        "language": lan
-    }
-    if cl_blocked.count(data) == 0:
-        cl_blocked.insert_one(data)
-
-    return basic_success
-
-@csrf_exempt
-def test_query(request):
-    return jsonResponse({
-        "pipeline": ['category', 'customer'],
-        'options': {
-            'mode': 'all',
-            'cat_list': ['Sports Shoes', 'Pumps']
-        }
-    })
-
+def get_conf(request, namespace, key):
+    res = db.configuration.find_one({"namespace": namespace})
+    if not res:
+        return jsonResponse({"success": False, "error": "Wrong namespace: "+namespace})
+    if key not in res:
+        return jsonResponse({"success": False, "error": "Wrong key: "+key})
+    else:
+        return jsonResponse({"success": True, "data": res[key]})
