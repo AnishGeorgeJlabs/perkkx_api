@@ -22,6 +22,12 @@ def test(request):
 
 @csrf_exempt
 def get_conf(request, namespace, key):
+    """ Get configuration values for the various wadi tools
+    :param request:
+    :param namespace:
+    :param key:
+    :return:
+    """
     if request.method == 'GET':
         res = db.configuration.find_one({"namespace": namespace})
 
@@ -34,5 +40,5 @@ def get_conf(request, namespace, key):
             return jsonResponse({"success": False, "error": "Wrong key: "+key})
         else:
             return jsonResponse({"success": True, "value": res['conf'][key]})
-    else:
+    else:   # Updation not support just yet
         raise Http404
