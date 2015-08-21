@@ -1,7 +1,7 @@
 from bson.json_util import dumps
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import Template,Context
+from django.template import Template, Context
 import pymongo
 from datetime import datetime, timedelta
 import random
@@ -10,13 +10,14 @@ import json
 import re
 from mongo_filter import merchant_filter_small, deal_compact_filter
 
-failure = dumps({ "success": 0 })
+failure = dumps({"success": 0})
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
 
 
 def con_hours(t):
     return timedelta(hours=t.hour, minutes=t.minute)
+
 
 def deal_valid(deal):
     if not deal:
@@ -26,11 +27,11 @@ def deal_valid(deal):
         return False
 
     if 'deal_start' in deal and \
-        today < datetime.strptime(deal['deal_start'], "%d/%m/%Y"):
+                    today < datetime.strptime(deal['deal_start'], "%d/%m/%Y"):
         return False
 
     if 'valid_days' in deal and \
-            ((today.weekday() + 1) % 7) not in deal['valid_days']:
+                    ((today.weekday() + 1) % 7) not in deal['valid_days']:
         return False
     '''
     try:
@@ -45,13 +46,13 @@ def deal_valid(deal):
             close=datetime.strptime(deal['valid_time'][1], "%H:%M"),
             now=datetime.now()
         )
-        #deal.pop('valid_time')         Let us show dynamic deal data for now
+        # deal.pop('valid_time')         Let us show dynamic deal data for now
         return res
 
     return True
 
 
-def check_time_between (open, close, now):
+def check_time_between(open, close, now):
     open = con_hours(open)
     close = con_hours(close)
     now = con_hours(now)
@@ -65,7 +66,6 @@ def check_time_between (open, close, now):
 
 
 def process_merchant(mer, long_version):
-
     if not long_version and 'special_event' in mer:
         sparr = mer.pop('special_event')
         mer['special'] = sparr[0].get('title')
@@ -76,13 +76,13 @@ def process_merchant(mer, long_version):
         else:
             timing = mer['timing']
         dayToday = (datetime.today().weekday() + 1) % 7
-        today = timing[dayToday]   # Because sunday is 0
+        today = timing[dayToday]  # Because sunday is 0
         op = check_time_between(
             open=datetime.strptime(today['open_time'], "%H:%M"),
             close=datetime.strptime(today['close_time'], "%H:%M"),
             now=datetime.now()
         )
-        mer.update({"open":op})
+        mer.update({"open": op})
         if not long_version:
             mer['open_time'] = today['open_time']
             mer['close_time'] = today['close_time']
@@ -91,7 +91,7 @@ def process_merchant(mer, long_version):
 
     if 'price' in mer:
         price = mer["price"]
-        price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
+        price = int(float(re.sub("[^\d+\.]", "", price).strip(".")))
         mer['price'] = price
 
 
@@ -105,6 +105,7 @@ def custom_filter(deal):
     else:
         return False
 
+
 @csrf_exempt
 def merchants(request, user, vendor):
     global db
@@ -112,7 +113,7 @@ def merchants(request, user, vendor):
     if merchant is None:
         return HttpResponse(dumps({}), content_type="application/json")
 
-    if db.user.count({"userID": user, "followed."+str(vendor) : {"$exists": True}}) > 0:
+    if db.user.count({"userID": user, "followed." + str(vendor): {"$exists": True}}) > 0:
         merchant['followed'] = True
     else:
         merchant['followed'] = False
@@ -143,4 +144,3 @@ def merchants(request, user, vendor):
     merchant['one_time_deals'] = list(db.one_time_deals.find({'vendor_id': int(vendor)}, deal_compact_filter))
 
     return HttpResponse(dumps(merchant), content_type="application/json")
-
