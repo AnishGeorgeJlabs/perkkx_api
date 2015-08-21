@@ -131,12 +131,13 @@ def get_deals(request, category):
 
             # Step 2, get the primary deal, now step 1
             deal_query.update({"deal_cat": "primary"})
-            pdeal = dCollection.find_one(deal_query, deal_filter )
+            pdeal = dCollection.find_one(deal_query, deal_filter )      # Always false for cat 5
 
             if category != 5:
                 deal_query.update({"deal_cat": "secondary"})
             else:
                 deal_query.pop('deal_cat')
+                deal_query.update({'rcodes.1': {"$exists": True}})
 
             if pdeal and deal_valid(pdeal):
                 secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
