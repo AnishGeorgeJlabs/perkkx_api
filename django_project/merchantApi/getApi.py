@@ -22,15 +22,19 @@ def get_dealOpts(vendor_id, userID):
     dealOpts = []
     for d in deals:
         if deal_valid(d):
+            i = 100
             deal_string = d['deal']
             if 'group_size' in d:
-                deal_string += " group: "+str(d['group_size'])
-            dealOpts.append({
+                deal_string += " (group: "+str(d['group_size'])+")"
+                i = int(d.get('gmin', 100))
+            dealOpts.append((i, {
                 "deal": deal_string,
                 "cID": d["cID"]
-            })
+            }))
+    res = map(lambda k: k[1],
+              sorted(dealOpts, key=lambda a: a[0]))
 
-    return dealOpts
+    return res
 
 
 @csrf_exempt
