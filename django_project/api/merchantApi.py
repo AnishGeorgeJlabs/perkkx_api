@@ -90,9 +90,12 @@ def process_merchant(mer, long_version):
             mer['today'] = dayToday
 
     if 'price' in mer:
-        price = mer["price"]
-        price = int(float(re.sub("[^\d+\.]", "", price).strip(".")))
-        mer['price'] = price
+        try:
+            price = mer["price"]
+            price = int(float(re.sub("[^\d+\.]", "", price).strip(".")))
+            mer['price'] = price
+        except:
+            pass
 
 
 def custom_filter(deal):
