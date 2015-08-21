@@ -57,7 +57,6 @@ def get_deals(request, category):
         mCollection = db.merchants
         dCollection = db.deals
         data = []
-        data_dynamic_deals = []
         try:
             pages = int(request.GET['pages'])
         except:
@@ -161,15 +160,6 @@ def get_deals(request, category):
             else:
                 mer.update({"distance": False})
 
-            # ----- Setup done ----- #
-
-            # Adding to deals arrays
-            '''
-            for d in dynamic_deals:
-                d.update(mer)
-                data_dynamic_deals.append(d)
-            '''
-
             if pdeal:
                 pdeal.update(mer)
                 data.append(pdeal)
@@ -179,8 +169,6 @@ def get_deals(request, category):
 
         ## God knows how to sort within lists, so we prepend the priority list (dynamic_deals) to the data list
         ## and hope for the best
-        data = data_dynamic_deals + data
-
         if end > len(data):
             end = len(data)
         if start > len(data):
