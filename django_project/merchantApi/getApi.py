@@ -14,7 +14,7 @@ def _get_unix_timestamp(data):  # data is datetime
 
 
 def get_dealOpts(vendor_id, userID):
-    deals = db.deals.find({"vendor_id": vendor_id})
+    deals = list(db.deals.find({"vendor_id": vendor_id}))
     deals += [
         deal for deal in db.one_time_deals.find({"vendor_id": vendor_id})
         if db.order_data.count({"cID": deal['cID'], "userID": userID}) == 0
