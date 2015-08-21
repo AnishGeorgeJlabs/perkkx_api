@@ -115,6 +115,9 @@ def add_coupon(request):
         collection = db.order_data
         data = json.loads(request.body)
         vendor = db.deals.find_one({"cID": data["cID"]})
+        if not vendor:
+            vendor = db.one_time_deals.find_one({"cID": data['cID']})
+
         if vendor:
             collection.insert({
                 "userID": data["rcode"][:-2],
