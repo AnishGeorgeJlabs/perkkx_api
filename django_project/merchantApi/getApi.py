@@ -69,7 +69,7 @@ def validate_code(request):
             if db.order_data.count({"rcode": code, "mstatus": {"$ne": "used"}}) > 0:
                 return response({"valid": False, "error": "repeated rcode: "})
 
-            dealOpts = get_dealOpts(vendor_id)
+            dealOpts = get_dealOpts(vendor_id, user['userID'])
             if not dealOpts:
                 return response({"valid": False, "error": "No dealOpts"})
 
