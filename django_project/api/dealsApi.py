@@ -124,7 +124,7 @@ def get_deals(request, category):
             # --- Selecting a deal -------- #
             deal_query = {"vendor_id": mer['vendor_id']}
 
-            if 'group' in request.GET:
+            if 'group' in request.GET and int(category) != 5:
                 group_query_update(deal_query, request.GET['group'])
 
             # Step 2, get the primary deal, now step 1
