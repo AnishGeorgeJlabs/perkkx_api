@@ -128,30 +128,11 @@ def get_deals(request, category):
             if 'group' in request.GET:
                 group_query_update(deal_query, request.GET['group'])
 
-            '''
-            debug2 += 'stage1deal_query: '+str(deal_query)+" :: "
-            # Step 1, dynamic deals get preference
-            dyn_query = deal_query.copy()
-            dyn_query.update({
-                "$or": [
-                    { "valid_days": {"$exists": True}},
-                    { "valid_time": {"$exists": True}}
-                ]
-            })
-            dynamic_deals = [d for d in
-                             dCollection.find(dyn_query, deal_filter)
-                             if deal_valid(d)]
-            debug2 += 'size of dynamic deals: '+str(len(dynamic_deals))+" :: "
-            '''
             # Step 2, get the primary deal, now step 1
             deal_query.update({"deal_cat": "primary"})
-            pdeal = dCollection.find_one( deal_query, deal_filter )
+            pdeal = dCollection.find_one(deal_query, deal_filter )
 
             deal_query.update({"deal_cat": "secondary"})
-            '''
-            if pdeal in dynamic_deals:
-                pdeal = {}
-            '''
             if pdeal and deal_valid(pdeal):
                 secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
                 if secondary:
@@ -165,18 +146,8 @@ def get_deals(request, category):
                     pdeal['second_deal'] = secondaries[1]['deal']
             debug_message += "\n Case 1 for dynamic"
 
-            """
-            else:
-                dynamic_deals = [d for d in dCollection.find(deal_query, deal_filter)
-                                 if deal_valid(d)]
-                pdeal = {}
-                debug_message += "\n Case 2 for dynamic"
-            """
-
-            # debug_message += "Size of dynamic deals: "+str(len(dynamic_deals))+"\n"
-
             # ----- Setup Merchant data ------ #
-            process_merchant(mer, save_timing=False)       # Found in merchantApi
+            process_merchant(mer, long_version=False)       # Found in merchantApi
             if mer['address']['lat'] and mer['address']['lng']:
                 if lat:
                     data_for_distance = {

@@ -64,31 +64,36 @@ def check_time_between (open, close, now):
         return False
 
 
-def process_merchant (mer, save_timing):
-    if not save_timing:
-        timing = mer.pop('timing')
-    else:
-        timing = mer['timing']
-    dayToday = (datetime.today().weekday() + 1) % 7
-    today = timing[dayToday]   # Because sunday is 0
-    op = check_time_between(
-        open=datetime.strptime(today['open_time'], "%H:%M"),
-        close=datetime.strptime(today['close_time'], "%H:%M"),
-        now=datetime.now()
-    )
-    try:
+def process_merchant(mer, long_version):
+
+    if not long_version and 'special_event' in mer:
+        sparr = mer.pop('special_event')
+        mer['special'] = sparr[0].get('title')
+
+    if 'timing' in mer:
+        if not long_version:
+            timing = mer.pop('timing')
+        else:
+            timing = mer['timing']
+        dayToday = (datetime.today().weekday() + 1) % 7
+        today = timing[dayToday]   # Because sunday is 0
+        op = check_time_between(
+            open=datetime.strptime(today['open_time'], "%H:%M"),
+            close=datetime.strptime(today['close_time'], "%H:%M"),
+            now=datetime.now()
+        )
+        mer.update({"open":op})
+        if not long_version:
+            mer['open_time'] = today['open_time']
+            mer['close_time'] = today['close_time']
+        else:
+            mer['today'] = dayToday
+
+    if 'price' in mer:
         price = mer["price"]
         price = int(float(re.sub("[^\d+\.]","",price).strip(".")))
         mer['price'] = price
-    except:
-        pass
 
-    mer.update({"open":op})
-    if not save_timing:
-        mer['open_time'] = today['open_time']
-        mer['close_time'] = today['close_time']
-    else:
-        mer['today'] = dayToday
 
 def custom_filter(deal):
     if deal_valid(deal):
@@ -112,7 +117,7 @@ def merchants(request, user, vendor):
     else:
         merchant['followed'] = False
 
-    process_merchant(merchant, save_timing=True)
+    process_merchant(merchant, long_version=True)
 
     """ Works like a charm :sunglasses: """
     all_deals = db.deals.aggregate([
