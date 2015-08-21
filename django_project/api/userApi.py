@@ -125,6 +125,7 @@ def getdata(request):
         return HttpResponse(dumps(failure),content_type="application/json")
 
 #-------------Mailing Function-----------------#
+'''
 def conf_mail(email,code):
     import sendgrid
     sg = sendgrid.SendGridClient('bandishshah', 'bandishshah@123')
@@ -134,6 +135,26 @@ def conf_mail(email,code):
     message.set_html("Click <a href='http://api.jlabs.co/perkkx/verifyUser/" + code + "'>Here</a> to verify your account and get all deals." )
     message.set_from('Verify <no-reply@perkkx.com>')
     return sg.send(message)
+'''
+
+def conf_mail(email, code):
+    import mandrill
+    mclient = mandrill.Mandrill('8kCnFImdpMfZZOyHlS7BFA')
+    message = {
+        'html': """
+            <p>
+                <a href='http://api.jlabs.co/perkkx/verifyUser/%s'>Click here</a> to verify your account
+                and get all deals.
+            </p>
+            """ % str(code),
+        'subject': "Verify your Corporate ID",
+        'from_name': 'Verify <no-reply@perkkx.com>',
+        'from_email': 'no-reply@perkkx.com',
+        'to': [
+            {'email': email}
+        ]
+    }
+    return mclient.messages.send(message=message, async=True)
 
 @csrf_exempt
 def updateuser(request):
