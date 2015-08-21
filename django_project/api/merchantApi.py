@@ -125,7 +125,8 @@ def merchants(request, user, vendor):
 
     category = merchant['cat'][0]
     if category == 5:
-        merchant['all_deals'] = db.deals.find({'vendor_id': int(vendor)}, {"_id": False, "rcodes": False, "usedrcodes": False})
+        merchant['all_deals'] = db.deals.find({'vendor_id': int(vendor)}, {"_id": False, "rcodes": False,
+                                                                           "usedrcodes": False, "vendor_id" False})
     else:
         """ Works like a charm :sunglasses: """
         all_deals = db.deals.aggregate([
