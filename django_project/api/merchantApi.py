@@ -123,26 +123,30 @@ def merchants(request, user, vendor):
 
     process_merchant(merchant, long_version=True)
 
-    """ Works like a charm :sunglasses: """
-    all_deals = db.deals.aggregate([
-        {"$match": {"vendor_id": int(vendor)}},
-        {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True,
-                      "valid_days": True, "valid_time": True, "deal_start": True}},
-        {"$group": {"_id": {"gsize": "$group_size", "gmin": "$gmin"},
-                    "deals": {
-                        "$addToSet": "$$ROOT"
-                    }}},
-        {"$sort": {"_id.gmin": 1}},
-        {"$project": {"size": "$_id.gsize", "_id": False, "deals": True}}
-    ])
-    all_deals = list(all_deals)
-    merchant['all_deals'] = filter(
-        lambda group: len(group['deals']) > 0,
-        map(
-            lambda group: {'size': group['size'], 'deals': filter(custom_filter, group['deals'])},
-            all_deals
+    category = merchant['cat'][0]
+    if category == 5:
+        merchant['all_deals'] = db.deals.find({'vendor_id': int(vendor)}, deal_compact_filter)
+    else:
+        """ Works like a charm :sunglasses: """
+        all_deals = db.deals.aggregate([
+            {"$match": {"vendor_id": int(vendor)}},
+            {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True,
+                          "valid_days": True, "valid_time": True, "deal_start": True}},
+            {"$group": {"_id": {"gsize": "$group_size", "gmin": "$gmin"},
+                        "deals": {
+                            "$addToSet": "$$ROOT"
+                        }}},
+            {"$sort": {"_id.gmin": 1}},
+            {"$project": {"size": "$_id.gsize", "_id": False, "deals": True}}
+        ])
+        all_deals = list(all_deals)
+        merchant['all_deals'] = filter(
+            lambda group: len(group['deals']) > 0,
+            map(
+                lambda group: {'size': group['size'], 'deals': filter(custom_filter, group['deals'])},
+                all_deals
+            )
         )
-    )
 
     merchant['one_time_deals'] = list(db.one_time_deals.find({'vendor_id': int(vendor)}, deal_compact_filter))
 
