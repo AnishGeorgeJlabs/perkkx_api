@@ -246,7 +246,9 @@ def get_one_time_deals(request):
             if not m:
                 continue
             deal['vendor_name'] = m['vendor_name']
-            deal['area'] = m['address']['area']
+            if 'address' in m:
+                deal['area'] = m['address']['area']
+
             if isinstance(m['cat'], list):
                 deal['cat'] = m['cat'][0]
             else:
