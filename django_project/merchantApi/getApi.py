@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from django.template import Template,Context
+from django.template import Template, Context
 import pymongo
 from datetime import datetime, timedelta
 import calendar
@@ -7,12 +7,17 @@ from .data_query import db, get_data, response
 import time
 import re
 
-def _get_unix_timestamp(data):      # data is datetime
+
+def _get_unix_timestamp(data):  # data is datetime
     return int(data.strftime("%s")) * 1000
 
 
-def get_dealOpts(vendor_id):
-    deals = db.deals.find({ "vendor_id": vendor_id})
+def get_dealOpts(vendor_id, userID):
+    deals = db.deals.find({"vendor_id": vendor_id})
+    deals += [
+        deal for deal in db.one_time_deals.find({"vendor_id": vendor_id})
+        if db.order_data.count({"cID": deal['cID'], "userID": userID}) == 0
+    ]
     dealOpts = []
     for d in deals:
         if datetime.strptime(d["expiry"], "%d/%m/%Y") > datetime.now():
@@ -22,19 +27,22 @@ def get_dealOpts(vendor_id):
             })
     return dealOpts
 
+
 @csrf_exempt
 def validate_code(request):
     invalid_code = {"valid": False, "error": "Invalid code"}
     try:
         vendor_id = int(request.GET['vendor_id'])
         code = request.GET['rcode'].lower()
-        res = db.order_data.find_one({"rcode": code, "userID": code[:-2], "vendor_id": vendor_id}, {"_id": False, "used_on": True, "rcode": True, "cID": True, "userID": True, "mstatus": True})
+        res = db.order_data.find_one({"rcode": code, "userID": code[:-2], "vendor_id": vendor_id},
+                                     {"_id": False, "used_on": True, "rcode": True, "cID": True, "userID": True,
+                                      "mstatus": True})
         if res:
             if res["mstatus"] == "pending" or res['mstatus'] == 'disputed':
                 res.pop("mstatus")
 
                 cid = res['cID']
-                dealOpts = get_dealOpts(vendor_id)
+                dealOpts = get_dealOpts(vendor_id, code[:-2])
 
                 res['dealOpts'] = dealOpts
 
@@ -46,11 +54,12 @@ def validate_code(request):
 
                 res["used_on"] = _get_unix_timestamp(res["used_on"])
                 return response({"valid": True, "data": res})
-            else: return response(invalid_code)
+            else:
+                return response(invalid_code)
         else:
             user = db.user.find_one({"userID": code[:-2]})
             if not user:
-                return response({"valid": False, "error": "Wrong user id "+code[:-2]})
+                return response({"valid": False, "error": "Wrong user id " + code[:-2]})
 
             if db.order_data.count({"rcode": code, "mstatus": {"$ne": "used"}}) > 0:
                 return response({"valid": False, "error": "repeated rcode: "})
@@ -67,15 +76,15 @@ def validate_code(request):
                 "selectedIndex": 0
             }
             return response({"valid": True, "data": result})
-        
+
     except Exception, e:
-        return response({"valid": False,"error": "Invalid code and error " + str(e)})
-        
+        return response({"valid": False, "error": "Invalid code and error " + str(e)})
+
 
 @csrf_exempt
 def get(request, typ, vendor_id):
     """GET requests for typ [pending, used, expired, disputed] and vendor_id"""
-    expiryLimit = timedelta(weeks=(6*4))        # 6 months
+    expiryLimit = timedelta(weeks=(6 * 4))  # 6 months
     today = datetime.now()
 
     if typ not in ['pending', 'used', 'expired', 'disputed']:
@@ -92,8 +101,8 @@ def get(request, typ, vendor_id):
         if not deal:
             deal = db.one_time_deals.find_one({"cID": data['cID']}, {"deal": True, "expiry": True})
             if not deal:
-                error += "dealMiss: "+data["cID"]+"   "
-                continue                                                                        # Testing use case, when we have inconsistent database
+                error += "dealMiss: " + data["cID"] + "   "
+                continue  # Testing use case, when we have inconsistent database
         data["deal"] = deal["deal"]
 
         # Step 2. Get expiry
@@ -101,13 +110,13 @@ def get(request, typ, vendor_id):
             expiry = datetime.strptime(deal['expiry'], "%d/%m/%Y")
             if expiry - today < expiryLimit:
                 data['expiry'] = _get_unix_timestamp(expiry)
-            
+
         # Step 3. Get used_on
         if typ != "expired":
             data["used_on"] = _get_unix_timestamp(data["used_on"])
         else:
             del data["used_on"]
-        
+
         # Step 4. Change submitted_on to proper format
         if typ == "used":
             data["submitted_on"] = _get_unix_timestamp(data["submitted_on"])
@@ -124,6 +133,7 @@ def get(request, typ, vendor_id):
 
     return response(result)
 
+
 @csrf_exempt
 def get_count(request, vendor_id):
     "GET the counts for each type of deals in used, expired, disputed"
@@ -136,4 +146,3 @@ def get_count(request, vendor_id):
         return response(result)
     except Exception, e:
         return response({"error": str(e)})
-
