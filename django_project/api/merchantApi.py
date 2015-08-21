@@ -68,7 +68,7 @@ def check_time_between(open, close, now):
 def process_merchant(mer, long_version):
     if not long_version and 'special_event' in mer:
         sparr = mer.pop('special_event')
-        mer['special'] = sparr[0].get('title')
+        mer['special'] = sparr[0]['title']
 
     if 'timing' in mer:
         if not long_version:
