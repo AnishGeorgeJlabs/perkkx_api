@@ -125,7 +125,7 @@ def merchants(request, user, vendor):
 
     category = merchant['cat'][0]
     if category == 5:
-        merchant['all_deals'] = db.deals.find({'vendor_id': int(vendor), "rcodes": {"$size": {"$ne": 0}}},
+        merchant['all_deals'] = db.deals.find({'vendor_id': int(vendor), "rcodes.1": {"$exists": True}},
                                               {"_id": False, "rcodes": False, "usedrcodes": False, "vendor_id": False})
     else:
         """ Works like a charm :sunglasses: """
