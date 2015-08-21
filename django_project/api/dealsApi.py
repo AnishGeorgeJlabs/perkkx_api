@@ -144,7 +144,6 @@ def get_deals(request, category):
                 pdeal = secondaries[0]
                 if len(secondaries) > 1:
                     pdeal['second_deal'] = secondaries[1]['deal']
-            debug_message += "\n Case 1 for dynamic"
 
             # ----- Setup Merchant data ------ #
             process_merchant(mer, long_version=False)       # Found in merchantApi
