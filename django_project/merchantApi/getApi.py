@@ -6,6 +6,7 @@ import calendar
 from .data_query import db, get_data, response
 import time
 import re
+from ..api.merchantApi import deal_valid
 
 
 def _get_unix_timestamp(data):  # data is datetime
@@ -20,11 +21,15 @@ def get_dealOpts(vendor_id, userID):
     ]
     dealOpts = []
     for d in deals:
-        if datetime.strptime(d["expiry"], "%d/%m/%Y") > datetime.now():
+        if deal_valid(d):
+            deal_string = d['deal']
+            if 'group_size' in d:
+                deal_string += " group: "+str(d['group_size'])
             dealOpts.append({
-                "deal": d["deal"],
+                "deal": deal_string,
                 "cID": d["cID"]
             })
+
     return dealOpts
 
 
