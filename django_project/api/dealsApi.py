@@ -129,11 +129,14 @@ def get_deals(request, category):
                 group_query_update(deal_query, request.GET['group'])
 
             # Step 2, get the primary deal, now step 1
-            if category != 5:
-                deal_query.update({"deal_cat": "primary"})
+            deal_query.update({"deal_cat": "primary"})
             pdeal = dCollection.find_one(deal_query, deal_filter )
 
-            deal_query.update({"deal_cat": "secondary"})
+            if category != 5:
+                deal_query.update({"deal_cat": "secondary"})
+            else:
+                deal_query.pop('deal_cat')
+
             if pdeal and deal_valid(pdeal):
                 secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
                 if secondary:
