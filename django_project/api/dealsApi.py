@@ -88,7 +88,8 @@ def get_deals(request, category):
         else:
             sort = 'distance'
 
-        search = {"cat": int(category)}
+        category = int(category)
+        search = {"cat": category}
         if 'subcat' in request.GET.keys():
             search.update({"subcat":{"$in":[int(x.replace("u","").strip("'")) for x in request.GET['subcat'].split(",")]}})
         if 'ser' in request.GET.keys():
@@ -124,11 +125,12 @@ def get_deals(request, category):
             # --- Selecting a deal -------- #
             deal_query = {"vendor_id": mer['vendor_id']}
 
-            if 'group' in request.GET and int(category) != 5:
+            if 'group' in request.GET and category != 5:
                 group_query_update(deal_query, request.GET['group'])
 
             # Step 2, get the primary deal, now step 1
-            deal_query.update({"deal_cat": "primary"})
+            if category != 5:
+                deal_query.update({"deal_cat": "primary"})
             pdeal = dCollection.find_one(deal_query, deal_filter )
 
             deal_query.update({"deal_cat": "secondary"})
