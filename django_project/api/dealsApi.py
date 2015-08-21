@@ -127,6 +127,7 @@ def get_deals(request, category):
 
             if 'group' in request.GET and category != 5:
                 group_query_update(deal_query, request.GET['group'])
+            debug_message += "AND the query is :: "+json.dumps(deal_query)
 
             # Step 2, get the primary deal, now step 1
             deal_query.update({"deal_cat": "primary"})
