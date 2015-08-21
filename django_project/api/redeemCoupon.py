@@ -1,50 +1,56 @@
 from bson.json_util import dumps
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import Template,Context
+from django.template import Template, Context
 import pymongo
 import datetime
 import random
 import string
 import json
-failure = dumps({ "success": 0 })
+
+failure = dumps({"success": 0})
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
 
 limit = 2
 
+
 @csrf_exempt
 def test(request):
-        collection = db.googleapitest
-        collection.insert({"hi":"hi"})
-        return HttpResponse("Bad Request",content_type="application/json")
+    collection = db.googleapitest
+    collection.insert({"hi": "hi"})
+    return HttpResponse("Bad Request", content_type="application/json")
+
 
 @csrf_exempt
 def get_ecom_coupon(request):
     try:
         collection = db.deals
         data = json.loads(request.body)
-        result = collection.find_one({"vendor_id":data['vendor_id'],"cID":data["cID"]})
+        result = collection.find_one({"vendor_id": data['vendor_id'], "cID": data["cID"]})
         if not result:
-            result = db.one_time_deals.find_one({"vendor_id":data['vendor_id'],"cID":data["cID"]})
+            result = db.one_time_deals.find_one({"vendor_id": data['vendor_id'], "cID": data["cID"]})
             collection = db.one_time_deals
 
-        user = db.order_data.find_one({"userID":data['userID'],"cID":data["cID"]})
+        user = db.order_data.find_one({"userID": data['userID'], "cID": data["cID"]})
         if user:
-            return HttpResponse(dumps({ "success": 1, "code": user['rcode'] }), content_type="application/json")
-        if db.order_data.find({"userID":data['userID'],"ustatus":"pending"}).count() >=2:
-            return HttpResponse(dumps({ "success": 0, "reason": "redeem limit reached" }), content_type="application/json")
+            return HttpResponse(dumps({"success": 1, "code": user['rcode']}), content_type="application/json")
+        if db.order_data.find({"userID": data['userID'], "ustatus": "pending"}).count() >= 2:
+            return HttpResponse(dumps({"success": 0, "reason": "redeem limit reached"}),
+                                content_type="application/json")
         else:
             codes = result['rcodes']
             code = codes.pop()
             result['rcodes'] = codes
             result['usedrcodes'].append(code)
-            collection.update({"vendor_id":data['vendor_id'],"cID":data["cID"]},{"$set":result},False)
-            couponRecord = {"vendor_id":data['vendor_id'],"cID":data["cID"],"userID":data['userID'],"rcode":code,"used_on":datetime.datetime.now(),"ustatus":"pending","mstatus":"pending"}
+            collection.update({"vendor_id": data['vendor_id'], "cID": data["cID"]}, {"$set": result}, False)
+            couponRecord = {"vendor_id": data['vendor_id'], "cID": data["cID"], "userID": data['userID'], "rcode": code,
+                            "used_on": datetime.datetime.now(), "ustatus": "pending", "mstatus": "pending"}
             db.order_data.insert(couponRecord)
-            return HttpResponse(dumps({ "success": 1, "code": code }), content_type="application/json")
+            return HttpResponse(dumps({"success": 1, "code": code}), content_type="application/json")
     except:
         return HttpResponse(failure, content_type="application/json")
+
 
 """
 {
@@ -52,19 +58,22 @@ def get_ecom_coupon(request):
     cID: A1
 }
 """
-success = { "success": 1 }
-failure = { "success": 0 }
+success = {"success": 1}
+failure = {"success": 0}
+
+
 @csrf_exempt
-def getUserDeals(request,userID):
+def getUserDeals(request, userID):
     collection = db.order_data
     t = collection.find({
-            "userID": userID,
-            "ustatus": "pending"
-        })
+        "userID": userID,
+        "ustatus": "pending"
+    })
     data = []
     if t:
         for x in t:
             x = x
+
 
 @csrf_exempt
 def check_coupon(request):
@@ -89,7 +98,7 @@ def check_coupon(request):
             return HttpResponse(dumps(result), content_type="application/json")
         # 3 Check if user is verified or not
         users = db.user
-        user = users.find_one({"userID":data['userID']})
+        user = users.find_one({"userID": data['userID']})
         if user['verified'] in 'Y':
             limit = 2
         else:
@@ -109,6 +118,7 @@ def check_coupon(request):
         result.update({"error": str(e)})
         return HttpResponse(dumps(result), content_type="application/json")
 
+
 @csrf_exempt
 def add_coupon(request):
     try:
@@ -126,7 +136,7 @@ def add_coupon(request):
                 "mstatus": "pending",
                 "vendor_id": vendor["vendor_id"],
                 "cID": data["cID"],
-                "used_on":datetime.datetime.now()       ## Mongo can store date directly !!
+                "used_on": datetime.datetime.now()  ## Mongo can store date directly !!
             })
             return HttpResponse(dumps(success), content_type="application/json")
         else:
@@ -137,4 +147,3 @@ def add_coupon(request):
         result = failure.copy()
         result.update({"error": str(e)})
         return HttpResponse(dumps(result), content_type="application/json")
-
