@@ -171,7 +171,7 @@ def updateuser(request):
             if 'cemail' in data.keys():
                 verify = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
                 code = key + "_" + verify
-                status,msg = conf_mail(data['cemail'],code)
+                result = conf_mail(data['cemail'],code)
                 data['veri_code'] = verify
                 if 'verified' not in verified:
                     data['verified'] = "N"
