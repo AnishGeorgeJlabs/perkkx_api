@@ -217,6 +217,7 @@ def get_deals(request, category):
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
+        raise
         return HttpResponse(dumps({"exception": "error : " + str(e)}), content_type="application/json")
 
 
