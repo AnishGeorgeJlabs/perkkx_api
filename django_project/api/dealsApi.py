@@ -156,7 +156,7 @@ def get_deals(request, category):
                 pdeal = secondaries.pop(0)
 
             if len(secondaries) > 0:
-                pdeal['second_deal'] = secondaries['deal']
+                pdeal['second_deal'] = secondaries[0]['deal']
 
             '''
             if pdeal and deal_valid(pdeal):
@@ -217,7 +217,6 @@ def get_deals(request, category):
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
-        raise
         return HttpResponse(dumps({"exception": "error : " + str(e)}), content_type="application/json")
 
 
