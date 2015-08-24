@@ -258,7 +258,7 @@ def get_one_time_deals(request):
         if 'userID' not in request.GET:
             return HttpResponse(dumps({"success": 0, "error": "No user id in get request"}))
 
-        page = request.GET.get('pages', request.GET.get('page', 1))
+        page = int(request.GET.get('pages', request.GET.get('page', 1)))
 
         userID = request.GET['userID']
 
