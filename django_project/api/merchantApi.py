@@ -68,24 +68,39 @@ def check_time_between(open, close, now):
         return False
 
 
+def _stringify_spec(ho, strict=False):
+    hstr = str(ho['title'])+', '
+    flag = False
+    if ho['time'] != '':
+        flag = True
+        tm = ' - '.join(ho['time'].split('-'))
+    else:
+        tm = ''
+
+    if ho['desc'].strip() != '' or ho['desc'].strip() != 'N/A':
+        d = str(ho['desc']) + ', '
+    else:
+        d = ''
+
+    res = hstr+d+tm
+    if not strict:
+        return res
+    elif flag:
+        return res
+    else:
+        return None
+
+
 def process_merchant(mer, long_version):
     if not long_version and 'special_event' in mer:
         sparr = mer.pop('special_event')
         if 'happy' in sparr[0]['title'].lower():
-            ho = sparr.pop(0)
-            hstr = None
-            if ho['time'] != '':
-                hstr = "Happy Hours, "
-                tm = ' - '.join(ho['time'].split('-'))
-            if ho['desc'].strip() != '' or ho['desc'].strip() != 'N/A':
-                d = str(ho['desc']) + ', '
-            else:
-                d = ''
-            if hstr is not None:
-                mer['happy_hours'] = hstr+d+tm
+            happy = _stringify_spec(sparr.pop(0), strict=True)
+            if happy is not None:
+                mer['happy_hours'] = happy
 
         if len(sparr) > 0:
-            mer['special'] = sparr[0]['title']
+            mer['special'] = _stringify_spec(sparr[0], strict=False)
 
     if 'timing' in mer:
         if not long_version:
