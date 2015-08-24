@@ -245,6 +245,8 @@ def get_one_time_deals(request):
         if 'userID' not in request.GET:
             return HttpResponse(dumps({"success": 0, "error": "No user id in get request"}))
 
+        page = request.GET.get('pages', request.GET.get('page', 1))
+
         userID = request.GET['userID']
 
         deals = [
@@ -267,9 +269,23 @@ def get_one_time_deals(request):
                 deal['cat'] = m['cat']
             if 'img' in m:
                 deal['img'] = m['img']
-        return HttpResponse(dumps({"success": 1, "data": deals}))
+
+        start = (page - 1) * 10
+        end = start + 10
+        if end > len(deals):
+            end = len(deals)
+        if start > len(deals):
+            start = len(deals)
+
+        res = {
+            "total": len(deals),
+            "data": deals[start:end],
+            "page": page,
+            "success": 1,
+        }
+        return HttpResponse(dumps(res), content_type='application/json')
     except Exception, e:
-        return HttpResponse(dumps({"success": 0, "error": "Exception: " + str(e)}))
+        return HttpResponse(dumps({"success": 0, "error": "Exception: " + str(e)}), content_type='application/json')
 
 
 """ Deprecated
