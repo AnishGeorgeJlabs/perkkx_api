@@ -151,10 +151,12 @@ def get_deals(request, category):
 
             secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
             if not deal_valid(pdeal):
-                if len(secondaries) > 0:
-                    pdeal = secondaries.pop(0)
-            elif len(secondaries) > 0:
-                pdeal['second_deal'] = secondaries[0]['deal']
+                if len(secondaries) == 0:
+                    continue
+                pdeal = secondaries.pop(0)
+
+            if len(secondaries) > 0:
+                pdeal['second_deal'] = secondaries['deal']
 
             '''
             if pdeal and deal_valid(pdeal):
