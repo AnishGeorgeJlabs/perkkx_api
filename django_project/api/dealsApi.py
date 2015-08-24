@@ -149,6 +149,17 @@ def get_deals(request, category):
                 deal_query.pop('deal_cat')
                 deal_query.update({'rcodes.1': {"$exists": True}})
 
+            secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
+            if len(secondaries) == 0:
+                continue
+
+            if not pdeal or not deal_valid(pdeal):
+                pdeal = secondaries.pop(0)
+
+            if len(secondaries) > 0:
+                pdeal['second_deal'] = secondaries[0]['deal']
+
+            '''
             if pdeal and deal_valid(pdeal):
                 secondary = dCollection.find_one(deal_query, {"_id": False, "deal": True})
                 if secondary:
@@ -160,6 +171,7 @@ def get_deals(request, category):
                 pdeal = secondaries[0]
                 if len(secondaries) > 1:
                     pdeal['second_deal'] = secondaries[1]['deal']
+            '''
 
             # ----- Setup Merchant data ------ #
             process_merchant(mer, long_version=False)  # Found in merchantApi
