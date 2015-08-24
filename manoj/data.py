@@ -8,6 +8,3 @@ def jsonResponse(obj):
 
 basic_success = jsonResponse({"result": True})
 
-# Data base
-dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
-db = dbclient.manoj
