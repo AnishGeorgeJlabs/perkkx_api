@@ -1,7 +1,7 @@
 from bson.json_util import dumps
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import Template,Context
+from django.template import Template, Context
 import pymongo
 import datetime
 import random
@@ -11,15 +11,16 @@ import math
 import re
 from unidecode import unidecode
 from dateutil.tz import *
-from math import pi, sin , cos , atan2,sqrt
+from math import pi, sin, cos, atan2, sqrt
 from mongo_filter import deal_filter, merchant_filter, deal_compact_filter
 from merchantApi import process_merchant, deal_valid
 
-failure = dumps({ "success": 0 })
+failure = dumps({"success": 0})
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
 
-dayMap = {0:1,1:2,2:3,3:4,4:5,5:6,6:0}
+dayMap = {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 0}
+
 
 def distance(obj):
     R = 6371
@@ -27,10 +28,11 @@ def distance(obj):
     dLon = (obj['ln2'] - obj['ln1']) * pi / 180
     lat1 = obj['l1'] * pi / 180
     lat2 = obj['l2'] * pi / 180
-    a = sin(dLat/2) * sin(dLat/2) + sin(dLon/2) * sin(dLon/2) * cos(lat1) * cos(lat2)
-    c = 2 * atan2(sqrt(a), sqrt(1-a))
+    a = sin(dLat / 2) * sin(dLat / 2) + sin(dLon / 2) * sin(dLon / 2) * cos(lat1) * cos(lat2)
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
     d = R * c
     return d
+
 
 def group_query_update(query, qStr):
     larr = map(lambda k: int(k), qStr.split("-"))
@@ -47,6 +49,7 @@ def group_query_update(query, qStr):
             ]
         })
 
+
 # TODO: Optimise the query using memoization
 @csrf_exempt
 def get_deals(request, category):
@@ -62,8 +65,8 @@ def get_deals(request, category):
         except:
             pages = 1
         if 'lat' in request.GET.keys() and 'lon' in request.GET.keys():
-            lat = re.sub("[^0-9\.]","",request.GET['lat'])
-            lon = re.sub("[^0-9\.]","",request.GET['lon'])
+            lat = re.sub("[^0-9\.]", "", request.GET['lat'])
+            lon = re.sub("[^0-9\.]", "", request.GET['lon'])
         else:
             lat = False
         if 'r' in request.GET.keys():
@@ -91,35 +94,39 @@ def get_deals(request, category):
         category = int(category)
         search = {"cat": category}
         if 'subcat' in request.GET.keys():
-            search.update({"subcat":{"$in":[int(x.replace("u","").strip("'")) for x in request.GET['subcat'].split(",")]}})
+            search.update(
+                {"subcat": {"$in": [int(x.replace("u", "").strip("'")) for x in request.GET['subcat'].split(",")]}})
         if 'ser' in request.GET.keys():
-            search.update({"spec_event.title":{"$in":request.GET['ser'].split(",")}})
+            search.update({"spec_event.title": {"$in": request.GET['ser'].split(",")}})
         if 'cuisine' in request.GET.keys():
-            search.update({"cuisine":{"$in":request.GET['cuisine'].split(",")}})
+            search.update({"cuisine": {"$in": request.GET['cuisine'].split(",")}})
         if 'mtype' in request.GET.keys():
-            search.update({"massage.type":int(request.GET['mtype'])})
+            search.update({"massage.type": int(request.GET['mtype'])})
         if 'tag' in request.GET.keys():
-            search.update({"icons":{"$in":request.GET['tag'].split(",")}})
+            search.update({"icons": {"$in": request.GET['tag'].split(",")}})
         if 'vendor' in request.GET.keys():
-            search.update({"vendor_id": {"$in": [int(x.replace("u","").strip("'")) for x in request.GET['vendor'].split(",")]} })
+            search.update(
+                {"vendor_id": {"$in": [int(x.replace("u", "").strip("'")) for x in request.GET['vendor'].split(",")]}})
         if 'area' in request.GET.keys():
-            search.update({"address.text":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['area'].split(",")]}})
+            search.update({"address.text": {
+            "$in": [re.compile(x.replace("_", " "), re.IGNORECASE) for x in request.GET['area'].split(",")]}})
         if 'name' in request.GET.keys():
-            search.update({"vendor_name":request.GET['name']})
+            search.update({"vendor_name": request.GET['name']})
         if 'type' in request.GET.keys():
-            search.update({"type":{"$in":[re.compile(x.replace("_"," "),re.IGNORECASE) for x in request.GET['type'].split(",")]}})
+            search.update({"type": {
+            "$in": [re.compile(x.replace("_", " "), re.IGNORECASE) for x in request.GET['type'].split(",")]}})
         if 'rate' in request.GET.keys():
             rating = [float(int(x) - 0.1) for x in request.GET['rate'].split(",")]
-            search.update({"rating":{"$gt":min(rating)}})
+            search.update({"rating": {"$gt": min(rating)}})
         if 'price' in request.GET.keys():
-            low,high = request.GET['price'].split("-")
+            low, high = request.GET['price'].split("-")
             low = int(low) - 1
             high = int(high) - 1
-            search.update({"price":{"$gt":low,"$lt":high}})
+            search.update({"price": {"$gt": low, "$lt": high}})
 
         merchants = mCollection.find(search, merchant_filter)
-        debug_message += "Count of merchants"+str(merchants.count())+"\n"
-        debug_message += "merchant query: "+str(search)+"\n"
+        debug_message += "Count of merchants" + str(merchants.count()) + "\n"
+        debug_message += "merchant query: " + str(search) + "\n"
 
         for mer in merchants:
             # --- Selecting a deal -------- #
@@ -127,11 +134,11 @@ def get_deals(request, category):
 
             if 'group' in request.GET and category != 5:
                 group_query_update(deal_query, request.GET['group'])
-            debug_message += "AND the query is :: "+json.dumps(deal_query)
+            debug_message += "AND the query is :: " + json.dumps(deal_query)
 
             # Step 2, get the primary deal, now step 1
             deal_query.update({"deal_cat": "primary"})
-            pdeal = dCollection.find_one(deal_query, deal_filter )      # Always false for cat 5
+            pdeal = dCollection.find_one(deal_query, deal_filter)  # Always false for cat 5
 
             if category != 5:
                 deal_query.update({"deal_cat": "secondary"})
@@ -152,14 +159,14 @@ def get_deals(request, category):
                     pdeal['second_deal'] = secondaries[1]['deal']
 
             # ----- Setup Merchant data ------ #
-            process_merchant(mer, long_version=False)       # Found in merchantApi
+            process_merchant(mer, long_version=False)  # Found in merchantApi
             if 'address' in mer and mer['address']['lat'] and mer['address']['lng']:
                 if lat:
                     data_for_distance = {
-                        "l1":float(lat),
-                        "ln1":float(lon),
-                        "l2":float(re.sub("[^0-9\.]","",str(mer['address']['lat']))),
-                        "ln2":float(re.sub("[^0-9\.]","",str(mer['address']['lng'])))
+                        "l1": float(lat),
+                        "ln1": float(lon),
+                        "l2": float(re.sub("[^0-9\.]", "", str(mer['address']['lat']))),
+                        "ln2": float(re.sub("[^0-9\.]", "", str(mer['address']['lng'])))
                     }
                     mer.update({"distance": distance(data_for_distance)})
                 else:
@@ -171,7 +178,7 @@ def get_deals(request, category):
                 pdeal.update(mer)
                 data.append(pdeal)
 
-        start = (pages-1)*10
+        start = (pages - 1) * 10
         end = start + 10
 
         ## God knows how to sort within lists, so we prepend the priority list (dynamic_deals) to the data list
@@ -181,14 +188,14 @@ def get_deals(request, category):
         if start > len(data):
             start = len(data) - 10
         if r:
-            newlist = [x for x in data if x['distance']<r]
+            newlist = [x for x in data if x['distance'] < r]
         else:
             newlist = data
         if ope:
             delta = [x for x in newlist if x['open'] is True]
         else:
             delta = newlist
-        newlist = sorted(delta, key=lambda k: k[sort] if k[sort] is not False else 100,reverse=reverse)
+        newlist = sorted(delta, key=lambda k: k[sort] if k[sort] is not False else 100, reverse=reverse)
         res = {
             "total": len(newlist),
             "data": newlist[start:end],
@@ -197,9 +204,12 @@ def get_deals(request, category):
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
-        return HttpResponse(dumps({"exception": "error : "+str(e)}), content_type="application/json")
+        return HttpResponse(dumps({"exception": "error : " + str(e)}), content_type="application/json")
+
 
 """ Deprecated """
+
+
 @csrf_exempt
 def get_all_deals_for_vendor(request, vendor):
     try:
@@ -212,7 +222,8 @@ def get_all_deals_for_vendor(request, vendor):
                  if deal_valid(d)]
         return HttpResponse(dumps({"data": deals, "total": len(deals), "one_time_deals": one_time_deals, "success": 1}))
     except Exception, e:
-        return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}))
+        return HttpResponse(dumps({"success": 0, "error": "Exception: " + str(e)}))
+
 
 @csrf_exempt
 def get_totals(request):
@@ -227,6 +238,7 @@ def get_totals(request):
 
     return HttpResponse(dumps({"data": res}), content_type='application/json')
 
+
 @csrf_exempt
 def get_one_time_deals(request):
     try:
@@ -239,7 +251,7 @@ def get_one_time_deals(request):
             deal
             for deal in db.one_time_deals.find({}, {"_id": False, "rcodes": False, "usedrcodes": False})
             if db.order_data.count({"userID": userID, "cID": deal['cID']}) == 0
-        ]
+            ]
 
         for deal in deals:
             m = db.merchants.find_one({'vendor_id': deal['vendor_id']})
@@ -254,10 +266,11 @@ def get_one_time_deals(request):
             else:
                 deal['cat'] = m['cat']
             if 'img' in m:
-                deal['img']= m['img']
+                deal['img'] = m['img']
         return HttpResponse(dumps({"success": 1, "data": deals}))
     except Exception, e:
-        return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}))
+        return HttpResponse(dumps({"success": 0, "error": "Exception: " + str(e)}))
+
 
 """ Deprecated
 @csrf_exempt
