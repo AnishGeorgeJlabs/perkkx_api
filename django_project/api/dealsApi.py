@@ -222,7 +222,7 @@ def get_all_deals_for_vendor(request, vendor):
                  if deal_valid(d)]
         return HttpResponse(dumps({"data": deals, "total": len(deals), "one_time_deals": one_time_deals, "success": 1}))
     except Exception, e:
-        return HttpResponse(dumps({"success": 0, "error": "Exception: " + str(e)}))
+        return HttpResponse(dumps({"success": 0, "error": "Exception: , We fucked up!!!" + str(e)}))
 
 
 @csrf_exempt
