@@ -78,14 +78,14 @@ def process_merchant(mer, long_version):
         dayToday = (datetime.today().weekday() + 1) % 7
         today = timing[dayToday]  # Because sunday is 0
         op = check_time_between(
-            open=datetime.strptime(today['open_time'], "%H:%M"),
-            close=datetime.strptime(today['close_time'], "%H:%M"),
+            open=datetime.strptime(today['open_time'].strip(), "%H:%M"),
+            close=datetime.strptime(today['close_time'].strip(), "%H:%M"),
             now=datetime.now()
         )
         mer.update({"open": op})
         if not long_version:
-            mer['open_time'] = today['open_time']
-            mer['close_time'] = today['close_time']
+            mer['open_time'] = today['open_time'].strip()
+            mer['close_time'] = today['close_time'].strip()
         else:
             mer['today'] = dayToday
 
