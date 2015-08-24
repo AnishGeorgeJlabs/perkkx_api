@@ -72,11 +72,20 @@ def process_merchant(mer, long_version):
     if not long_version and 'special_event' in mer:
         sparr = mer.pop('special_event')
         if 'happy' in sparr[0]['title'].lower():
-            ho = sparr[0]
+            ho = sparr.pop(0)
             hstr = None
             if ho['time'] != '':
-                hstr = "Happy Hours"
-        mer['special'] = sparr[0]['title']
+                hstr = "Happy Hours, "
+                tm = ' - '.join(ho['time'].split('-'))
+            if ho['desc'].strip() != '' or ho['desc'].strip() != 'N/A':
+                d = str(ho['desc']) + ', '
+            else:
+                d = ''
+            if hstr is not None:
+                mer['happy_hours'] = hstr+d+tm
+
+        if len(sparr) > 0:
+            mer['special'] = sparr[0]['title']
 
     if 'timing' in mer:
         if not long_version:
