@@ -15,7 +15,7 @@ def basic_error(e):
     })
 
 # Data base
-dbclient = pymongo.MongoClient("mongodb://wadiAdmin:w%40diRock$@45.55.232.5:27017")
+dbclient = pymongo.MongoClient("mongodb://wadiAdmin:secureWadiOp45.55.232.5:27017")
 db = dbclient.wadi
 
 cl_blocked = db.blocked
