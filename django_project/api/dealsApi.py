@@ -211,8 +211,7 @@ def get_deals(request, category):
         res = {
             "total": len(newlist),
             "data": newlist[start:end],
-            "page": pages,
-            "debug": debug_message,
+            "page": pages
         }
         return HttpResponse(dumps(res), content_type="application/json")
     except Exception, e:
