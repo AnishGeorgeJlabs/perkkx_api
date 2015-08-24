@@ -14,10 +14,13 @@ from dateutil.tz import *
 from math import pi, sin, cos, atan2, sqrt
 from mongo_filter import deal_filter, merchant_filter, deal_compact_filter
 from merchantApi import process_merchant, deal_valid
+from . import db
 
 failure = dumps({"success": 0})
+'''
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+'''
 
 dayMap = {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 0}
 

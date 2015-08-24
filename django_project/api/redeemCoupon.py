@@ -7,10 +7,13 @@ import datetime
 import random
 import string
 import json
+from . import db
 
 failure = dumps({"success": 0})
+'''
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+'''
 
 limit = 2
 

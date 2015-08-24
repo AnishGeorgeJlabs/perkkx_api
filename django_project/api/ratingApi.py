@@ -7,9 +7,12 @@ from datetime import datetime
 import random
 import string
 import json
+from . import db
 
+'''
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+'''
 
 def updateRating (vendor_id, rating):
     collection = db.merchants

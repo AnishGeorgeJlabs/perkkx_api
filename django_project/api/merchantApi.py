@@ -9,10 +9,13 @@ import string
 import json
 import re
 from mongo_filter import merchant_filter_small, deal_compact_filter
+from . import db
 
 failure = dumps({"success": 0})
+'''
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+'''
 
 
 def con_hours(t):

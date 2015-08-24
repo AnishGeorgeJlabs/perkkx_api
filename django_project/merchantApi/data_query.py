@@ -4,7 +4,7 @@ from django.http import HttpResponse
 import pymongo
 import math
 
-dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
+dbclient = pymongo.MongoClient("mongodb://perkkxAdmin:perkkx@123@45.55.232.5:27017")
 db = dbclient.perkkx
 limit = 10
 

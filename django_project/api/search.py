@@ -10,10 +10,13 @@ import json
 import math
 import re
 from unidecode import unidecode
+from . import db
 
 failure = dumps({"success": 0})
+'''
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+'''
 
 
 @csrf_exempt

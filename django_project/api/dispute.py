@@ -4,9 +4,12 @@ import random
 import string
 import json
 import sys
+from . import db
 
+'''
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+'''
 
 """
 def check_dispute(object):

@@ -12,10 +12,13 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client import tools
 import gspread
 import os
+from . import db
 
 failure = dumps({ "success": 0 })
+'''
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+'''
 
 def get_worksheet(i):
     storage = Storage("creds.dat")

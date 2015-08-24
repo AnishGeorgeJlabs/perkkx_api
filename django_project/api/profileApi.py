@@ -9,9 +9,12 @@ import string
 import json
 from mailer import Mailer
 from mailer import Message
+from . import db
 
+'''
 dbclient = pymongo.MongoClient("mongodb://45.55.232.5:27017")
 db = dbclient.perkkx
+'''
 
 @csrf_exempt
 def get_savings(request, userID):       # Dummy
