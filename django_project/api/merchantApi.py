@@ -26,11 +26,17 @@ def deal_valid(deal):
     if not deal:
         return False
     today = datetime.today()
-    if 'expiry' in deal and today >= datetime.strptime(deal['expiry'].split(' ')[0], "%d/%m/%Y"):
+    try:
+        if 'expiry' in deal and today >= datetime.strptime(deal['expiry'].split(' ')[0], "%d/%m/%Y"):
+            return False
+    except:
         return False
 
-    if 'deal_start' in deal and \
-                    today < datetime.strptime(deal['deal_start'].split(' ')[0], "%d/%m/%Y"):
+    try:
+        if 'deal_start' in deal and \
+                        today < datetime.strptime(deal['deal_start'].split(' ')[0], "%d/%m/%Y"):
+            return False
+    except:
         return False
 
     if 'valid_days' in deal and \
@@ -44,11 +50,14 @@ def deal_valid(deal):
     '''
 
     if 'valid_time' in deal:
-        res = check_time_between(
-            open=datetime.strptime(deal['valid_time'][0], "%H:%M"),
-            close=datetime.strptime(deal['valid_time'][1], "%H:%M"),
-            now=datetime.now()
-        )
+        try:
+            res = check_time_between(
+                open=datetime.strptime(deal['valid_time'][0], "%H:%M"),
+                close=datetime.strptime(deal['valid_time'][1], "%H:%M"),
+                now=datetime.now()
+            )
+        except:
+            return False
         # deal.pop('valid_time')         Let us show dynamic deal data for now
         return res
 
@@ -109,15 +118,21 @@ def process_merchant(mer, long_version):
             timing = mer['timing']
         dayToday = (datetime.today().weekday() + 1) % 7
         today = timing[dayToday]  # Because sunday is 0
-        op = check_time_between(
-            open=datetime.strptime(today['open_time'].strip(), "%H:%M"),
-            close=datetime.strptime(today['close_time'].strip(), "%H:%M"),
-            now=datetime.now()
-        )
+
+        opTmStr = today['open_time'].strip()[:5]
+        clTmStr = today['close_time'].strip()[:5]
+        try:
+            op = check_time_between(
+                open=datetime.strptime(opTmStr, "%H:%M"),
+                close=datetime.strptime(clTmStr, "%H:%M"),
+                now=datetime.now()
+            )
+        except Exception:
+            op = False
         mer.update({"open": op})
         if not long_version:
-            mer['open_time'] = today['open_time'].strip()
-            mer['close_time'] = today['close_time'].strip()
+            mer['open_time'] = opTmStr
+            mer['close_time'] = clTmStr
         else:
             mer['today'] = dayToday
 
