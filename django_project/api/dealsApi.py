@@ -256,24 +256,8 @@ def get_totals(request):
 @csrf_exempt
 def get_one_time_deals(request):
     try:
-        search = {"rcodes.0": {"$exists": True}}
-
         if 'userID' not in request.GET:
             return HttpResponse(dumps({"success": 0, "error": "No user id in get request"}))
-
-        if 'subcat' in request.GET:
-            sr = map(lambda s: int(s), request.GET['subcat'].split(','))
-            msearch = {
-                "cat": 5,
-                "$or": [
-                    {"subcat": {"$in": sr}}, {"subcat": {"$exists": False}}
-                ]
-            }
-            vendors = map(
-                lambda k: k['vendor_id'],
-                db.merchants.find(msearch, {"_id": False, "vendor_id": True})
-            )
-            search['vendor_id'] = {"$in": vendors}
 
         try:
             page = int(request.GET.get('pages', request.GET.get('page', 1)))
@@ -284,7 +268,9 @@ def get_one_time_deals(request):
 
         deals = [
             deal
-            for deal in db.one_time_deals.find(search, {"_id": False, "rcodes": False, "usedrcodes": False})
+            for deal in db.one_time_deals.find(
+                {"$or": [{"rcodes.0": {"$exists": True}}, {"rcodes": {"$exists": False}}]},
+                {"_id": False, "rcodes": False, "usedrcodes": False})
             if db.order_data.count({"userID": userID, "cID": deal['cID']}) == 0
             ]
 
@@ -347,3 +333,19 @@ def get_totals(request):
         res["group"].append(g)
     return HttpResponse(dumps(res), content_type="application/json")
 """
+
+'''
+if 'subcat' in request.GET:
+    sr = map(lambda s: int(s), request.GET['subcat'].split(','))
+    msearch = {
+        "cat": 5,
+        "$or": [
+            {"subcat": {"$in": sr}}, {"subcat": {"$exists": False}}
+        ]
+    }
+    vendors = map(
+        lambda k: k['vendor_id'],
+        db.merchants.find(msearch, {"_id": False, "vendor_id": True})
+    )
+    search['vendor_id'] = {"$in": vendors}
+'''
