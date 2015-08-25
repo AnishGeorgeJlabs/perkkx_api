@@ -112,12 +112,12 @@ def get_deals(request, category):
                 {"vendor_id": {"$in": [int(x.replace("u", "").strip("'")) for x in request.GET['vendor'].split(",")]}})
         if 'area' in request.GET.keys():
             search.update({"address.text": {
-            "$in": [re.compile(x.replace("_", " "), re.IGNORECASE) for x in request.GET['area'].split(",")]}})
+                "$in": [re.compile(x.replace("_", " "), re.IGNORECASE) for x in request.GET['area'].split(",")]}})
         if 'name' in request.GET.keys():
             search.update({"vendor_name": request.GET['name']})
         if 'type' in request.GET.keys():
             search.update({"type": {
-            "$in": [re.compile(x.replace("_", " "), re.IGNORECASE) for x in request.GET['type'].split(",")]}})
+                "$in": [re.compile(x.replace("_", " "), re.IGNORECASE) for x in request.GET['type'].split(",")]}})
         if 'rate' in request.GET.keys():
             rating = [float(int(x) - 0.1) for x in request.GET['rate'].split(",")]
             search.update({"rating": {"$gt": min(rating)}})
@@ -256,8 +256,18 @@ def get_totals(request):
 @csrf_exempt
 def get_one_time_deals(request):
     try:
+        search = {"rcodes.0": {"$exists": True}}
+
         if 'userID' not in request.GET:
             return HttpResponse(dumps({"success": 0, "error": "No user id in get request"}))
+
+        if 'subcat' in request.GET:
+            sr = map(lambda s: int(s), request.GET['subcat'].split(','))
+            search.update({
+                "$or": [
+                    {"subcat": {"$in": sr}}, {"subcat": {"$exists": False}}
+                ]
+            })
 
         try:
             page = int(request.GET.get('pages', request.GET.get('page', 1)))
@@ -268,7 +278,8 @@ def get_one_time_deals(request):
 
         deals = [
             deal
-            for deal in db.one_time_deals.find({}, {"_id": False, "rcodes": False, "usedrcodes": False})
+            for deal in db.one_time_deals.find({"rcodes.0": {"$exists": True}},
+                                               {"_id": False, "rcodes": False, "usedrcodes": False})
             if db.order_data.count({"userID": userID, "cID": deal['cID']}) == 0
             ]
 
