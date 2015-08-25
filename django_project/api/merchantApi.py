@@ -86,7 +86,7 @@ def _stringify_spec(ho, strict=False):
     else:
         tm = ''
 
-    if ho['desc'].strip() != '' or ho['desc'].strip() != 'N/A':
+    if ho['desc'].strip() != '' and ho['desc'].strip() != 'N/A':
         d = ', ' + str(ho['desc'])
     else:
         d = ''
