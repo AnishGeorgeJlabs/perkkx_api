@@ -91,7 +91,7 @@ def _stringify_spec(ho, strict=False):
     else:
         d = ''
 
-    res = hstr+d+tm
+    res = hstr + d + tm
     if not strict:
         return res
     elif flag:
@@ -104,7 +104,7 @@ def process_merchant(mer, long_version):
     if not long_version and 'special_event' in mer:
         sparr = mer.pop('special_event')
         if len(sparr) > 0 and 'happy' in sparr[0]['title'].lower():
-            happy = _stringify_spec(sparr.pop(0), strict=True)      # Removed the first one here
+            happy = _stringify_spec(sparr.pop(0), strict=True)  # Removed the first one here
             if happy is not None:
                 mer['happy_hours'] = happy
 
@@ -151,6 +151,8 @@ def custom_filter(deal):
             deal.pop('gmin')
         if 'group_size' in deal:
             deal.pop('group_size')
+        if 'deal_cat' in deal:
+            deal.pop('deal_cat')
         return True
     else:
         return False
@@ -178,7 +180,8 @@ def merchants(request, user, vendor):
         """ Works like a charm :sunglasses: """
         all_deals = db.deals.aggregate([
             {"$match": {"vendor_id": int(vendor)}},
-            {"$project": {"_id": False, "deal": True, "expiry": True, "cID": True, "group_size": True, "gmin": True,
+            {"$project": {"_id": False, "deal": True, "expiry": True, "deal_cat": True, "cID": True, "group_size": True,
+                          "gmin": True,
                           "valid_days": True, "valid_time": True, "deal_start": True}},
             {"$group": {"_id": {"gsize": "$group_size", "gmin": "$gmin"},
                         "deals": {
@@ -191,7 +194,10 @@ def merchants(request, user, vendor):
         merchant['all_deals'] = filter(
             lambda group: len(group['deals']) > 0,
             map(
-                lambda group: {'size': group['size'], 'deals': filter(custom_filter, group['deals'])},
+                lambda group: {'size': group['size'], 'deals': filter(custom_filter, sorted(group['deals'],
+                                                                                            key=lambda d: 1 if d.get(
+                                                                                                'deal_cat',
+                                                                                                'secondary') == 'primary' else 10))},
                 all_deals
             )
         )
