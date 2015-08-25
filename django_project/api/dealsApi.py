@@ -263,11 +263,17 @@ def get_one_time_deals(request):
 
         if 'subcat' in request.GET:
             sr = map(lambda s: int(s), request.GET['subcat'].split(','))
-            search.update({
+            msearch = {
+                "cat": 5,
                 "$or": [
                     {"subcat": {"$in": sr}}, {"subcat": {"$exists": False}}
                 ]
-            })
+            }
+            vendors = map(
+                lambda k: k['vendor_id'],
+                db.merchants.find(msearch, {"_id": False, "vendor_id": True})
+            )
+            search['vendor_id'] = {"$in": vendors}
 
         try:
             page = int(request.GET.get('pages', request.GET.get('page', 1)))
@@ -278,8 +284,7 @@ def get_one_time_deals(request):
 
         deals = [
             deal
-            for deal in db.one_time_deals.find({"rcodes.0": {"$exists": True}},
-                                               {"_id": False, "rcodes": False, "usedrcodes": False})
+            for deal in db.one_time_deals.find(search, {"_id": False, "rcodes": False, "usedrcodes": False})
             if db.order_data.count({"userID": userID, "cID": deal['cID']}) == 0
             ]
 
