@@ -10,7 +10,7 @@ def block(request):
             return jsonResponse({"success": False, "error": "No type specified"})
         type = request.GET['type']
 
-        lst = list(db.blocked.find({"type": type}, {"_id": False}))
+        lst = list(db.blocked.find({"type": type}, {"_id": False, "type": False}))
         return jsonResponse({"success": True, "data": lst})
 
     else:
