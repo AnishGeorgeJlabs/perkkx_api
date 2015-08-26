@@ -1,5 +1,6 @@
 from data import basic_success, jsonResponse, db, basic_failure, basic_error
 from django.http import Http404
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from datetime import datetime
@@ -45,6 +46,8 @@ def block(request):
     GET/POST based method for blocking a phone and/or email
     :param request:
     :return:
+
+    tested on Wed, 26 Aug, 10:45 PM
     """
     if request.method == 'GET':
         data = request.GET
@@ -92,10 +95,16 @@ def block(request):
                     }
                 })
             res['phone entry'] = 'Updated'
-    if not res:
-        return jsonResponse({"success": False})
+    if 'pretty' in data and data['pretty'] not in [False, 'false']:
+        if not res:
+            return jsonResponse({"success": False})
+        else:
+            return jsonResponse({"success": True, "result": res})
     else:
-        return jsonResponse({"success": True, "result": res})
+        if not res:
+            return HttpResponse("There seems to be some problem. You seem to be already unsubscribed")
+        else:
+            return HttpResponse("You have been successfully unsubscribed")
 
 
 def get_blocked(request):
