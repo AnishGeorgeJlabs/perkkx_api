@@ -5,47 +5,17 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from datetime import datetime
 
-''' Cannot be used
-@csrf_exempt
-def block(request):
-    if request.method == 'GET':
-        if 'type' not in request.GET:
-            return jsonResponse({"success": False, "error": "No type specified"})
-        type = request.GET['type']
-
-        lst = list(db.blocked.find({"type": type}, {"_id": False, "type": False}))
-        return jsonResponse({"success": True, "data": lst})
-
-    else:
-        data = json.loads(request.body)
-        if 'type' not in data:
-            return jsonResponse({"success": False, "error": "No type specified"})
-
-        type = data['type']
-        obj = {'type': type}
-        if type == 'email':
-            obj['email'] = data['email']
-        elif type == 'phone':
-            obj['phone'] = data['phone']
-            obj['language'] = data['language']
-        else:
-            return jsonResponse({"success": False, "error": "Unknown type"})
-
-        if db.blocked.count(obj) == 0:
-            # obj.pop("_id")
-            result = db.blocked.insert_one(obj)
-            return jsonResponse({"success": True, "_id": str(result.inserted_id)})
-        else:
-            return jsonResponse({"success": True, "message": "Already exists"})
-'''
-
-
 @csrf_exempt
 def block(request):
     """
     GET/POST based method for blocking a phone and/or email
-    :param request:
-    :return:
+    Parameters: (?: optional, +: required)
+        ? email: email address to block
+        ? phone: phone number to block
+        ? language: a list of one or more languages, separated by comma, to be blocked for given phone.
+            Only makes sense when the phone key is given. Supports English, Arabic
+        ? pretty (true or false): If set to true, then results in an http response (yet to be styled),
+            useful for user links. If set to false or not given, then results in a json response
 
     tested on Wed, 26 Aug, 10:45 PM
     """
@@ -110,8 +80,18 @@ def block(request):
 def get_blocked(request):
     """
     GET based method for retrieving blocked [phone, language] or email list
-    :param request:
-    :return:
+    Parameters: (?: optional, +: required)
+        + type (email or phone): Get the block list type. If not present, defaults to email.
+            Throws error for any other type
+
+    Response:
+        1. For type=email:
+            success: true,
+            data: [list of emails]
+        2. For type=phone:
+            success: true,
+            data: [list of [phone, language]]
+    Tested on Wed, 26 Aug, 11:05 PM
     """
     type = request.GET.get('type', 'email')
 
