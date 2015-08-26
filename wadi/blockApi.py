@@ -37,9 +37,13 @@ def block(request):
     if 'phone' in data:
         ph = data['phone']
         if 'language' in data:
+            if isinstance(data['language'], list):
+                lan_list = data['language']
+            else:
+                lan_list = data['language'].split(',')
             language = map(
                 lambda l: 'English' if 'eng' in l.lower() else 'Arabic',
-                data['language'].split(',')
+                lan_list
             )
         else:
             language = ['English', 'Arabic']
