@@ -52,7 +52,7 @@ def get_ecom_coupon(request):
         result = collection.find_one_and_update(
             {"vendor_id": data['vendor_id'], "cID": data["cID"], "rcodes.0": {"$exists": True}, "type": "fixed"},
             {"$pop": {"rcodes": -1}},
-            {"rcodes": {"$slice": -1}, "cID": True, "_id": False}
+            {"rcodes": {"$slice": 1}, "cID": True, "_id": False}
         )
         if result:
             code = result['rcodes'][0]                             # >>>>>>>> Code here
