@@ -57,7 +57,7 @@ def block(request):
             "email": data['email'],
             "timestamp": datetime.now()
         })
-        res['email entry'] = resEm.inserted_id
+        res['email entry'] = str(resEm.inserted_id)
 
     # ----- Phone ------ #
     if 'phone' in data:
@@ -73,13 +73,17 @@ def block(request):
         if db.blocked_phone.count({"phone": ph}) == 0:
             resPh = db.blocked_phone.insert_one({
                 "phone": ph,
-                "language": language
+                "language": language,
+                "timestamp": datetime.now()
             })
-            res['phone entry'] = resPh.inserted_id
+            res['phone entry'] = str(resPh.inserted_id)
         else:
             db.blocked_phone.update_one({
                 "$addToSet": {
                     "language": {"$each": language}
+                },
+                "$set": {
+                    "timestamp": datetime.now()
                 }
             })
             res['phone entry'] = 'Updated'
