@@ -52,7 +52,7 @@ def get_ecom_coupon(request):
         result = collection.find_one_and_update(
             {"vendor_id": data['vendor_id'], "cID": data["cID"], "rcodes.0": {"$exists": True}, "type": "fixed"},
             {"$pop": {"rcodes": -1}},
-            {"rcodes": {"$slice": 1}, "cID": True, "_id": False}
+            {"rcodes": {"$slice": -1}, "cID": True, "_id": False}
         )
         if result:
             code = result['rcodes'][0]                             # >>>>>>>> Code here
@@ -74,9 +74,9 @@ def get_ecom_coupon(request):
                 {"$inc": {"usedrcodes."+code: 1 }}
             )
 
-        user = db.order_data.find_one({"userID": data['userID'], "cID": data["cID"]})
+        user = db.order_data.find_one({"userID": data['userID'], "cID": data["cID"], "mstatus": "pending"})
         if user:
-            return HttpResponse(dumps({"success": 1, "code": user['rcode']}), content_type="application/json")
+            return HttpResponse(dumps({"success": 0, "code": user['rcode'], "note": "Already used"}), content_type="application/json")
         else:
             couponRecord = {"vendor_id": data['vendor_id'], "cID": data["cID"], "userID": data['userID'], "rcode": code,
                             "used_on": datetime.datetime.now(), "ustatus": "pending", "mstatus": "pending"}
