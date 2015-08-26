@@ -30,14 +30,14 @@ def get_ecom_coupon(request):
     try:
         collection = db.deals
         data = json.loads(request.body)
+
+        '''
         result = collection.find_one({"vendor_id": data['vendor_id'], "cID": data["cID"]})
         if not result:
             result = db.one_time_deals.find_one({"vendor_id": data['vendor_id'], "cID": data["cID"]})
             collection = db.one_time_deals
 
         user = db.order_data.find_one({"userID": data['userID'], "cID": data["cID"]})
-        if user:
-            return HttpResponse(dumps({"success": 1, "code": user['rcode']}), content_type="application/json")
         if db.order_data.find({"userID": data['userID'], "ustatus": "pending"}).count() >= 2:
             return HttpResponse(dumps({"success": 0, "reason": "redeem limit reached"}),
                                 content_type="application/json")
@@ -47,6 +47,37 @@ def get_ecom_coupon(request):
             result['rcodes'] = codes
             result['usedrcodes'].append(code)
             collection.update({"vendor_id": data['vendor_id'], "cID": data["cID"]}, {"$set": result}, False)
+        '''
+
+        result = collection.find_one_and_update(
+            {"vendor_id": data['vendor_id'], "cID": data["cID"], "rcodes.0": {"$exists": True}, "type": "fixed"},
+            {"$pop": {"rcodes": -1}},
+            {"rcodes": {"$slice": 1}, "cID": True, "_id": False}
+        )
+        if result:
+            code = result['rcodes'][0]                             # >>>>>>>> Code here
+            collection.update_one(
+                {"cID": result['cID'], "vendor_id": data['vendor_id']},
+                {"$push": {'usedrcodes': code}}
+            )
+        else:
+            result = collection.find_one(
+                {"vendor_id": data['vendor_id'], "cID": data['cID'], "type": "generic"},
+                {"rcodes": True, "cID": True}
+            )
+            if not result:
+                return HttpResponse(dumps({"success": 0, "reason": "Deal just finished"}))
+
+            code = str(random.choice(result['rcodes']))             # >>>>>>> Code here
+            collection.update_one(
+                {'cID': data['cID'], 'vendor_id': data['vendor_id']},
+                {"$inc": {"usedrcodes."+code: 1 }}
+            )
+
+        user = db.order_data.find_one({"userID": data['userID'], "cID": data["cID"]})
+        if user:
+            return HttpResponse(dumps({"success": 1, "code": user['rcode']}), content_type="application/json")
+        else:
             couponRecord = {"vendor_id": data['vendor_id'], "cID": data["cID"], "userID": data['userID'], "rcode": code,
                             "used_on": datetime.datetime.now(), "ustatus": "pending", "mstatus": "pending"}
             db.order_data.insert(couponRecord)
