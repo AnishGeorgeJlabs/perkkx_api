@@ -132,6 +132,7 @@ def signup(request):
             "vendor_id": data['vendor_id'],
             "username": data['username'],
             "password": data['password'],
+            "level": data['level'],
             "last_modified": datetime.now()
         })
         return response({"result": True})
