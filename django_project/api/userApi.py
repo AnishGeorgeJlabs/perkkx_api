@@ -197,7 +197,11 @@ def user_coupons(request,uid):
         used = []
         for x in usedDeals:
             vendorData = db.merchants.find_one({"vendor_id":int(x['vendor_id'])})
-            address = vendorData['address']['area']
+            try:
+                address = vendorData['address']['area']
+            except:
+                address = vendorData.get('web_address', '')
+
             dealData = db.deals.find_one({"cID":x['cID']})
             if not dealData:
                 dealData = db.one_time_deals.find_one({"cID": x['cID']})
@@ -206,7 +210,7 @@ def user_coupons(request,uid):
                 "address":address,
                 "code":x['rcode'],
                 "deal": dealData['deal'],
-                "expiry":dealData['expiry'],
+                "expiry":dealData.get('expiry', '1/1/2090'),
                 "used_on":x['used_on'].strftime("%d/%m/%Y %H:%M:%S"),
                 "status":x['ustatus'],
                 "cID": x['cID'],

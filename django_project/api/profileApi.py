@@ -40,9 +40,18 @@ def get_followed(request, userID):      # Dummy
         merchant = db.merchants
         for x,y in merchants.items():
             mm = merchant.find_one({"vendor_id":int(x)})
+            try:
+                if 'address' in mm and 'area' in mm['address']:
+                    address = mm['address']['area']
+                elif 'address' in mm:
+                    address = mm['address']['text']
+                else:
+                    address = mm['web_address']
+            except:
+                address = ''
             temp = {
             "vendor_name": mm['vendor_name'],
-            "address":  mm['address']['text'],
+            "address":  address,
             "cat": mm['cat'],
             "rating": mm['rating'],
             "date": y
@@ -77,7 +86,7 @@ def pre_app_check(request):
             data['codes'] = []
             for x in records:
                 vendor_data = db.merchants.find_one({"vendor_id":x['vendor_id']},
-                                                    {"_id": False,"vendor_name":True,"address.text":True})
+                                                    {"_id": False,"vendor_name":True,"address.area":True, 'web_address': True})
                 x.update(vendor_data)
                 data['codes'].append(x)
 
