@@ -31,7 +31,7 @@ def block(request):
         if db.blocked.count(obj) == 0:
             # obj.pop("_id")
             result = db.blocked.insert_one(obj)
-            return jsonResponse({"success": True, "_id": str(result.insert_id)})
+            return jsonResponse({"success": True, "_id": str(result.inserted_id)})
         else:
             return jsonResponse({"success": True, "message": "Already exists"})
 
