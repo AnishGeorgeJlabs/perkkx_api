@@ -130,6 +130,7 @@ def check_coupon(request):
             result = failure.copy()
             result.update({"error": "Invalid cID"})
             return HttpResponse(dumps(result), content_type="application/json")
+
         # 3 Check if user is verified or not
         users = db.user
         user = users.find_one({"userID": data['userID']})
