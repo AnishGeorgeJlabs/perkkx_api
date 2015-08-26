@@ -113,4 +113,29 @@ def get_blocked(request):
     :param request:
     :return:
     """
-    return jsonResponse({"success": False, "message": "Work in progress"})
+    type = request.GET.get('type', 'email')
+
+    if type == 'email':
+        return jsonResponse({
+            "success": True,
+            "data": [
+                x['email'] for x in
+                db.blocked_email.find({}, {"_id": False, "timestamp": False})
+            ]
+        })
+    elif type == 'phone':
+        return jsonResponse({
+            "success": True,
+            "data": [
+                [x['phone'], x['language']] for x in
+                db.blocked_phone.aggregate([
+                    {"$project": {"_id": False, "phone": True, "language": True}},
+                    {"$unwind": "$language"}
+                ])
+            ]
+        })
+    else:
+        return jsonResponse({
+            "success": False,
+            "error": "Unknown type"
+        })
