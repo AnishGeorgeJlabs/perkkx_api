@@ -29,6 +29,7 @@ def block(request):
             return jsonResponse({"success": False, "error": "Unknown type"})
 
         if db.blocked.count(obj) == 0:
+            obj.pop("_id")
             result = db.blocked.insert_one(obj)
             return jsonResponse({"success": True, "_id": str(result.insert_id)})
         else:
