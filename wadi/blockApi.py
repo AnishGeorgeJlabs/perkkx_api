@@ -38,6 +38,7 @@ def block(request):
             return jsonResponse({"success": True, "message": "Already exists"})
 '''
 
+
 @csrf_exempt
 def block(request):
     """
@@ -78,14 +79,18 @@ def block(request):
             })
             res['phone entry'] = str(resPh.inserted_id)
         else:
-            db.blocked_phone.update_one({
-                "$addToSet": {
-                    "language": {"$each": language}
+            db.blocked_phone.update_one(
+                {
+                    "phone": ph
                 },
-                "$set": {
-                    "timestamp": datetime.now()
-                }
-            })
+                {
+                    "$addToSet": {
+                        "language": {"$each": language}
+                    },
+                    "$set": {
+                        "timestamp": datetime.now()
+                    }
+                })
             res['phone entry'] = 'Updated'
     if not res:
         return jsonResponse({"success": False})
