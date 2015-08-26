@@ -97,14 +97,14 @@ def block(request):
             res['phone entry'] = 'Updated'
     if 'pretty' in data and data['pretty'] not in [False, 'false']:
         if not res:
-            return jsonResponse({"success": False})
-        else:
-            return jsonResponse({"success": True, "result": res})
-    else:
-        if not res:
             return HttpResponse("There seems to be some problem. You seem to be already unsubscribed")
         else:
             return HttpResponse("You have been successfully unsubscribed")
+    else:
+        if not res:
+            return jsonResponse({"success": False})
+        else:
+            return jsonResponse({"success": True, "result": res})
 
 
 def get_blocked(request):
