@@ -4,14 +4,19 @@ from oauth2client.file import Storage
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client import tools
 import gspread
+import os
 
+def local_file(name):
+    cdir = os.path.dirname(__file__)
+    filename = os.path.join(cdir, file)
+    return filename
 
 def get_worksheet(i):
-    storage = Storage("creds.dat")
+    storage = Storage(local_file("creds.dat"))
     credentials = storage.get()
     if credentials is None or credentials.invalid:
         flags = tools.argparser.parse_args(args=[])
-        flow = flow_from_clientsecrets("client_secret.json", scope=["https://spreadsheets.google.com/feeds"])
+        flow = flow_from_clientsecrets(local_file("client_secret.json"), scope=["https://spreadsheets.google.com/feeds"])
         credentials = tools.run_flow(flow, storage, flags)
     if credentials.access_token_expired:
         credentials.refresh(httplib2.Http())
