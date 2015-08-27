@@ -147,7 +147,7 @@ def get_deals(request, category):
                 deal_query.update({"deal_cat": "secondary"})
             else:
                 deal_query.pop('deal_cat')
-                deal_query.update({'rcodes.1': {"$exists": True}})
+                deal_query.update({'rcodes.0': {"$exists": True}})
 
             secondaries = [s for s in dCollection.find(deal_query, deal_filter) if deal_valid(s)]
             if not deal_valid(pdeal):
