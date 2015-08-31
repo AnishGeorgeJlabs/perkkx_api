@@ -77,7 +77,7 @@ def pre_app_check(request):
             if ocount == 1:
                 pending = db.order_data.find_one({"userID": userID, "ustatus": "pending"})
                 if pending:
-                    data['rcode'] = pending['rcode']
+                    data['rcode'] = json.dumps(pending)
                     '''
                     merchant = db.merchants.find_one({'vendor_id': pending['vendor_id']}, {"_id": False, "vendor_name": True})
                     if not merchant:
