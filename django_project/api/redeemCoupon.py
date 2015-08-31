@@ -134,7 +134,7 @@ def check_coupon(request):
         # 3 Check if user is verified or not
         users = db.user
         user = users.find_one({"userID": data['userID']})
-        if user['verified'] in 'Y':
+        if user['verified'] in 'N':
             t2 = collection.find({
                 "userID": data['userID']
             })
