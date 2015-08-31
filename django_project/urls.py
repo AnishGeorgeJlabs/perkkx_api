@@ -47,6 +47,7 @@ url(r'^text',redeemCoupon.test,name='redeemCoupon.test'),
     url(r'^perkkx/search', search.search, name='search.search'),
 
     url(r'^wadi/', include('wadi.urls')),
-    url(r'^manoj/', include('manoj.urls'))
+    url(r'^manoj/', include('manoj.urls')),
+    url(r'^misc/', include('misc.urls'))
 
 )
