@@ -142,7 +142,7 @@ def check_coupon(request):
         else:
             t2 = collection.find({
                 "userID": data["userID"],
-                "mstatus": "pending"
+                "ustatus": "pending"
             }).count()
             limit = 2
 
