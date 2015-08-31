@@ -142,7 +142,7 @@ def check_coupon(request):
         # 4 Check if the user is over his/her limit for coupons
         t2 = collection.find({
             "userID": data["userID"],
-            "ustatus": "pending"
+            "mstatus": "pending"
         }).count()
         if t2 >= limit:
             return HttpResponse(dumps(failure), content_type="application/json")
