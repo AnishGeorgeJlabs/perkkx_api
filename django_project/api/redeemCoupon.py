@@ -118,7 +118,7 @@ def check_coupon(request):
         t1 = collection.find_one({
             "userID": data["userID"],
             "cID": data["cID"],
-            "ustatus": "pending"
+            "mstatus": "pending"
         })
         if t1:
             result = failure.copy()
@@ -135,15 +135,18 @@ def check_coupon(request):
         users = db.user
         user = users.find_one({"userID": data['userID']})
         if user['verified'] in 'Y':
-            limit = 2
-        else:
+            t2 = collection.find({
+                "userID": data['userID']
+            })
             limit = 1
+        else:
+            t2 = collection.find({
+                "userID": data["userID"],
+                "mstatus": "pending"
+            }).count()
+            limit = 2
 
-        # 4 Check if the user is over his/her limit for coupons
-        t2 = collection.find({
-            "userID": data["userID"],
-            "mstatus": "pending"
-        }).count()
+
         if t2 >= limit:
             return HttpResponse(dumps(failure), content_type="application/json")
         else:
