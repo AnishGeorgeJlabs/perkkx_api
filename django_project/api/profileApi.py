@@ -67,6 +67,8 @@ def pre_app_check(request):
         userID = request.GET['userID']
         data = {}
         user = db.user.find_one({"userID": userID})
+        if not user:
+            return HttpResponse(dumps({"success": 0, "reason": "User does not exist"}))
         # Section 1, corporate info
         data['cinfo'] = True if 'cname' in user else False
         # Section 2, verified
@@ -78,13 +80,11 @@ def pre_app_check(request):
                 pending = db.order_data.find_one({"userID": userID, "ustatus": "pending"})
                 if pending:
                     data['rcode'] = json.dumps(pending)
-                    '''
                     merchant = db.merchants.find_one({'vendor_id': pending['vendor_id']}, {"_id": False, "vendor_name": True})
                     if not merchant:
-                        data['vendor_name'] = "Fucked"
+                        data['vendor_name'] = "_"
                     else:
-                        data['vendor_name'] = merchant.get('vendor_name', 'Noooooo')
-                    '''
+                        data['vendor_name'] = merchant.get('vendor_name', '_')
 
         # Section 3, codes
         if data['verified']:
