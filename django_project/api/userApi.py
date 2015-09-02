@@ -172,6 +172,8 @@ def updateuser(request):
         verified = collection.find_one({"userID":key})
         try:
             if 'cemail' in data.keys():
+                if db.user.count({"cemail": data['cemail']}) > 0:
+                    return HttpResponse(dumps({"success": 0, "reason": "This corporate email id is already registered with us"}))
                 verify = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
                 code = key + "_" + verify
                 result = conf_mail(data['cemail'],code)
