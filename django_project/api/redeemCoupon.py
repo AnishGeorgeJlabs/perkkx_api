@@ -135,12 +135,12 @@ def check_coupon(request):
         users = db.user
         user = users.find_one({"userID": data['userID']})
         if user['verified'] in 'N':
-            t2 = collection.find({
+            t2 = collection.count({
                 "userID": data['userID']
             })
             limit = 1
         else:
-            t2 = collection.find({
+            t2 = collection.count({
                 "userID": data["userID"],
                 "ustatus": "pending"
             }).count()
