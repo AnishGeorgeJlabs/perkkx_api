@@ -174,12 +174,21 @@ def updateuser(request):
             if 'cemail' in data.keys():
                 if db.user.count({"cemail": data['cemail']}) > 0:
                     return HttpResponse(dumps({"success": 0, "reason": "This corporate email id is already registered with us"}))
-                verify = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
-                code = key + "_" + verify
-                result = conf_mail(data['cemail'],code)
-                data['veri_code'] = verify
-                if 'verified' not in verified:
-                    data['verified'] = "N"
+
+                whitelist_conf = db.configuration.find_one({"name": "cemail_whitelist"})
+                if whitelist_conf:
+                    whitelist = whitelist_conf.get('emails', [])
+                else:
+                    whitelist = []
+                if data['cemail'] in whitelist:
+                    data['verified'] = 'Y'
+                else:
+                    verify = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
+                    code = key + "_" + verify
+                    result = conf_mail(data['cemail'],code)
+                    data['veri_code'] = verify
+                    if 'verified' not in verified:
+                        data['verified'] = "N"
         except:
             print "hi"
         collection.update({"userID":key},{"$set": data} ,False)
