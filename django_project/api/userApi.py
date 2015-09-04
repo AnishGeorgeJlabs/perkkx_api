@@ -99,6 +99,7 @@ def signup(request):
         data.update({"verified":"N"})
 
         data['regId'] = [data['regId']]
+        data['timestamp'] = datetime.now()
         collection.insert(data)
         res = { "success":'1', "userID": key }
 
