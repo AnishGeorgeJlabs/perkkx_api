@@ -102,48 +102,52 @@ def _stringify_spec(ho, strict=False):
 
 
 def process_merchant(mer, long_version):
-    if not long_version and 'special_event' in mer:
-        sparr = mer.pop('special_event')
-        if len(sparr) > 0 and 'title' in sparr[0] and 'happy' in sparr[0]['title'].lower():
-            happy = _stringify_spec(sparr.pop(0), strict=True)  # Removed the first one here
-            if happy is not None:
-                mer['happy_hours'] = happy
+    try:
+        if not long_version and 'special_event' in mer:
+            sparr = mer.pop('special_event')
+            if len(sparr) > 0 and 'title' in sparr[0] and 'happy' in sparr[0]['title'].lower():
+                happy = _stringify_spec(sparr.pop(0), strict=True)  # Removed the first one here
+                if happy is not None:
+                    mer['happy_hours'] = happy
 
-        if len(sparr) > 0 and all([key in sparr[0] for key in ['title', 'time', 'desc']]):
-            mer['special'] = _stringify_spec(sparr[0], strict=False)
+            if len(sparr) > 0 and all([key in sparr[0] for key in ['title', 'time', 'desc']]):
+                mer['special'] = _stringify_spec(sparr[0], strict=False)
 
-    if 'timing' in mer:
-        if not long_version:
-            timing = mer.pop('timing')
-        else:
-            timing = mer['timing']
-        dayToday = (datetime.today().weekday() + 1) % 7
-        today = timing[dayToday]  # Because sunday is 0
+        if 'timing' in mer:
+            if not long_version:
+                timing = mer.pop('timing')
+            else:
+                timing = mer['timing']
+            dayToday = (datetime.today().weekday() + 1) % 7
+            today = timing[dayToday]  # Because sunday is 0
 
-        opTmStr = today['open_time'].strip()[:5]
-        clTmStr = today['close_time'].strip()[:5]
-        try:
-            op = check_time_between(
-                open=datetime.strptime(opTmStr, "%H:%M"),
-                close=datetime.strptime(clTmStr, "%H:%M"),
-                now=datetime.now()
-            )
-        except Exception:
-            op = False
-        mer.update({"open": op})
-        if not long_version:
-            mer['open_time'] = opTmStr
-            mer['close_time'] = clTmStr
-        else:
-            mer['today'] = dayToday
+            opTmStr = today['open_time'].strip()[:5]
+            clTmStr = today['close_time'].strip()[:5]
+            try:
+                op = check_time_between(
+                    open=datetime.strptime(opTmStr, "%H:%M"),
+                    close=datetime.strptime(clTmStr, "%H:%M"),
+                    now=datetime.now()
+                )
+            except Exception:
+                op = False
+            mer.update({"open": op})
+            if not long_version:
+                mer['open_time'] = opTmStr
+                mer['close_time'] = clTmStr
+            else:
+                mer['today'] = dayToday
 
-    if 'price' in mer:
-        try:
-            price = mer["price"]
-            price = int(float(re.sub("[^\d+\.]", "", price).strip(".")))
-            mer['price'] = price
-        except:
-            pass
+        if 'price' in mer:
+            try:
+                price = mer["price"]
+                price = int(float(re.sub("[^\d+\.]", "", price).strip(".")))
+                mer['price'] = price
+            except:
+                pass
+        return True
+    except Exception, e:
+        return False
 
 
 def custom_filter(deal):

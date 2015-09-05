@@ -173,7 +173,10 @@ def get_deals(request, category):
             '''
 
             # ----- Setup Merchant data ------ #
-            process_merchant(mer, long_version=False)  # Found in merchantApi
+            mres = process_merchant(mer, long_version=False)  # Found in merchantApi
+            if not mres:
+                continue                # Skips the damn merchant
+
             if 'address' in mer and mer['address']['lat'] and mer['address']['lng']:
                 if lat:
                     data_for_distance = {
