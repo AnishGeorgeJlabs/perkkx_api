@@ -80,14 +80,15 @@ def check_time_between(open, close, now):
 def _stringify_spec(ho, strict=False):
     hstr = str(ho['title'])
     flag = False
-    if ho['time'] != '':
+    if ho.get('time', '') != '':
         flag = True
-        tm = ', ' + ho['time']
+        tm = ', ' + ho.get('time', '')
     else:
         tm = ''
 
-    if ho['desc'].strip() != '' and ho['desc'].strip() != 'N/A':
-        d = ', ' + str(ho['desc'])
+    desc = ho.get('desc', '').strip()
+    if desc != '' and desc != 'N/A':
+        d = ', ' + str(desc)
     else:
         d = ''
 
