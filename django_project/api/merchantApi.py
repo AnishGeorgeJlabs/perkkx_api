@@ -103,12 +103,12 @@ def _stringify_spec(ho, strict=False):
 def process_merchant(mer, long_version):
     if not long_version and 'special_event' in mer:
         sparr = mer.pop('special_event')
-        if len(sparr) > 0 and 'happy' in sparr[0]['title'].lower():
+        if len(sparr) > 0 and 'title' in sparr[0] and 'happy' in sparr[0]['title'].lower():
             happy = _stringify_spec(sparr.pop(0), strict=True)  # Removed the first one here
             if happy is not None:
                 mer['happy_hours'] = happy
 
-        if len(sparr) > 0:
+        if len(sparr) > 0 and all([key in sparr[0] for key in ['title', 'time', 'desc']]):
             mer['special'] = _stringify_spec(sparr[0], strict=False)
 
     if 'timing' in mer:
