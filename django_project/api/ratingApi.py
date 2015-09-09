@@ -45,7 +45,7 @@ def response (obj):
 def rate_merchant (request):
     try:
         data = json.loads(request.body)
-        uID = data['rcode'][:-2]
+        uID = data.get('userID', data['rcode'][:-2])
         vID = int(data['vendor_id'])
         das = data['das']
         # Step 0: check validity of user
