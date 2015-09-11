@@ -199,6 +199,23 @@ def updateuser(request):
         failure['reason'] = "UPDATATION CAN'T BE PROCEEDED"
         return HttpResponse(dumps(failure),content_type="application/json")
 
+def resend_email(request):
+    try:
+        userID = request.GET['userID']
+        user = db.user.find_one({"userID": userID})
+        if 'cemail' not in user:
+            return HttpResponse(dumps({"success": 0, "reason": "No corporate email"}),content_type="application/json")
+
+        if 'veri_code' in user:
+            verify = user['veri_code']
+        else:
+            verify = ''.join(random.choice(string.ascii_lowercase) for _ in range(4))
+            db.user.update_one({"userID": userID}, {"$set": {"veri_code": verify}})
+
+        conf_mail(user['cemail'], userID + '_' + verify)
+    except Exception, e:
+        return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}),content_type="application/json")
+
 @csrf_exempt
 def user_coupons(request,uid):
     global db
