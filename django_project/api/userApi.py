@@ -215,6 +215,7 @@ def resend_email(request):
             db.user.update_one({"userID": userID}, {"$set": {"veri_code": verify}})
 
         conf_mail(user['cemail'], userID + '_' + verify)
+        return HttpResponse(dumps({"success": 1}),content_type="application/json")
     except Exception, e:
         return HttpResponse(dumps({"success": 0, "error": "Exception: "+str(e)}),content_type="application/json")
 
