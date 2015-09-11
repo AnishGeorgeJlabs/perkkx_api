@@ -213,9 +213,14 @@ def get_deals(request, category):
         else:
             delta = newlist
         newlist = sorted(delta, key=lambda k: k[sort] if k[sort] is not False else 100, reverse=reverse)
+
+        open_now = [x for x in newlist if x.get('open', False)]
+        closed_now = [x for x in newlist if not x.get('open', False)]
+
+        final_list = open_now + closed_now
         res = {
             "total": len(newlist),
-            "data": newlist[start:end],
+            "data": final_list[start:end],
             "page": pages
         }
         return HttpResponse(dumps(res), content_type="application/json")
