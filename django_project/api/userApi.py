@@ -203,6 +203,8 @@ def resend_email(request):
     try:
         userID = request.GET['userID']
         user = db.user.find_one({"userID": userID})
+        if not user:
+            return HttpResponse(dumps({"success": 0, "reason": "User doesn't exist"}),content_type="application/json")
         if 'cemail' not in user:
             return HttpResponse(dumps({"success": 0, "reason": "No corporate email"}),content_type="application/json")
 
