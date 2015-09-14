@@ -20,7 +20,6 @@ urlpatterns = patterns(
     
     url(r'^perkkx/update/user',userApi.updateuser, name='userApi.updateuser'),
     url(r'^perkkx/check', userApi.user_exist, name="userApi.user_exist"),
-    url(r'^perkkx/echo', 'preks.echo'),
     url(r'^perkkx/verifyUser/(?P<code>\w+)', userApi.verifyUser, name='userApi.verifyUser'),
     url(r'^perkkx/deals/all/(?P<vendor>\d+)', dealsApi.get_all_deals_for_vendor, name='dealsApi.get_all_deals_for_vendor'),
     url(r'^perkkx/deals/onetime', dealsApi.get_one_time_deals, name='dealsApi.get_one_time_deals'),
