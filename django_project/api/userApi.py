@@ -319,5 +319,5 @@ def share_link(request):
             "userID": userID
         }, {"$inc": {"clicked": 1}})
 
-    return redirect("https://play.google.com/store/apps/details?id=com.jlabs.perkkxapp")
+    return redirect("https://play.google.com/store/apps/details?id=com.jlabs.perkkxapp", permanent=True)
 
