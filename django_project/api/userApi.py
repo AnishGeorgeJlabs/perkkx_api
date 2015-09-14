@@ -313,7 +313,7 @@ def verifyUser(request,code):
         return HttpResponse("Invalid Format")
 
 def share_link(request):
-    userID = request.get('userID')
+    userID = request.GET.get('userID')
     if userID and db.user.count({"userID": userID}) > 0:
         db.user_share.update_one({
             "userID": userID
