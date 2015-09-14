@@ -317,7 +317,7 @@ def share_link(request):
     if userID and db.user.count({"userID": userID}) > 0:
         db.user_share.update_one({
             "userID": userID
-        }, {"$inc": {"clicked": 1}})
+        }, {"$inc": {"clicked": 1}}, upsert=True)
 
     return redirect("https://play.google.com/store/apps/details?id=com.jlabs.perkkxapp", permanent=True)
 
