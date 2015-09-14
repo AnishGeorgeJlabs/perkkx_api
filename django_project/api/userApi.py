@@ -1,6 +1,7 @@
 from bson.json_util import dumps
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
 from django.template import Template,Context
 import pymongo
 from datetime import datetime
@@ -310,3 +311,13 @@ def verifyUser(request,code):
             return HttpResponse("Invalid Username")
     else:
         return HttpResponse("Invalid Format")
+
+def share_link(request):
+    userID = request.get('userID')
+    if userID and db.user.count({"userID": userID}) > 0:
+        db.user_share.update_one({
+            "userID": userID
+        }, {"$inc": {"clicked": 1}})
+
+    redirect("https://play.google.com/store/apps/details?id=com.jlabs.perkkxapp")
+
