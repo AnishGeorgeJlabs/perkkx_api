@@ -318,7 +318,7 @@ def share_link(request, userID):
         db.user_share.update_one({
             "userID": userID
         }, {"$inc": {"clicked": 1}}, upsert=True)
-        link += "?utm_source=%s&utm_medium=android&utm_campaign=perkkx_share" % userID
+        link += "&utm_source=%s&utm_medium=android&utm_campaign=perkkx_share" % userID
 
     return redirect(link)
 
