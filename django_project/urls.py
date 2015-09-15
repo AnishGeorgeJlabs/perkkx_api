@@ -16,7 +16,7 @@ urlpatterns = patterns(
     url(r'^perkkx/user/coupon/(?P<uid>\w+)', userApi.user_coupons, name='userApi.user_coupons'),
     url(r'^perkkx/signup', userApi.signup, name='userApi.signup'),
     url(r'^perkkx/user', userApi.getdata, name='userApi.getdata'),
-    url(r'^perkkx/app', userApi.share_link, name='userApi.share_link'),
+    url(r'^perkkx/share/(?P<userID>\w+)', userApi.share_link, name='userApi.share_link'),
     
     url(r'^perkkx/update/user',userApi.updateuser, name='userApi.updateuser'),
     url(r'^perkkx/check', userApi.user_exist, name="userApi.user_exist"),

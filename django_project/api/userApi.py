@@ -312,12 +312,13 @@ def verifyUser(request,code):
     else:
         return HttpResponse("Invalid Format")
 
-def share_link(request):
-    userID = request.GET.get('userID')
+def share_link(request, userID):
+    link = "https://play.google.com/store/apps/details?id=com.jlabs.perkkxapp"
     if userID and db.user.count({"userID": userID}) > 0:
         db.user_share.update_one({
             "userID": userID
         }, {"$inc": {"clicked": 1}}, upsert=True)
+        link += "?utm_source=%s&utm_medium=android&utm_campaign=perkkx_share" % userID
 
-    return redirect("https://play.google.com/store/apps/details?id=com.jlabs.perkkxapp")
+    return redirect(link)
 
