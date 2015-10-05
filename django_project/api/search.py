@@ -1,15 +1,7 @@
 from bson.json_util import dumps
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import Template, Context
-import pymongo
-import datetime
-import random
-import string
-import json
-import math
 import re
-from unidecode import unidecode
 from . import db
 
 failure = dumps({"success": 0})

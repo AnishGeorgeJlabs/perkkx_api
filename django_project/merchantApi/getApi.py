@@ -1,11 +1,8 @@
-from django.views.decorators.csrf import csrf_exempt
-from django.template import Template, Context
-import pymongo
 from datetime import datetime, timedelta
-import calendar
-from .data_query import db, get_data, response
 import time
-import re
+
+from django.views.decorators.csrf import csrf_exempt
+from .data_query import db, get_data, response
 from ..api.merchantApi import deal_valid
 
 

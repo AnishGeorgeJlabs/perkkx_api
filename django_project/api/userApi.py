@@ -1,15 +1,12 @@
-from bson.json_util import dumps
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import redirect
-from django.template import Template,Context
-import pymongo
 from datetime import datetime
 import random
 import string
 import json
-from mailer import Mailer
-from mailer import Message
+
+from bson.json_util import dumps
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
 from . import db
 
 '''

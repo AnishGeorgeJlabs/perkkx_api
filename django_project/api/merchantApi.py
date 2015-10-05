@@ -1,15 +1,10 @@
+from datetime import datetime, timedelta
+
 from bson.json_util import dumps
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import Template, Context
-import pymongo
-from datetime import datetime, timedelta
-import random
-import string
-import json
 import re
 from mongo_filter import merchant_filter_small, deal_compact_filter
-from . import db
 
 failure = dumps({"success": 0})
 '''

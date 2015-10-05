@@ -4,10 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template import Template,Context
 import pymongo
 from datetime import datetime"""
-import random
-import string
-import json
-    # Do OAuth2 stuff to create credentials object
+# Do OAuth2 stuff to create credentials object
 from oauth2client.file import Storage
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client import tools

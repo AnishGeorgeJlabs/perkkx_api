@@ -1,10 +1,9 @@
-from django.views.decorators.csrf import csrf_exempt
-import pymongo
-from datetime import datetime, date
-import calendar
-from .data_query import db, response
+from datetime import datetime
 import json
 import time
+
+from django.views.decorators.csrf import csrf_exempt
+from .data_query import db, response
 
 
 def _time_transform(data):

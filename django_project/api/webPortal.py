@@ -1,17 +1,10 @@
 from bson.json_util import dumps
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import Template,Context
-import pymongo
-from datetime import datetime
-import random
-import string
-import json
 from oauth2client.file import Storage
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client import tools
 import gspread
-import os
 from . import db
 
 failure = dumps({ "success": 0 })

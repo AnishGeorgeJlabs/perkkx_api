@@ -1,17 +1,11 @@
+import json
+from math import pi, sin, cos, atan2, sqrt
+
 from bson.json_util import dumps
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.template import Template, Context
-import pymongo
-import datetime
-import random
-import string
-import json
-import math
 import re
-from unidecode import unidecode
 from dateutil.tz import *
-from math import pi, sin, cos, atan2, sqrt
 from mongo_filter import deal_filter, merchant_filter, deal_compact_filter
 from merchantApi import process_merchant, deal_valid
 from . import db
